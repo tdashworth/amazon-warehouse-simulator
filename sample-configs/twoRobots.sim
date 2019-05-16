@@ -1,0 +1,106 @@
+format 1
+width 4
+height 4
+capacity 50
+chargeSpeed 1
+podRobot c0 r0 3 1
+podRobot c1 r1 3 3
+shelf ss0 2 2
+station ps0 0 2
+order 13 ss0
+order 8 ss0
+order 3 ss0
+order 2 ss0
+order 13 ss0
+order 4 ss0
+order 6 ss0
+order 4 ss0
+order 16 ss0
+order 19 ss0
+order 18 ss0
+order 8 ss0
+order 9 ss0
+order 13 ss0
+order 1 ss0
+order 3 ss0
+order 3 ss0
+order 1 ss0
+order 7 ss0
+order 8 ss0
+order 16 ss0
+order 11 ss0
+order 7 ss0
+order 2 ss0
+order 15 ss0
+order 9 ss0
+order 5 ss0
+order 8 ss0
+order 14 ss0
+order 14 ss0
+order 10 ss0
+order 6 ss0
+order 3 ss0
+order 3 ss0
+order 12 ss0
+order 4 ss0
+order 18 ss0
+order 4 ss0
+order 12 ss0
+order 7 ss0
+order 4 ss0
+order 20 ss0
+order 14 ss0
+order 15 ss0
+order 11 ss0
+order 17 ss0
+order 10 ss0
+order 4 ss0
+order 1 ss0
+order 3 ss0
+order 13 ss0
+order 19 ss0
+order 20 ss0
+order 15 ss0
+order 19 ss0
+order 11 ss0
+order 12 ss0
+order 12 ss0
+order 16 ss0
+order 12 ss0
+order 9 ss0
+order 2 ss0
+order 3 ss0
+order 11 ss0
+order 4 ss0
+order 3 ss0
+order 2 ss0
+order 10 ss0
+order 20 ss0
+order 4 ss0
+order 5 ss0
+order 16 ss0
+order 14 ss0
+order 16 ss0
+order 7 ss0
+order 14 ss0
+order 5 ss0
+order 20 ss0
+order 17 ss0
+order 5 ss0
+order 13 ss0
+order 20 ss0
+order 19 ss0
+order 17 ss0
+order 12 ss0
+order 5 ss0
+order 19 ss0
+order 2 ss0
+order 18 ss0
+order 20 ss0
+order 14 ss0
+order 9 ss0
+order 2 ss0
+order 19 ss0
+order 8 ss0
+order 14 ss0
+order 5 ss0
