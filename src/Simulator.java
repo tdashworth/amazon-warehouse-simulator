@@ -60,6 +60,7 @@ public class Simulator {
 		this.totalTickCounts = 0;
 		this.warehouse = new Warehouse(floor, entities, orders);
 		this.actors = entities.values().stream()
+				.sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
 				.filter(entity -> entity instanceof Actor)
 				.map(entity -> (Actor) entity)
 				.collect(Collectors.toList());

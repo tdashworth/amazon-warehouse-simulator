@@ -17,8 +17,12 @@ public class Location {
 	 * Represents a point on a grid (row and column) 
 	 * @param row
 	 * @param column
+	 * @throws Exception 
 	 */
-	public Location(int row, int column) {
+	public Location(int row, int column) throws Exception {
+		if (row < 0 || column < 0)
+			throw new Exception("Row or column must not be less than 0.");
+		
 		this.row = row;
 		this.column = column;
 	}
