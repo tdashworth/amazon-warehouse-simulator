@@ -81,7 +81,14 @@ public class Simulator {
 	 */
 	private void tick() {
 		this.totalTickCounts++;
-		this.actors.forEach(actor -> actor.tick(this.warehouse));
+		this.actors.forEach(actor -> {
+			try {
+				actor.tick(this.warehouse);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 	}
 
 }

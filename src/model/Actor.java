@@ -5,6 +5,10 @@ package model;
  */
 public interface Actor {
 	
-	// TODO Warehouse should be passed to this as a parameter.
-	public abstract void tick(Warehouse warehouse);
+	/**
+	 * This is execute on every tick/step of the simulation allowing each Actor to make their "turn".
+	 * @param warehouse
+	 * @throws Exception 
+	 */
+	public abstract void tick(Warehouse warehouse) throws Exception;
 }

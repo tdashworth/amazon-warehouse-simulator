@@ -1,8 +1,5 @@
 package model;
-
-import java.util.Map;
-import java.util.Deque;
-import java.util.Set;
+import java.util.*;
 
 /**
  *	TODO JavaDoc description.
@@ -24,6 +21,8 @@ public class Warehouse {
 		this.floor = floor;
 		this.entities = entities;
 		this.unassignedOrders = orders;
+		this.assignedOrders = new HashSet<Order>();
+		this.dispatchedOrders = new LinkedList<Order>();
 	}
 	
 	/**
