@@ -1,12 +1,13 @@
 package model;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 /**
  *
  */
 public class Order {
-	private final String[] storageShelfUIDs;
+	private final List<String> storageShelfUIDs;
 	private final int numberOfTicksToPack;
 	private int totalNumberOfTicksToPack;
 	
@@ -14,7 +15,7 @@ public class Order {
 	 * @param storageShelfUIDs
 	 * @param numberOfTicksToPack
 	 */
-	public Order(String[] storageShelfUIDs, int numberOfTicksToPack) {
+	public Order(List<String> storageShelfUIDs, int numberOfTicksToPack) {
 		this.storageShelfUIDs = storageShelfUIDs;
 		this.numberOfTicksToPack = numberOfTicksToPack;
 	}
@@ -22,7 +23,7 @@ public class Order {
 	/**
 	 * @return The storage shelf UIDs required in the order.
 	 */
-	public String[] getStorageShelfUIDs() {
+	public List<String> getStorageShelfUIDs() {
 		return storageShelfUIDs;
 	}
 

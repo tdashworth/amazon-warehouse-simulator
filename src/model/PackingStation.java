@@ -26,7 +26,7 @@ public class PackingStation extends Entity implements Actor {
 	}
 
 	@Override
-	public void tick() {
+	public void tick(Warehouse warehouse) {
 		// TODO determine "state" of packing station and call the next action to
 		// perform.
 	}

@@ -82,4 +82,11 @@ public class Warehouse {
 		return "Warehouse: ...";
 	}
 
+	/**
+	 * @return true if all orders have been dispatched.
+	 */
+	public boolean areAllOrdersDispatched() {
+		return this.assignedOrders.size() == 0 && this.unassignedOrders.isEmpty();
+	}
+
 }

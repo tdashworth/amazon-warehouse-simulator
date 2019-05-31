@@ -27,7 +27,7 @@ public class Robot extends Entity implements Actor {
 	}
 
 	@Override
-	public void tick() {
+	public void tick(Warehouse warehouse) {
 		// TODO determine "state" of robot and call the next action to perform.
 	}
 

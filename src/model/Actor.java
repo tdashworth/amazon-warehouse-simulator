@@ -6,5 +6,5 @@ package model;
 public interface Actor {
 	
 	// TODO Warehouse should be passed to this as a parameter.
-	public abstract void tick();
+	public abstract void tick(Warehouse warehouse);
 }
