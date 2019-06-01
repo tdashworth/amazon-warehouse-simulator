@@ -42,6 +42,7 @@ public class Order {
 	}
 
 	/**
+	 * Sets the total number of ticks it takes an item to pack.
 	 * @param The total number of ticks to pack from assigned.
 	 */
 	public void setTotalNumberOfTicksToPack(int totalNumberOfTicksToPack) {

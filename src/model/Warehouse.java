@@ -1,4 +1,5 @@
 package model;
+import java.text.MessageFormat;
 import java.util.*;
 
 /**
@@ -12,7 +13,7 @@ public class Warehouse {
 	private Deque<Order> dispatchedOrders;
 
 	/**
-	 * TODO JavaDoc description.
+	 * A representation of a warehouse
 	 * @param floor
 	 * @param entities
 	 * @param orders
@@ -78,7 +79,12 @@ public class Warehouse {
 	 */
 	public String toString() {
 		// TODO Warehouse toString. 
-		return "Warehouse: ...";
+		String defaultOutput = "Warehouse:"
+				+ "unassignedOrders: " + unassignedOrders.size()
+				+ "assignedOrders: " + assignedOrders.size()
+				+ "dispatchedOrders: " + dispatchedOrders.size();
+				
+		return defaultOutput;
 	}
 
 	/**

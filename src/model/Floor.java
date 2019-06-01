@@ -39,7 +39,7 @@ public class Floor {
 	}
 	
 	/**
-	 * TODO JavaDoc description.
+	 * Place an entity on the floor.
 	 * @param entity
 	 * @throws Exception
 	 */
@@ -58,7 +58,7 @@ public class Floor {
 	}
 	
 	/**
-	 * TODO JavaDoc description.
+	 * Move an entity to a new location.
 	 * @param oldLocation
 	 * @param newLocation
 	 * @return
@@ -85,6 +85,7 @@ public class Floor {
 	}
 	
 	/**
+	 * To String method of floor
 	 *	@return A string representation of the floor.
 	 */
 	public String toString() {

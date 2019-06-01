@@ -42,7 +42,8 @@ public class PackingStation extends Entity implements Actor {
 	}
 
 	/**
-	 * TODO JavaDoc description.
+	 * Pick an unassigned order from the warehouse
+	 * @param warehouse
 	 */
 	private void pickOrder(Warehouse warehouse) {
 		this.currentOrder = warehouse.getUnassignedOrder();
@@ -53,14 +54,15 @@ public class PackingStation extends Entity implements Actor {
 	}
 
 	/**
-	 * TODO JavaDoc description.
+	 * Pack an order, decrements the number of packing ticks remaining.
 	 */
 	private void packOrder() {
 		this.remainingPackingTicks--;
 	}
 
 	/**
-	 * TODO JavaDoc description.
+	 * Dispatch an order from the warehouse when it has been packed.
+	 * @param warehouse
 	 * @throws Exception 
 	 */
 	private void dispatchOrder(Warehouse warehouse) throws Exception {
@@ -71,7 +73,7 @@ public class PackingStation extends Entity implements Actor {
 	}
 
 	/**
-	 * TODO JavaDoc description.
+	 * Requests an item from a robot
 	 * @param The storage shelf UID.
 	 * @param Thw warehouse reference.
 	 */
