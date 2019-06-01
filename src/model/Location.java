@@ -19,9 +19,9 @@ public class Location {
 	 * @param column
 	 * @throws Exception 
 	 */
-	public Location(int row, int column) throws Exception {
+	public Location(int row, int column) throws LocationNotValidException {
 		if (row < 0 || column < 0)
-			throw new Exception("Row or column must not be less than 0.");
+			throw new LocationNotValidException(row, column, "Row or column must not be less than 0.");
 		
 		this.row = row;
 		this.column = column;

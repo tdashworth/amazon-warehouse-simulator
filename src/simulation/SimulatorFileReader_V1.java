@@ -1,3 +1,6 @@
+package simulation;
+
+import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import model.*;
@@ -23,17 +26,25 @@ public class SimulatorFileReader_V1 implements SimulatorFileReader {
 
 	/**
 	 * TODO JavaDoc description.
+	 * @throws IOException 
+	 * @throws LocationNotValidException 
 	 */
 	@Override
-	public Simulator read(Path fileLocation) throws Exception {
+	public Simulator read(Path fileLocation) throws SimFileFormatException, IOException, LocationNotValidException {
 		List<String> lines = Files.readAllLines(fileLocation);
 		if (lines.size() == 0)
-			throw new Exception("File is empty.");
+			throw new SimFileFormatException("", "File is empty.");
 		
 		if (!lines.get(0).startsWith("format 1"))
-			throw new Exception("File format is not '1'.");
+			throw new SimFileFormatException(lines.get(0), "File format is not '1'.");
 		
-		lines.stream().forEachOrdered(this::parseLine);
+		for (String line : lines) {
+			try {
+				this.parseLine(line);
+			} catch (NumberFormatException | LocationNotValidException e) {
+				throw new SimFileFormatException(line, e.toString());
+			}
+		}
 		
 		Floor floor = new Floor(this.width, this.height); 
 		Simulator simulator = new Simulator(floor, capacity, chargeSpeed, entities, orders);
@@ -42,8 +53,11 @@ public class SimulatorFileReader_V1 implements SimulatorFileReader {
 	
 	/**
 	 * TODO JavaDoc description.
+	 * @throws Exception 
+	 * @throws NumberFormatException 
+	 * @throws LocationNotValidException 
 	 */
-	private void parseLine(String line) {
+	private void parseLine(String line) throws NumberFormatException, LocationNotValidException {
 		List<String> words = Arrays.asList(line.split(" "));
 		Location location;
 			
@@ -70,7 +84,7 @@ public class SimulatorFileReader_V1 implements SimulatorFileReader {
 		case "podRobot":
 			location = new Location(Integer.parseInt(words.get(3)), Integer.parseInt(words.get(4)));
 			ChargingPod chargingPod = new ChargingPod(words.get(1), location);
-			Robot robot = new Robot(words.get(2), location, chargingPod);
+			Robot robot = new Robot(words.get(2), location, chargingPod, this.capacity);
 			this.entities.put(words.get(1), chargingPod);
 			this.entities.put(words.get(2), robot);
 			break;

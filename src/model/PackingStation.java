@@ -16,6 +16,7 @@ public class PackingStation extends Entity implements Actor {
 	private int tickCountWhenOrderAssigned;
 	private int remainingPackingTicks;
 	private List<StorageShelf> storageShelvesVisited;
+	private List<String> unrequestedStorageShelves;
 
 	/**
 	 * A simple representation of a packing station within the warehouse.
@@ -28,15 +29,18 @@ public class PackingStation extends Entity implements Actor {
 
 	@Override
 	public void tick(Warehouse warehouse) throws Exception {
-		// TODO determine "state" of packing station and call the next action to
-		// perform.
-		
 		if (this.currentOrder == null)
 			this.pickOrder(warehouse);
+		
+		else if (this.unrequestedStorageShelves.size() > 0)
+			this.requestItems(warehouse);
+		
 		else if (this.currentOrder.getStorageShelfUIDs().size() == this.storageShelvesVisited.size() && this.remainingPackingTicks != 0)
 			this.packOrder();
+		
 		else if (this.currentOrder.getStorageShelfUIDs().size() == this.storageShelvesVisited.size() && this.remainingPackingTicks == 0)
 			this.dispatchOrder(warehouse);
+		
 		else
 			; // wait...
 	}
@@ -47,10 +51,28 @@ public class PackingStation extends Entity implements Actor {
 	 */
 	private void pickOrder(Warehouse warehouse) {
 		this.currentOrder = warehouse.getUnassignedOrder();
-		this.currentOrder.getStorageShelfUIDs().forEach(uid -> this.requestItem(uid, warehouse));
-		this.tickCountWhenOrderAssigned = 0; // TODO get this value?
+		this.tickCountWhenOrderAssigned = warehouse.getTotalTickCount();
 		this.remainingPackingTicks = this.currentOrder.getNumberOfTicksToPack();
 		this.storageShelvesVisited = new ArrayList<StorageShelf>();
+		this.unrequestedStorageShelves = this.currentOrder.getStorageShelfUIDs();
+		
+		this.requestItems(warehouse);
+	}
+	
+	/**
+	 * TODO JavaDoc description.
+	 * @param The storage shelf UID.
+	 * @param Thw warehouse reference.
+	 */
+	private void requestItems(Warehouse warehouse) {
+		for (String storageShelfUID : this.unrequestedStorageShelves) {
+			StorageShelf storageShelf = (StorageShelf) warehouse.getEntityByUID(storageShelfUID);
+			
+			if (warehouse.assignJobToRobot(storageShelf, this))
+				this.unrequestedStorageShelves.remove(storageShelfUID);
+		}
+		
+		// TODO What if there are no robots available? 
 	}
 
 	/**
@@ -66,21 +88,10 @@ public class PackingStation extends Entity implements Actor {
 	 * @throws Exception 
 	 */
 	private void dispatchOrder(Warehouse warehouse) throws Exception {
-		int totalNumberOfTicksToPack = 0 /* TODO get this value? */ - this.tickCountWhenOrderAssigned; 
+		int totalNumberOfTicksToPack = warehouse.getTotalTickCount() - this.tickCountWhenOrderAssigned; 
 		this.currentOrder.setTotalNumberOfTicksToPack(totalNumberOfTicksToPack);
 		warehouse.dispatchOrder(this.currentOrder);
 		this.currentOrder = null;
-	}
-
-	/**
-	 * Requests an item from a robot
-	 * @param The storage shelf UID.
-	 * @param Thw warehouse reference.
-	 */
-	private void requestItem(String storageShelfUID, Warehouse warehouse) {
-		StorageShelf storageShelf = (StorageShelf) warehouse.getEntityByUID(uid);
-		warehouse.assignJobToRobot(storageShelf, this);
-		// TODO What if there are no robots available? 
 	}
 
 	/**

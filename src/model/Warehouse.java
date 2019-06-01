@@ -2,6 +2,8 @@ package model;
 import java.text.MessageFormat;
 import java.util.*;
 
+import simulation.Simulator;
+
 /**
  *	TODO JavaDoc description.
  */
@@ -11,6 +13,7 @@ public class Warehouse {
 	private Deque<Order> unassignedOrders;
 	private Set<Order> assignedOrders;
 	private Deque<Order> dispatchedOrders;
+	private Simulator simulator;
 
 	/**
 	 * A representation of a warehouse
@@ -18,12 +21,13 @@ public class Warehouse {
 	 * @param entities
 	 * @param orders
 	 */
-	public Warehouse(Floor floor, Map<String, Entity> entities, Deque<Order> orders) {
+	public Warehouse(Floor floor, Map<String, Entity> entities, Deque<Order> orders, Simulator simulator) {
 		this.floor = floor;
 		this.entities = entities;
 		this.unassignedOrders = orders;
 		this.assignedOrders = new HashSet<Order>();
 		this.dispatchedOrders = new LinkedList<Order>();
+		this.simulator = simulator;
 	}
 	
 	/**
@@ -62,9 +66,15 @@ public class Warehouse {
 	 * @param storageShelf
 	 * @param packingStation
 	 */
-	public void assignJobToRobot(StorageShelf storageShelf, PackingStation packingStation) {
-		// TODO filter entities for robots then ask each one if they can accept the job. 
-		// Maybe throw exception if it couldn't be assigned.
+	public boolean assignJobToRobot(StorageShelf storageShelf, PackingStation packingStation) {
+		for (Entity entity : this.entities.values()) {
+			// If entity is a robot and the robot accepts the job, return true, otherwise keep going.
+			if (entity instanceof Robot && ((Robot) entity).acceptJob(storageShelf, packingStation))
+				return true;
+		}
+		
+		// No robot accepted the job. 
+		return false;
 	}
 	
 	/**
@@ -72,6 +82,34 @@ public class Warehouse {
 	 */
 	public Floor getFloor() {
 		return this.floor;
+	}
+
+	/**
+	 * @return true if all orders have been dispatched.
+	 */
+	public boolean areAllOrdersDispatched() {
+		return this.assignedOrders.size() == 0 && this.unassignedOrders.isEmpty();
+	}
+	
+	/**
+	 * @return the totalTickCounts
+	 */
+	public int getTotalTickCount() {
+		return this.simulator.getTotalTickCount();
+	}
+
+	/**
+	 * @return the chargeSpeed
+	 */
+	public int getChargeSpeed() {
+		return this.simulator.getChargeSpeed();
+	}
+
+	/**
+	 * @return the maxChargeCapacity
+	 */
+	public int getMaxChargeCapacity() {
+		return this.simulator.getMaxChargeCapacity();
 	}
 	
 	/**
@@ -86,12 +124,4 @@ public class Warehouse {
 				
 		return defaultOutput;
 	}
-
-	/**
-	 * @return true if all orders have been dispatched.
-	 */
-	public boolean areAllOrdersDispatched() {
-		return this.assignedOrders.size() == 0 && this.unassignedOrders.isEmpty();
-	}
-
 }
