@@ -6,7 +6,7 @@ package model;
 public interface Actor {
 	
 	/**
-	 * This is execute on every tick/step of the simulation allowing each Actor to make their "turn".
+	 * This is to execute on every tick/step of the simulation allowing each Actor to make their "turn".
 	 * @param warehouse
 	 * @throws Exception 
 	 */
