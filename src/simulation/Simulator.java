@@ -59,7 +59,7 @@ public class Simulator {
 			simulatorFileReader = new SimulatorFileReader_V1();
 			break;
 		default:
-			throw new SimFileFormatException("", "File is empty or of wrong format.");
+			throw new SimFileFormatException(lines.get(0), "File is empty or of wrong format.");
 		}
 
 		Simulator simulator = simulatorFileReader.read(fileLocation);
@@ -75,8 +75,12 @@ public class Simulator {
 			throws LocationNotValidException {
 		this.totalTickCount = 0;
 		this.warehouse = new Warehouse(floor, entities, orders, this);
-		this.actors = entities.values().stream().sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
-				.filter(entity -> entity instanceof Actor).map(entity -> (Actor) entity).collect(Collectors.toList());
+		this.actors = entities.values()
+				.stream()
+				.sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
+				.filter(entity -> entity instanceof Actor)
+				.map(entity -> (Actor) entity)
+				.collect(Collectors.toList());
 		this.chargeSpeed = chargeSpeed;
 		this.maxChargeCapacity = capacity;
 

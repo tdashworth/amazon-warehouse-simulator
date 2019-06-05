@@ -71,8 +71,6 @@ public class PackingStation extends Entity implements Actor {
 			if (warehouse.assignJobToRobot(storageShelf, this))
 				this.unrequestedStorageShelves.remove(storageShelfUID);
 		}
-		
-		// TODO What if there are no robots available? 
 	}
 
 	/**

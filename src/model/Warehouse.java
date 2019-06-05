@@ -4,9 +4,6 @@ import java.util.*;
 
 import simulation.Simulator;
 
-/**
- *	TODO JavaDoc description.
- */
 public class Warehouse {
 	private Floor floor;
 	private Map<String, Entity> entities;
@@ -88,7 +85,7 @@ public class Warehouse {
 	 * @return true if all orders have been dispatched.
 	 */
 	public boolean areAllOrdersDispatched() {
-		return this.assignedOrders.size() == 0 && this.unassignedOrders.isEmpty();
+		return this.assignedOrders.isEmpty() && this.unassignedOrders.isEmpty();
 	}
 	
 	/**
@@ -116,12 +113,9 @@ public class Warehouse {
 	 * @return A string representation of the warehouse.
 	 */
 	public String toString() {
-		// TODO Warehouse toString. 
-		String defaultOutput = "Warehouse:"
+		return"Warehouse:"
 				+ "unassignedOrders: " + unassignedOrders.size()
 				+ "assignedOrders: " + assignedOrders.size()
 				+ "dispatchedOrders: " + dispatchedOrders.size();
-				
-		return defaultOutput;
 	}
 }
