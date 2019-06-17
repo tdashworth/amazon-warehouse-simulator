@@ -1,4 +1,5 @@
 package simulation;
+import View.*;
 
 import java.io.IOException;
 import java.nio.file.*;

@@ -7,7 +7,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1800.0" prefWidth="3000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.WarehouseController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.WarehouseController">
    <left>
       <VBox prefHeight="200.0" prefWidth="225.0" BorderPane.alignment="CENTER">
          <children>
@@ -17,18 +17,18 @@
                </font>
             </Label>
             <Slider fx:id="sldSize" majorTickUnit="5.0" max="30.0" min="5.0" minorTickCount="1" showTickLabels="true" />
-            <Label fx:id="lblSize" text="Size: 5">
+            <Label fx:id="lblSize" text="Size: 5 x 5">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label text="Robots:">
+            <Label text="Robots">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Slider fx:id="sldRobot" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" snapToTicks="true" />
-            <Label fx:id="lblRobot" text="1 robot">
+            <Slider fx:id="sldCapacity" blockIncrement="1.0" majorTickUnit="1.0" max="50.0" min="10.0" minorTickCount="1" showTickLabels="true" snapToTicks="true" />
+            <Label fx:id="lblCapacity" text="Battery Capacity: 10">
                <font>
                   <Font size="14.0" />
                </font>
@@ -108,11 +108,29 @@
    <bottom>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Team 3 Simulation">
+            <Label contentDisplay="CENTER" text="Team 3 Simulation">
                <font>
                   <Font size="16.0" />
                </font>
             </Label>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="400.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="400.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label text="Total tick count: 0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+               </children>
+            </GridPane>
          </children></HBox>
    </bottom>
    <center>
