@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1800.0" prefWidth="3000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.WarehouseController">
+   <left>
+      <VBox prefHeight="200.0" prefWidth="225.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Warehouse" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Slider fx:id="sldSize" majorTickUnit="5.0" max="30.0" min="5.0" minorTickCount="1" showTickLabels="true" />
+            <Label fx:id="lblSize" text="Size: 5">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label text="Robots:">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Slider fx:id="sldRobot" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" snapToTicks="true" />
+            <Label fx:id="lblRobot" text="1 robot">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Slider fx:id="sldCharge" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="1" showTickLabels="true" />
+            <Label fx:id="lblCharge" text="Charge speed: 1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Button fx:id="btnReset" mnemonicParsing="false" onAction="#reset" prefWidth="50.0" text="Reset" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                     <GridPane.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </GridPane.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Button>
+                  <Button fx:id="btnRun" alignment="CENTER" mnemonicParsing="false" onAction="#runSimulation" prefWidth="50.0" text="Run" GridPane.rowIndex="2">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Button>
+                  <Label text=" " GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+         </children>
+      </VBox>
+   </left>
+   <top>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <MenuBar prefHeight="57.0" prefWidth="1401.0">
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+         </children>
+      </HBox>
+   </top>
+   <right>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+   </right>
+   <bottom>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Team 3 Simulation">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children></HBox>
+   </bottom>
+   <center>
+      <Pane fx:id="paneWarehouse" prefHeight="518.0" prefWidth="546.0" BorderPane.alignment="CENTER">
+         <children>
+            <GridPane fx:id="grdWarehouse" centerShape="false" gridLinesVisible="true" hgap="1.0" layoutX="10.0" layoutY="10.0" minHeight="50.0" minWidth="50.0">
+              <columnConstraints>
+                <ColumnConstraints minWidth="30.0" />
+                <ColumnConstraints minWidth="30.0" />
+                  <ColumnConstraints minWidth="30.0" />
+                  <ColumnConstraints minWidth="30.0" />
+                  <ColumnConstraints minWidth="30.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints minHeight="30.0" />
+                  <RowConstraints minHeight="30.0" />
+                <RowConstraints minHeight="30.0" />
+                <RowConstraints minHeight="30.0" />
+                <RowConstraints minHeight="30.0" />
+              </rowConstraints>
+             </GridPane>
+         </children></Pane>
+   </center>
+</BorderPane>
