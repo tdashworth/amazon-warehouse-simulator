@@ -25,6 +25,7 @@ public class WarehouseController {
 	private int rows;
 	private int capacity;
 	private int chargeSpeed;
+	private Floor floor;
 
 
 	@FXML public void initialize() {
@@ -34,46 +35,53 @@ public class WarehouseController {
 
 			rows = newValue.intValue();	
 			lblSize.setText("Size: " + Integer.toString(newValue.intValue()) + " x " + Integer.toString(newValue.intValue()));
-						
+
 			if(newValue.intValue() > oldValue.intValue()) {
 				ColumnConstraints column = new ColumnConstraints();
-			    column.setMinWidth(30);
+				column.setMinWidth(30);
 				grdWarehouse.getColumnConstraints().add(column);
 				RowConstraints rowConst = new RowConstraints();
 				rowConst.setMinHeight(30);
 				grdWarehouse.getRowConstraints().add(rowConst);    
 			}
-		});
-		
-			
+			else if(newValue.intValue() < oldValue.intValue()) {
+				int endCell = grdWarehouse.getRowConstraints().size() - 1;
+				grdWarehouse.getRowConstraints().remove(endCell);
+				grdWarehouse.getColumnConstraints().remove(endCell);
+			}
+			});
+
 		sldCapacity.valueProperty().addListener((observable, oldValue, newValue) -> {
 			capacity = newValue.intValue();
 			lblCapacity.setText("Battery Capacity: " + Integer.toString(newValue.intValue()));
 		});
-		
+
+
 		sldCharge.valueProperty().addListener((observable, oldValue, newValue) -> {
 			chargeSpeed = newValue.intValue();
 			lblCharge.setText("Charge speed:" + Integer.toString(newValue.intValue()));
 		});
-		}
-			
+	}
+
 	@FXML public void reset() {
 		sldSize.setValue(5.0);
 		sldCapacity.setValue(10.0);
 		sldCharge.setValue(1.0);
 		lblCount.setText("Total tick count: 0");
+		floor.clear();
+
 	}
-	
+
 
 	@FXML public void runSimulation() {
-		
-		Floor f = new Floor(rows, rows);
 
-		Simulator s = new Simulator(f, capacity, chargeSpeed,  );
+		floor = new Floor(rows, rows);
+
+		//Simulator s = new Simulator(f, capacity, chargeSpeed,   );
 		
-		
-		
-		
+
+
+
 	}
 
 

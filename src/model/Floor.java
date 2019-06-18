@@ -58,6 +58,20 @@ public class Floor {
 	}
 	
 	/**
+	 * Empty the floor.
+	 */
+	public void clear()
+	{
+		for(int row = 0; row < numberOfRows; row++) {
+			for(int col = 0; col < numberOfColumns; col++) {
+				grid[row][col] = null;
+			}
+		}
+	}
+	
+	
+	
+	/**
 	 * Move an entity to a new location.
 	 * @param oldLocation
 	 * @param newLocation
