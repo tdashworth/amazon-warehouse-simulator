@@ -78,4 +78,8 @@ public class Node implements Comparable {
 	public Node getParent() {
 		return parent;
 	}
+
+	public void setHeuristic(float heuristic) {
+		this.heuristic = heuristic;
+	}
 }

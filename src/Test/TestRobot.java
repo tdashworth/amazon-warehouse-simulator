@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import model.*;
+import simulation.*;
 
 public class TestRobot {
 	
@@ -48,10 +49,12 @@ public class TestRobot {
 	/**
 	 * Test to see if the robot power goes down when moving and location is changed
 	 
+	 
 	@Test
 	public void testRobotMoveNoItems() {
 		Robot r = new Robot("r1", l2, ch,10);
-		move();
+		Simulator s = new Simulator();
+		//move();
 		assertEquals(false, r.getLocation().equals(ch.getLocation()));
 		assertEquals(true, r.getPowerUnits()<10);
 				

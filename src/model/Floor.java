@@ -55,11 +55,11 @@ public class Floor {
 		
 		// Check location is on the grid.
 		if(!locationIsValid(location))
-			throw new LocationNotValidException(location.getColumn(), location.getRow(), "The location is outside of the floor.");
+			throw new LocationNotValidException(location.getColumn(), location.getRow(), "The location is outside of the floor");
 		
 		// Checks location is empty.
 		if(!locationIsEmpty(location))
-			throw new LocationNotValidException(location.getColumn(), location.getRow(), "That location is not empty.");
+			throw new LocationNotValidException(location.getColumn(), location.getRow(), "That location is not empty");
 		
 		grid[location.getColumn()][location.getRow()] = entity;
 	}
@@ -79,7 +79,7 @@ public class Floor {
 	 * @return
 	 */
 	public boolean locationIsEmpty(Location location) {
-		return (grid[location.getColumn()][location.getRow()] != null);
+		return (grid[location.getColumn()][location.getRow()] == null);
 	}
 	
 	/**
