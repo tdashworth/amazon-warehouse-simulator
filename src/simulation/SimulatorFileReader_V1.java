@@ -102,7 +102,7 @@ public class SimulatorFileReader_V1 implements SimulatorFileReader {
 			break;
 			
 		case "order":
-			Order order = new Order(words.subList(2, words.size()-1), Integer.parseInt(words.get(1)));
+			Order order = new Order(words.subList(2, words.size()), Integer.parseInt(words.get(1)));
 			orders.add(order);
 			break;
 			
