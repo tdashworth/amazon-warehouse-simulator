@@ -5,6 +5,7 @@ package model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,7 +55,7 @@ public class PackingStation extends Entity implements Actor {
 		this.tickCountWhenOrderAssigned = warehouse.getTotalTickCount();
 		this.remainingPackingTicks = this.currentOrder.getNumberOfTicksToPack();
 		this.storageShelvesVisited = new ArrayList<StorageShelf>();
-		this.unrequestedStorageShelves = this.currentOrder.getStorageShelfUIDs();
+		this.unrequestedStorageShelves = new ArrayList<String>(this.currentOrder.getStorageShelfUIDs());
 		
 		this.requestItems(warehouse);
 	}
@@ -65,11 +66,17 @@ public class PackingStation extends Entity implements Actor {
 	 * @param Thw warehouse reference.
 	 */
 	private void requestItems(Warehouse warehouse) {
+		ArrayList<String> uuidsToRemove = new ArrayList<String>();
+		
 		for (String storageShelfUID : this.unrequestedStorageShelves) {
 			StorageShelf storageShelf = (StorageShelf) warehouse.getEntityByUID(storageShelfUID);
 			
 			if (warehouse.assignJobToRobot(storageShelf, this))
-				this.unrequestedStorageShelves.remove(storageShelfUID);
+				uuidsToRemove.add(storageShelfUID);
+		}
+		
+		for(int i = 0; i < uuidsToRemove.size(); i++) {
+			this.unrequestedStorageShelves.remove(uuidsToRemove.get(i));
 		}
 	}
 

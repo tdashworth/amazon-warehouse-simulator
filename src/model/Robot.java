@@ -63,7 +63,7 @@ public class Robot extends Entity implements Actor {
 		else 
 			targetLocation = this.chargingPod.getLocation();
 		
-		Location newLocation = this.pathFinder.getNextMove(this.location, targetLocation);
+		Location newLocation = this.pathFinder.getNextMove(this.location, targetLocation, warehouse).get(0);
 		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
 
 		if (successfulMove) {
