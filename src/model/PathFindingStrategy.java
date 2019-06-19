@@ -19,16 +19,17 @@ public class PathFindingStrategy {
 			System.out.println("The robots current destination is invalid.");
 		if(!grid.locationIsValid(targetPos)) 
 			System.out.println("The robots target destination is invalid.");
-		if(currentPos.equals(targetPos))
+		if(currentPos.equals(targetPos)) {
 			System.out.println("We are already at the target destination.");
-		
+			return new ArrayList<Location>();
+		}
 
 		//nodes, used to store all of the grid tiles from the floor as a node, which allows storage of extra variables for searching
 		Node[][] nodes = new Node[grid.getNumberOfRows()][grid.getNumberOfColumns()];
 		for (int x=0;x<grid.getNumberOfRows();x++) {
 			for (int y=0;y<grid.getNumberOfColumns();y++) {
 				//for each column of each row, add the location into the nodes array. 
-				nodes[x][y] = new Node(grid.getEntities()[x][y].getLocation().getColumn(),grid.getEntities()[x][y].getLocation().getRow());
+				nodes[x][y] = new Node(x,y);
 			}
 		}
 
@@ -46,17 +47,12 @@ public class PathFindingStrategy {
 
 			open.remove(current);
 			explored.add(current);
-			
-			
-			
-			
-			
 
 			// search through all the neighbours of the current node evaluating
 			// them as next steps
 
-			for (int x=-1;x<2;x++) {
-				for (int y=-1;y<2;y++) {
+			for (int x=-1; x<2; x++) {
+				for (int y=-1; y<2; y++) {
 					// not a neighbour, its the current tile
 
 					if ((x == 0) && (y == 0)) {
@@ -72,13 +68,7 @@ public class PathFindingStrategy {
 					int xp = x + current.getX();
 					int yp = y + current.getY();
 					
-					//if (NOT ON THE GRID && NOT AT X OR Y) {
-					//	invalid = IS SOMEONE IN MY SPACE;
-					//}
-					
-					//return !invalid OPPOSITE OF FINAL RESULT;
-					
-					if (!((x < 0) || (y < 0) || (x >= grid.getNumberOfColumns()) || (y >= grid.getNumberOfRows()))) {
+					if (!((xp < 0) || (yp < 0) || (xp >= grid.getNumberOfColumns()) || (yp >= grid.getNumberOfRows()))) {
 						// the cost to get to this node is cost the current plus the movement
 						// cost to reach this node. Note that the heursitic value is only used
 						// in the sorted open list
@@ -106,7 +96,10 @@ public class PathFindingStrategy {
 
 						if (!open.contains(neighbour) && !(explored.contains(neighbour))) {
 							neighbour.setCost(nextStepCost);
-							//neighbour.heuristic = getHeuristicCost(mover, xp, yp, tx, ty);   //#][3#][3#][3#][3#][3#][3#][3#][3#][3#][3#][3#][3#][3#][3#][3
+								int dx = targetPos.getColumn() - xp;
+							    int dy = targetPos.getRow() - yp;
+							    float heuristic = (float) Math.sqrt((dx*dx)+(dy*dy));
+								neighbour.setHeuristic(heuristic);
 							open.add(neighbour);
 						}
 					}
@@ -133,8 +126,9 @@ public class PathFindingStrategy {
 			target = target.getParent();
 		}
 		path.add(0, currentPos);
-
-		// thats it, we have our path 
+		
+		//Return the calculated path
 		return path;
 	}
+	
 }

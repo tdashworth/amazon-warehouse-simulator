@@ -1,0 +1,6 @@
+format 1
+width 2
+height 2
+capacity 200
+chargeSpeed 1
+podRobot c0 r0 0 0
