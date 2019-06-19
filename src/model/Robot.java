@@ -7,6 +7,7 @@ public class Robot extends Entity implements Actor {
 	private StorageShelf storageShelf;
 	private PackingStation packingStation;
 	private ChargingPod chargingPod;
+	private PathFindingStrategy pathFinder;
 
 	private static int POWER_UNITS_EMPTY;
 	private static int POWER_UNITS_CARRYING;
@@ -19,6 +20,7 @@ public class Robot extends Entity implements Actor {
 		super(uid, location);
 		this.chargingPod = chargingPod;
 		this.powerUnits = powerUnits;
+		this.pathFinder = new PathFindingStrategy();
 	}
 
 	@Override
@@ -61,7 +63,7 @@ public class Robot extends Entity implements Actor {
 		else 
 			targetLocation = this.chargingPod.getLocation();
 		
-		Location newLocation = null; // this.pathFinder.getNextMove(targetLocation); Ask path finder for next location
+		Location newLocation = this.pathFinder.getNextMove(this.location, targetLocation);
 		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
 
 		if (successfulMove) {
