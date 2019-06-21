@@ -3,40 +3,31 @@ package model;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import PathFindingTEMP.Node;
-
 public class PathFindingStrategy {
 
 	
-	//TODO convert node to actually use the existing floor as nodes
+	//TODO Potentially convert node to actually use the existing floor as nodes
 	//TODO Get the code to detect other robots as a collision hazard and go around them
 	public ArrayList<Location> getNextMove(Location currentPos, Location targetPos, Warehouse warehouse) throws LocationNotValidException {
-
-
-		//INITIAL SETUP
-
-
+		
 		//An ArrayList for storing open (unexplored) and closed (already explored) Locations
 		ArrayList<Node> closed = new ArrayList<Node>();
 		ArrayList<Node> open = new ArrayList<Node>();
 
-		//Store the target X and Y values as variables to prevent repeated method calls
-		int tx = targetPos.getColumn();
-		int ty = targetPos.getRow();
+		//Store the Robot's target X and Y values as variables to prevent repeated method calls
+		int targetX = targetPos.getColumn();
+		int targetY = targetPos.getRow();
 
-		//Store the current X and Y values as variables to prevent repeated method calls
-		int cx = currentPos.getColumn();
-		int cy = currentPos.getRow();
+		//Store the Robot's current X and Y values as variables to prevent repeated method calls
+		int currentX = currentPos.getColumn();
+		int currentY = currentPos.getRow();
 		
-		//Store the floor in a variable
+		//Store the grid in a variable
 		Floor grid = warehouse.getFloor();
 		
 		//Store the warehouse's X and Y values as variables as these are used multiple times
 		int maxX = grid.getNumberOfColumns();
 		int maxY = grid.getNumberOfRows();
-
-		
-		//INITIAL TESTING
 
 
 		//TODO Some of the below checking may not be needed as it may be covered within an earlier class
@@ -55,27 +46,18 @@ public class PathFindingStrategy {
 		}
 
 
-		//PATH FINDING SETUP
-
-
 		//The 'nodes' variable is used to store the floors tiles as nodes, which has added variables for searching
 		Node[][] nodes = new Node[maxX][maxY];
 		for (int x=0;x<maxX;x++) {
 			for (int y=0;y<maxY;y++) {
 				Node n = new Node(x,y);
-				if(grid.getEntities()[x][y] != null) {
-					//TODO Set the node to blocked/closed, as it cannot be used
-				}	
 				nodes[x][y] = n;
 			}
 		}
 
 		//Add the node the robot is currently at to the open list
-		open.add(nodes[cx][cy]);
+		open.add(nodes[currentX][currentY]);
 		Collections.sort(open);
-
-
-		//BEGIN THE ACTUAL PATH FINDING
 
 
 		while(open.size() != 0) {
@@ -84,7 +66,7 @@ public class PathFindingStrategy {
 			// be the most likely to be the next step based on our heuristic
 			Node current = open.get(0);
 
-			if (current == nodes[tx][ty]) {
+			if (current == nodes[targetX][targetY]) {
 				break;
 			}
 
@@ -111,7 +93,7 @@ public class PathFindingStrategy {
 					int xp = x + current.getX();
 					int yp = y + current.getY();
 
-					if (!((xp < 0) || (yp < 0) || (xp >= maxX) || (yp >= maxY))) {
+					if (!((xp < 0) || (yp < 0) || (xp >= maxX) || (yp >= maxY ) || (grid.getEntities()[xp][yp] != null))) {
 						// the cost to get to this node is cost the current plus the movement
 						// cost to reach this node. Note that the heursitic value is only used
 						// in the sorted open list
@@ -139,8 +121,8 @@ public class PathFindingStrategy {
 
 						if (!open.contains(neighbour) && !closed.contains(neighbour)) {
 							neighbour.setCost(nextStepCost);
-							int dx = tx - xp;
-							int dy = ty - yp;
+							int dx = targetX - xp;
+							int dy = targetY - yp;
 							float heuristic = (float) Math.sqrt((dx*dx)+(dy*dy));
 							neighbour.setHeuristic(heuristic);
 							neighbour.setParent(current);
@@ -153,20 +135,17 @@ public class PathFindingStrategy {
 		}
 
 		
-		//ASSESS THE RESULT AND RETURN THE APPROPRIATE RESPONSE
-
-		
 		//No path was found
 		//TODO return some sort of exception to deal with this
-		if (nodes[tx][ty].getParent() == null) {
+		if (nodes[targetX][targetY].getParent() == null) {
 			return null;
 		}
 
 		//A path was found - iterate these into a 'path' variable to return them in the correct order
 		ArrayList<Location> path = new ArrayList<Location>();
-		Node target = nodes[tx][ty];
+		Node target = nodes[targetX][targetY];
 		
-		while (target != nodes[cx][cy]) {
+		while (target != nodes[currentX][currentY]) {
 			path.add(0, new Location(target.getX(),target.getY()));
 			target = target.getParent();
 		}

@@ -1,4 +1,4 @@
-package PathFindingTEMP;
+package model;
 
 /**
  * A single node in the search graph
