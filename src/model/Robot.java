@@ -72,7 +72,7 @@ public class Robot extends Entity implements Actor {
 		System.out.println("Target " + targetLocation);
 		System.out.println("Path: " + this.pathFinder.getNextMove(this.location, targetLocation, warehouse));
 		
-		Location newLocation = this.pathFinder.getNextMove(this.location, targetLocation, warehouse).get(1);
+		Location newLocation = this.pathFinder.getNextMove(this.location, targetLocation, warehouse).get(0);
 		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
 
 		if (successfulMove) {
@@ -97,10 +97,16 @@ public class Robot extends Entity implements Actor {
 	 * @param storageShelf
 	 * @param packingStation
 	 * @return
+	 * @throws LocationNotValidException 
 	 */
 	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation) {
-		// TODO check various condition whether the robot can accept a job.
-		boolean acceptJob = !this.hasItem() ;//TODO && the robots max charge level is enough for this to be possible
+		//TODO check various condition whether the robot can accept a job.
+		//TODO Check that the robots current charge is enough to get it from...
+		//    - its current location to the requested shelf (costs 1 per move)
+		//    - from that shelf to the packing station (costs 2 per move)
+		//    - from that packing station to the charging pod (costs 1 per move)
+		
+		boolean acceptJob = !this.hasItem() ;
 		if (acceptJob) {
 			this.storageShelf = storageShelf;
 			this.packingStation = packingStation;
