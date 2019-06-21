@@ -5,6 +5,8 @@ import java.text.MessageFormat;
 public class Robot extends Entity implements Actor {
 	private int powerUnits;
 	private StorageShelf storageShelf;
+	private boolean storageShelfVisited;
+	private boolean packingStationVisited;
 	private PackingStation packingStation;
 	private ChargingPod chargingPod;
 	private PathFindingStrategy pathFinder;
@@ -25,13 +27,19 @@ public class Robot extends Entity implements Actor {
 
 	@Override
 	public void tick(Warehouse warehouse) {
-		// TODO determine "state" of robot and call the next action to perform.
-
 		try {
 			if (this.location.equals(chargingPod.getLocation()) && powerUnits < (warehouse.getMaxChargeCapacity()/2) )
 				charge(warehouse.getChargeSpeed());
+			else if (this.storageShelfVisited == false)
+				move(warehouse, this.storageShelf.getLocation());
+			else if (this.packingStationVisited == false)
+				move(warehouse, this.packingStation.getLocation());
+			else if (!this.location.equals(chargingPod.getLocation()))
+				move(warehouse, this.chargingPod.getLocation());
+			else if (this.powerUnits < warehouse.getMaxChargeCapacity())
+				charge(warehouse.getChargeSpeed());
 			else
-				move(warehouse);
+				; //Wait...
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -53,21 +61,25 @@ public class Robot extends Entity implements Actor {
 	 * @throws Exception
 	 * 
 	 */
-	private void move(Warehouse warehouse) throws Exception {
-		// TODO ask path finding module for next move and update its location.
-		Location targetLocation;
-		if (this.storageShelf != null)
-			targetLocation = this.storageShelf.getLocation();
-		else if (this.packingStation != null)
-			targetLocation = this.packingStation.getLocation();
-		else 
-			targetLocation = this.chargingPod.getLocation();
+	private void move(Warehouse warehouse, Location targetLocation) throws Exception {
+		//TESTING PATH FINDING
+		System.out.println("\n\n-----<Call to getNextMove>-----");
+		System.out.println("Current " + this.location);
+		System.out.println("Target " + targetLocation);
+		System.out.println("Path: " + this.pathFinder.getNextMove(this.location, targetLocation, warehouse));
 		
-		Location newLocation = this.pathFinder.getNextMove(this.location, targetLocation, warehouse).get(0);
+		Location newLocation = this.pathFinder.getNextMove(this.location, targetLocation, warehouse).get(1);
 		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
 
 		if (successfulMove) {
 			this.location = newLocation;
+			
+			if(this.location.equals(this.storageShelf.getLocation()))
+				this.storageShelfVisited = true;
+			if(this.location.equals(this.packingStation.getLocation())) {
+				this.packingStationVisited = true;
+				packingStation.recieveItem(storageShelf);
+			}
 
 			int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;
 			this.powerUnits = this.powerUnits - powerUnitsToDeduct;
@@ -85,6 +97,8 @@ public class Robot extends Entity implements Actor {
 		if (acceptJob) {
 			this.storageShelf = storageShelf;
 			this.packingStation = packingStation;
+			this.storageShelfVisited = false;
+			this.packingStationVisited = false;
 		}
 		return acceptJob;
 	}
