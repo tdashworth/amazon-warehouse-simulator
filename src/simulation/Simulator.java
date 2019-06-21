@@ -98,6 +98,7 @@ public class Simulator {
 	private void run() throws Exception {
 		while (!this.warehouse.areAllOrdersDispatched())
 			tick();
+		System.out.println("All orders have been dispatched.");
 	}
 
 	/**
