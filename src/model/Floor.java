@@ -15,10 +15,10 @@ public class Floor {
 	
 	/**
 	 * A representation of a grid floor.
-	 * @param numberofRows
-	 * @param numberOfColumns
+	 * @param numberofRows width
+	 * @param numberOfColumns height
 	 */
-	public Floor(int numberofRows, int numberOfColumns) {
+	public Floor(int numberOfColumns, int numberofRows) {
 		this.numberOfRows = numberofRows;
 		this.numberOfColumns = numberOfColumns;
 		this.grid = new Entity[numberOfColumns][numberofRows];
@@ -70,7 +70,7 @@ public class Floor {
 	 * @return
 	 */
 	public boolean locationIsValid(Location location) {
-		return (location.getColumn() < this.numberOfColumns && location.getRow() < this.numberOfRows);
+		return (location.getColumn() <= this.numberOfColumns && location.getRow() <= this.numberOfRows);
 	}
 	
 	/**
