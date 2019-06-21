@@ -1,52 +1,95 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+
 import PathFindingTEMP.Node;
 
 public class PathFindingStrategy {
 
-	public ArrayList<Location> getNextMove(Location currentPos, Location targetPos, Warehouse warehouse) {
-		
-		//An ArrayList for storing explored Locations
-		ArrayList<Node> explored = new ArrayList<Node>();
-		//An ArrayList for storing unexplored Locations
+	
+	//TODO convert node to actually use the existing floor as nodes
+	//TODO Get the code to detect other robots as a collision hazard and go around them
+	public ArrayList<Location> getNextMove(Location currentPos, Location targetPos, Warehouse warehouse) throws LocationNotValidException {
+
+
+		//INITIAL SETUP
+
+
+		//An ArrayList for storing open (unexplored) and closed (already explored) Locations
+		ArrayList<Node> closed = new ArrayList<Node>();
 		ArrayList<Node> open = new ArrayList<Node>();
 
+		//Store the target X and Y values as variables to prevent repeated method calls
+		int tx = targetPos.getColumn();
+		int ty = targetPos.getRow();
+
+		//Store the current X and Y values as variables to prevent repeated method calls
+		int cx = currentPos.getColumn();
+		int cy = currentPos.getRow();
+		
+		//Store the floor in a variable
 		Floor grid = warehouse.getFloor();
 		
-		//Some of the below checking may not be needed as it may be covered within an earlier class
-		if(!grid.locationIsValid(currentPos))
+		//Store the warehouse's X and Y values as variables as these are used multiple times
+		int maxX = grid.getNumberOfColumns();
+		int maxY = grid.getNumberOfRows();
+
+		
+		//INITIAL TESTING
+
+
+		//TODO Some of the below checking may not be needed as it may be covered within an earlier class
+		//TODO These will also need to be handled if kept, rather than just printing to console
+		if(!grid.locationIsValid(currentPos)) {
 			System.out.println("The robots current destination is invalid.");
-		if(!grid.locationIsValid(targetPos)) 
+			System.exit(1);
+		}
+		if(!grid.locationIsValid(targetPos)) {
 			System.out.println("The robots target destination is invalid.");
+			System.exit(2);
+		}
 		if(currentPos.equals(targetPos)) {
 			System.out.println("We are already at the target destination.");
-			return new ArrayList<Location>();
+			System.exit(3);
 		}
 
-		//nodes, used to store all of the grid tiles from the floor as a node, which allows storage of extra variables for searching
-		Node[][] nodes = new Node[grid.getNumberOfRows()][grid.getNumberOfColumns()];
-		for (int x=0;x<grid.getNumberOfRows();x++) {
-			for (int y=0;y<grid.getNumberOfColumns();y++) {
-				//for each column of each row, add the location into the nodes array. 
-				nodes[x][y] = new Node(x,y);
+
+		//PATH FINDING SETUP
+
+
+		//The 'nodes' variable is used to store the floors tiles as nodes, which has added variables for searching
+		Node[][] nodes = new Node[maxX][maxY];
+		for (int x=0;x<maxX;x++) {
+			for (int y=0;y<maxY;y++) {
+				Node n = new Node(x,y);
+				if(grid.getEntities()[x][y] != null) {
+					//TODO Set the node to blocked/closed, as it cannot be used
+				}	
+				nodes[x][y] = n;
 			}
 		}
 
-		open.add(nodes[currentPos.getColumn()][currentPos.getRow()]);
-		//Should already be null      nodes[currentPos.getColumn()][currentPos.getRow()].setParent(null);
+		//Add the node the robot is currently at to the open list
+		open.add(nodes[cx][cy]);
+		Collections.sort(open);
+
+
+		//BEGIN THE ACTUAL PATH FINDING
+
 
 		while(open.size() != 0) {
 
 			// pull out the first node in our open list, this is determined to 
 			// be the most likely to be the next step based on our heuristic
 			Node current = open.get(0);
-			if (current == nodes[targetPos.getColumn()][targetPos.getRow()]) {
+
+			if (current == nodes[tx][ty]) {
 				break;
 			}
 
 			open.remove(current);
-			explored.add(current);
+			closed.add(current);
 
 			// search through all the neighbours of the current node evaluating
 			// them as next steps
@@ -67,8 +110,8 @@ public class PathFindingStrategy {
 					// determine the location of the neighbour and evaluate it
 					int xp = x + current.getX();
 					int yp = y + current.getY();
-					
-					if (!((xp < 0) || (yp < 0) || (xp >= grid.getNumberOfColumns()) || (yp >= grid.getNumberOfRows()))) {
+
+					if (!((xp < 0) || (yp < 0) || (xp >= maxX) || (yp >= maxY))) {
 						// the cost to get to this node is cost the current plus the movement
 						// cost to reach this node. Note that the heursitic value is only used
 						// in the sorted open list
@@ -85,8 +128,8 @@ public class PathFindingStrategy {
 							if (open.contains(neighbour)) {
 								open.remove(neighbour);
 							}
-							if (explored.contains(neighbour)) {
-								explored.remove(neighbour);
+							if (closed.contains(neighbour)) {
+								closed.remove(neighbour);
 							}
 						}
 
@@ -94,41 +137,43 @@ public class PathFindingStrategy {
 						// reset it's cost to our current cost and add it as a next possible
 						// step (i.e. to the open list)
 
-						if (!open.contains(neighbour) && !(explored.contains(neighbour))) {
+						if (!open.contains(neighbour) && !closed.contains(neighbour)) {
 							neighbour.setCost(nextStepCost);
-								int dx = targetPos.getColumn() - xp;
-							    int dy = targetPos.getRow() - yp;
-							    float heuristic = (float) Math.sqrt((dx*dx)+(dy*dy));
-								neighbour.setHeuristic(heuristic);
+							int dx = tx - xp;
+							int dy = ty - yp;
+							float heuristic = (float) Math.sqrt((dx*dx)+(dy*dy));
+							neighbour.setHeuristic(heuristic);
+							neighbour.setParent(current);
 							open.add(neighbour);
+							Collections.sort(open);
 						}
 					}
 				}
 			}
 		}
 
-		// since we'e've run out of search 
-		// there was no path. Just return null
+		
+		//ASSESS THE RESULT AND RETURN THE APPROPRIATE RESPONSE
 
-		if (nodes[targetPos.getColumn()][targetPos.getRow()].getParent() == null) {
+		
+		//No path was found
+		//TODO return some sort of exception to deal with this
+		if (nodes[tx][ty].getParent() == null) {
 			return null;
 		}
 
-		// At this point we've definitely found a path so we can uses the parent
-		// references of the nodes to find out way from the target location back
-		// to the start recording the nodes on the way.
-
+		//A path was found - iterate these into a 'path' variable to return them in the correct order
 		ArrayList<Location> path = new ArrayList<Location>();
-		Node target = nodes[targetPos.getColumn()][targetPos.getRow()];
-		while (target != nodes[currentPos.getColumn()][currentPos.getRow()]) {
-			
-			path.add(0, grid.getEntities()[targetPos.getColumn()][targetPos.getRow()].location);
+		Node target = nodes[tx][ty];
+		
+		while (target != nodes[cx][cy]) {
+			path.add(0, new Location(target.getX(),target.getY()));
 			target = target.getParent();
 		}
 		path.add(0, currentPos);
-		
+
 		//Return the calculated path
 		return path;
 	}
-	
+
 }
