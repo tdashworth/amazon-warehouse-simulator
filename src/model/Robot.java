@@ -38,7 +38,7 @@ public class Robot extends Entity implements Actor {
 				move(warehouse, this.packingStation.getLocation());
 			else if (!this.location.equals(chargingPod.getLocation()))
 				move(warehouse, this.chargingPod.getLocation());
-			else if (this.powerUnits < warehouse.getMaxChargeCapacity())
+			else if (this.location.equals(chargingPod.getLocation()) && this.powerUnits < warehouse.getMaxChargeCapacity())
 				charge(warehouse.getChargeSpeed());
 			else
 				; //Wait...
@@ -67,7 +67,7 @@ public class Robot extends Entity implements Actor {
 	private void move(Warehouse warehouse, Location targetLocation) throws Exception {
 		//TESTING PATH FINDING
 		System.out.println("\n\n-----<Call to getNextMove>-----");
-		System.out.println("Robot " + this.uid + ". Power level " + this.powerUnits);
+		System.out.println("Robot " + this.uid + ". Power level " + this.powerUnits + " before move.");
 		System.out.println("Current " + this.location);
 		System.out.println("Target " + targetLocation);
 		System.out.println("Path: " + this.pathFinder.getNextMove(this.location, targetLocation, warehouse));
@@ -85,11 +85,11 @@ public class Robot extends Entity implements Actor {
 				packingStation.recieveItem(storageShelf);
 			}
 
-			int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;
-			System.out.println("Power units deducted: " + powerUnitsToDeduct);
-			System.out.println("Power units remaining: " + this.powerUnits);
-			
+			int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;			
 			this.powerUnits = this.powerUnits - powerUnitsToDeduct;
+			
+			System.out.println("Power level " + this.powerUnits + " after move.");
+
 		}
 	}
 
