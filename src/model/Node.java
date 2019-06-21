@@ -4,24 +4,18 @@ package model;
  * A single node in the search graph
  */
 public class Node implements Comparable {
-	/** The x coordinate of the node */
+	
 	private int x;
-	/** The y coordinate of the node */
 	private int y;
-	/** The path cost for this node */
 	private float cost;
-	/** The parent of this node, how we reached it in the search */
 	private Node parent;
-	/** The heuristic cost of this node */
 	private float heuristic;
-	/** The search depth of this node */
-	private int depth;
 
 	/**
 	 * Create a new node
 	 * 
-	 * @param x The x coordinate of the node
-	 * @param y The y coordinate of the node
+	 * @param x
+	 * @param y
 	 */
 	public Node(int x, int y) {
 		this.x = x;
@@ -31,18 +25,14 @@ public class Node implements Comparable {
 	/**
 	 * Set the parent of this node
 	 * 
-	 * @param parent The parent node which lead us to this node
-	 * @return The depth we have no reached in searching
+	 * @param parent
 	 */
-	public int setParent(Node parent) {
-		depth = parent.depth + 1;
+	public void setParent(Node parent) {
 		this.parent = parent;
-
-		return depth;
 	}
 
 	/**
-	 * @see Comparable#compareTo(Object)
+	 * compare the nodes by their heuristic value
 	 */
 	public int compareTo(Object other) {
 		Node o = (Node) other;
@@ -59,26 +49,56 @@ public class Node implements Comparable {
 		}
 	}
 	
+	/**
+	 * return the nodes x value
+	 * 
+	 * @return
+	 */
 	public int getX() {
 		return x;
 	}
 	
+	/**
+	 * return the nodes y value
+	 * 
+	 * @return
+	 */
 	public int getY() {
 		return y;
 	}
 	
+	/**
+	 * return the nodes cost
+	 * 
+	 * @return
+	 */
 	public float getCost() {
 		return cost;
 	}
 	
+	/**
+	 * set the nodes cost
+	 * 
+	 * @return
+	 */
 	public void setCost(float cost) {
 		this.cost = cost;
 	}
 	
+	/**
+	 * return the nodes parent
+	 * 
+	 * @return
+	 */
 	public Node getParent() {
 		return parent;
 	}
 
+	/**
+	 * set the nodes heuristic value
+	 * 
+	 * @return
+	 */
 	public void setHeuristic(float heuristic) {
 		this.heuristic = heuristic;
 	}
