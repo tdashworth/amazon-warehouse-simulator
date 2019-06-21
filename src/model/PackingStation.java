@@ -85,6 +85,7 @@ public class PackingStation extends Entity implements Actor {
 	 */
 	private void packOrder() {
 		this.remainingPackingTicks--;
+		System.out.println("Packing station " + uid + " packing... " + this.remainingPackingTicks + " ticks remaining.");
 	}
 
 	/**
@@ -97,6 +98,7 @@ public class PackingStation extends Entity implements Actor {
 		this.currentOrder.setTotalNumberOfTicksToPack(totalNumberOfTicksToPack);
 		warehouse.dispatchOrder(this.currentOrder);
 		this.currentOrder = null;
+		System.out.println("Packing station " + uid + " dispatching...");
 	}
 
 	/**
