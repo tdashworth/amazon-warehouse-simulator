@@ -149,7 +149,6 @@ public class PathFindingStrategy {
 			path.add(0, new Location(target.getX(),target.getY()));
 			target = target.getParent();
 		}
-		path.add(0, currentPos);
 
 		//Return the calculated path
 		return path;
