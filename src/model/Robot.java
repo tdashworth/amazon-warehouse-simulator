@@ -23,6 +23,8 @@ public class Robot extends Entity implements Actor {
 		this.chargingPod = chargingPod;
 		this.powerUnits = powerUnits;
 		this.pathFinder = new PathFindingStrategy();
+		POWER_UNITS_EMPTY = 1;
+		POWER_UNITS_CARRYING = 2;
 	}
 
 	@Override
@@ -30,9 +32,9 @@ public class Robot extends Entity implements Actor {
 		try {
 			if (this.location.equals(chargingPod.getLocation()) && powerUnits < (warehouse.getMaxChargeCapacity()/2) )
 				charge(warehouse.getChargeSpeed());
-			else if (this.storageShelfVisited == false)
+			else if (this.storageShelfVisited == false && this.storageShelf != null)
 				move(warehouse, this.storageShelf.getLocation());
-			else if (this.packingStationVisited == false)
+			else if (this.packingStationVisited == false && this.packingStation != null)
 				move(warehouse, this.packingStation.getLocation());
 			else if (!this.location.equals(chargingPod.getLocation()))
 				move(warehouse, this.chargingPod.getLocation());
@@ -52,6 +54,7 @@ public class Robot extends Entity implements Actor {
 	public void charge(int chargeSpeed) {
 		// need to get charge speed from simulator
 		powerUnits += chargeSpeed;
+		System.out.println("Robot " + uid + " charging...");
 	}
 
 	/**
@@ -64,6 +67,7 @@ public class Robot extends Entity implements Actor {
 	private void move(Warehouse warehouse, Location targetLocation) throws Exception {
 		//TESTING PATH FINDING
 		System.out.println("\n\n-----<Call to getNextMove>-----");
+		System.out.println("Robot " + this.uid + ". Power level " + this.powerUnits);
 		System.out.println("Current " + this.location);
 		System.out.println("Target " + targetLocation);
 		System.out.println("Path: " + this.pathFinder.getNextMove(this.location, targetLocation, warehouse));
@@ -82,6 +86,9 @@ public class Robot extends Entity implements Actor {
 			}
 
 			int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;
+			System.out.println("Power units deducted: " + powerUnitsToDeduct);
+			System.out.println("Power units remaining: " + this.powerUnits);
+			
 			this.powerUnits = this.powerUnits - powerUnitsToDeduct;
 		}
 	}
@@ -93,7 +100,7 @@ public class Robot extends Entity implements Actor {
 	 */
 	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation) {
 		// TODO check various condition whether the robot can accept a job.
-		boolean acceptJob = !this.hasItem() || this.storageShelf == null;
+		boolean acceptJob = !this.hasItem() ;//TODO && the robots max charge level is enough for this to be possible
 		if (acceptJob) {
 			this.storageShelf = storageShelf;
 			this.packingStation = packingStation;
@@ -109,7 +116,7 @@ public class Robot extends Entity implements Actor {
 	 * @return boolean
 	 */
 	public boolean hasItem() {
-		return this.storageShelf == null && this.packingStation != null;
+		return this.storageShelfVisited == true && this.packingStationVisited == false;
 	}
 	
 	/**
