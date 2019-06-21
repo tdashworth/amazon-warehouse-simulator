@@ -70,9 +70,9 @@ public class Robot extends Entity implements Actor {
 		System.out.println("Robot " + this.uid + ". Power level " + this.powerUnits + " before move.");
 		System.out.println("Current " + this.location);
 		System.out.println("Target " + targetLocation);
-		System.out.println("Path: " + this.pathFinder.getNextMove(this.location, targetLocation, warehouse));
+		System.out.println("Path: " + this.pathFinder.getPath(this.location, targetLocation, warehouse));
 		
-		Location newLocation = this.pathFinder.getNextMove(this.location, targetLocation, warehouse).get(0);
+		Location newLocation = this.pathFinder.getPath(this.location, targetLocation, warehouse).get(0);
 		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
 
 		if (successfulMove) {
