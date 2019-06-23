@@ -60,10 +60,6 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Slider fx:id="sldCapacity" blockIncrement="1.0" majorTickUnit="1.0" max="50.0" min="10.0" minorTickCount="1" prefHeight="30.0" prefWidth="100.0" showTickLabels="true" snapToTicks="true">
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding></Slider>
             <Label fx:id="lblCapacity" text="Battery Capacity: 10">
                <font>
                   <Font size="14.0" />
@@ -72,7 +68,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </Label>
-            <Slider fx:id="sldCharge" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="1" prefHeight="25.0" prefWidth="80.0" showTickLabels="true">
+            <Slider fx:id="sldCapacity" blockIncrement="1.0" majorTickUnit="1.0" max="50.0" min="10.0" minorTickCount="1" prefHeight="30.0" prefWidth="100.0" showTickLabels="true" snapToTicks="true">
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding></Slider>
@@ -84,6 +80,10 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </Label>
+            <Slider fx:id="sldCharge" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="1" prefHeight="25.0" prefWidth="80.0" showTickLabels="true">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding></Slider>
             <GridPane alignment="CENTER" VBox.vgrow="NEVER">
               <columnConstraints>
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -196,7 +196,7 @@
    <center>
       <Pane fx:id="paneWarehouse" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
          <children>
-            <GridPane fx:id="grdWarehouse" alignment="CENTER" centerShape="false" gridLinesVisible="true" hgap="1.0" layoutX="10.0" layoutY="10.0" style="-fx-background-color: darkRed;">
+            <GridPane fx:id="grdWarehouse" alignment="CENTER" centerShape="false" gridLinesVisible="true" hgap="1.0" layoutX="10.0" layoutY="10.0" style="-fx-background-color: #3D4849">
               <columnConstraints>
                 <ColumnConstraints minWidth="30.0" />
                 <ColumnConstraints minWidth="30.0" />

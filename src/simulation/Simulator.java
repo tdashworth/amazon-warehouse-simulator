@@ -16,7 +16,7 @@ public class Simulator {
 	private int maxChargeCapacity;
 
 	/**
-	 * TODO JavaDoc description.
+	 * Main method, creates a simulator and starts the simulation run method.
 	 */
 	public static void main(String[] args) {
 		if (args.length == 0) {
@@ -68,8 +68,7 @@ public class Simulator {
 	}
 
 	/**
-	 * TODO JavaDoc description.
-	 * 
+	 * Simuator constructor setting up the warehouse and entities 
 	 * @throws LocationNotValidException
 	 */
 	public Simulator(Floor floor, int capacity, int chargeSpeed, HashMap<String, Entity> entities, Deque<Order> orders)
@@ -92,17 +91,17 @@ public class Simulator {
 	}
 
 	/**
-	 * TODO JavaDoc description.
+	 * Simulator run method, keeps the simulation until all orders have been dispatched.
 	 * @throws Exception 
 	 */
-	private void run() throws Exception {
+	public void run() throws Exception {
 		while (!this.warehouse.areAllOrdersDispatched())
 			tick();
 		System.out.println("All orders have been dispatched.");
 	}
 
 	/**
-	 * TODO JavaDoc description.
+	 * Tick method which gets all of the actors to tick simultaneously.
 	 * @throws Exception 
 	 */
 	private void tick() throws Exception {
