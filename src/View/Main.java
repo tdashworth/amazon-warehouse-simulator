@@ -16,7 +16,7 @@ public class Main extends Application {
 						
 		BorderPane mainContainer = (BorderPane) loader.load();
 		
-		Scene mainScene = new Scene(mainContainer, 500, 500);
+		Scene mainScene = new Scene(mainContainer, 700, 700);
 		primaryStage.setScene(mainScene);
 		primaryStage.setTitle("Amazon Warehouse Simulator");
 		primaryStage.show();

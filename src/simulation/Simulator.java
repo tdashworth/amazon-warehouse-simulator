@@ -72,7 +72,7 @@ public class Simulator {
 	 * 
 	 * @throws LocationNotValidException
 	 */
-	Simulator(Floor floor, int capacity, int chargeSpeed, HashMap<String, Entity> entities, Deque<Order> orders)
+	public Simulator(Floor floor, int capacity, int chargeSpeed, HashMap<String, Entity> entities, Deque<Order> orders)
 			throws LocationNotValidException {
 		this.totalTickCount = 0;
 		this.warehouse = new Warehouse(floor, entities, orders, this);
@@ -98,6 +98,7 @@ public class Simulator {
 	private void run() throws Exception {
 		while (!this.warehouse.areAllOrdersDispatched())
 			tick();
+		System.out.println("All orders have been dispatched.");
 	}
 
 	/**
@@ -118,6 +119,14 @@ public class Simulator {
 		return totalTickCount;
 	}
 
+	/**
+	 * sets the tick count
+	 * @param ticks
+	 */
+	
+	public void setTotalTickCount(int ticks) {
+		totalTickCount = ticks;
+	}
 	/**
 	 * @return the chargeSpeed
 	 */
