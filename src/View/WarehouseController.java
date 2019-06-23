@@ -139,6 +139,7 @@ public class WarehouseController {
 			grdWarehouse.getColumnConstraints().add(column);
 		}
 
+		robot1.
 	
 
 
