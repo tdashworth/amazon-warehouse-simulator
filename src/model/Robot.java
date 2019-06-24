@@ -66,7 +66,7 @@ public class Robot extends Entity implements Actor {
 	 */
 	private void move(Warehouse warehouse, Location targetLocation) throws Exception {
 		//TESTING PATH FINDING
-		System.out.println("\n\n-----<Call to getNextMove>-----");
+		System.out.println("\n\n-----<Call to getPath>-----");
 		System.out.println("Robot " + this.uid + ". Power level " + this.powerUnits + " before move.");
 		System.out.println("Current " + this.location);
 		System.out.println("Target " + targetLocation);
