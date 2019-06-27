@@ -1,5 +1,7 @@
 package simulation;
 import View.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.collections.ObservableList;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -14,7 +16,16 @@ public class Simulator {
 	private Warehouse warehouse;
 	private int chargeSpeed;
 	private int maxChargeCapacity;
-
+	private WarehouseController controller;
+	private ObservableList<ChargingPod> chargePods;
+	private ObservableList<Robot> robots;
+	private ObservableList<PackingStation> packingStations;
+	private ObservableList<StorageShelf> shelves;
+	private ObservableList<Order> assignedOrders;
+	private ObservableList<Order> unassignedOrders;
+	private ObservableList<Order> dispatchedOrders;
+	private WarehouseView view;
+	private Floor floor;
 	/**
 	 * Main method, creates a simulator and starts the simulation run method.
 	 */
@@ -47,7 +58,7 @@ public class Simulator {
 	 * @throws SimFileFormatException
 	 * @throws LocationNotValidException
 	 */
-	private static Simulator createFromFile(Path fileLocation)
+	public static Simulator createFromFile(Path fileLocation)
 			throws IOException, SimFileFormatException, LocationNotValidException {
 		SimulatorFileReader simulatorFileReader;
 		List<String> lines = Files.readAllLines(fileLocation);
@@ -68,11 +79,12 @@ public class Simulator {
 	}
 
 	/**
-	 * Simuator constructor setting up the warehouse and entities 
+	 * Simulator constructor setting up the warehouse and entities 
 	 * @throws LocationNotValidException
 	 */
 	public Simulator(Floor floor, int capacity, int chargeSpeed, HashMap<String, Entity> entities, Deque<Order> orders)
 			throws LocationNotValidException {
+		this.floor = floor;
 		this.totalTickCount = 0;
 		this.warehouse = new Warehouse(floor, entities, orders, this);
 		this.actors = entities.values()
@@ -83,7 +95,6 @@ public class Simulator {
 				.collect(Collectors.toList());
 		this.chargeSpeed = chargeSpeed;
 		this.maxChargeCapacity = capacity;
-
 		for (Entity entity : entities.values()) {
 			if (entity instanceof Robot)
 				floor.loadEntity(entity);
@@ -99,12 +110,22 @@ public class Simulator {
 			tick();
 		System.out.println("All orders have been dispatched.");
 	}
-
+	
+	
+	/**
+	 * Set the view object
+	 * @param WarehouseView
+	 */
+	public void setView(WarehouseView view) {
+		this.view = view;
+	}
+	
+		
 	/**
 	 * Tick method which gets all of the actors to tick simultaneously.
 	 * @throws Exception 
 	 */
-	private void tick() throws Exception {
+	public void tick() throws Exception {
 		this.totalTickCount++;
 		for (Actor actor : actors) {
 			actor.tick(this.warehouse);
@@ -126,18 +147,45 @@ public class Simulator {
 	public void setTotalTickCount(int ticks) {
 		totalTickCount = ticks;
 	}
-	/**
-	 * @return the chargeSpeed
-	 */
+	
 	public int getChargeSpeed() {
 		return chargeSpeed;
 	}
-
+	
 	/**
 	 * @return the maxChargeCapacity
 	 */
+
 	public int getMaxChargeCapacity() {
 		return maxChargeCapacity;
 	}
+	
+	public Floor getFloor() {
+		return floor;
+	}
 
+	public 	ObservableList<ChargingPod> chargePodsProperty(){
+		return chargePods;
+	}
+	public ObservableList<Robot> robotsProperty(){
+		return robots;
+	}
+	public ObservableList<PackingStation> packingStationsProperty(){
+		return packingStations;
+	}
+	public ObservableList<StorageShelf> storageShelfProperty(){
+		return shelves;
+	}	
+	public ObservableList<Order> assignedOrdersProperty(){
+		return assignedOrders;
+	}
+	public ObservableList<Order> unassignedOrdersProperty(){
+		return unassignedOrders;
+	}
+	public ObservableList<Order> dispatchedOrdersProperty(){
+		return dispatchedOrders;
+	}
+	
+	
+	
 }

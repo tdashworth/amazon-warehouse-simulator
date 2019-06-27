@@ -62,8 +62,8 @@ public class Floor {
 	 */
 	public void clear()
 	{
-		for(int row = 0; row < numberOfRows; row++) {
-			for(int col = 0; col < numberOfColumns; col++) {
+		for(int row = 0; row < numberOfRows -1; row++) {
+			for(int col = 0; col < numberOfColumns -1; col++) {
 				grid[row][col] = null;
 			}
 		}
