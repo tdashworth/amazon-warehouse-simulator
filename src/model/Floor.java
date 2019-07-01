@@ -15,10 +15,10 @@ public class Floor {
 	
 	/**
 	 * A representation of a grid floor.
-	 * @param numberofRows
-	 * @param numberOfColumns
+	 * @param numberofRows width
+	 * @param numberOfColumns height
 	 */
-	public Floor(int numberofRows, int numberOfColumns) {
+	public Floor(int numberOfColumns, int numberofRows) {
 		this.numberOfRows = numberofRows;
 		this.numberOfColumns = numberOfColumns;
 		this.grid = new Entity[numberOfColumns][numberofRows];
@@ -39,6 +39,13 @@ public class Floor {
 	}
 	
 	/**
+	 * @return The grid of entities.
+	 */
+	public Entity[][] getEntities() {
+		return grid;
+	}
+	
+	/**
 	 * Place an entity on the floor.
 	 * @param entity
 	 * @throws Exception
@@ -47,14 +54,32 @@ public class Floor {
 		Location location = entity.getLocation();
 		
 		// Check location is on the grid.
-		if (location.getColumn() > this.numberOfColumns || location.getRow() > this.numberOfRows)
-			throw new LocationNotValidException(location.getColumn(), location.getRow(), "The location is outside of the floor.");
+		if(!locationIsValid(location))
+			throw new LocationNotValidException(location.getColumn(), location.getRow(), "The location is outside of the floor");
 		
 		// Checks location is empty.
-		if (grid[location.getColumn()][location.getRow()] != null)
-			throw new LocationNotValidException(location.getColumn(), location.getRow(), "That location is not empty.");
+		if(!locationIsEmpty(location))
+			throw new LocationNotValidException(location.getColumn(), location.getRow(), "That location is not empty");
 		
 		grid[location.getColumn()][location.getRow()] = entity;
+	}
+	
+	/**
+	 * Returns whether a location is on the grid or not
+	 * @param location
+	 * @return
+	 */
+	public boolean locationIsValid(Location location) {
+		return (location.getColumn() <= this.numberOfColumns && location.getRow() <= this.numberOfRows);
+	}
+	
+	/**
+	 * Returns whether a location is empty or not
+	 * @param location
+	 * @return
+	 */
+	public boolean locationIsEmpty(Location location) {
+		return (grid[location.getColumn()][location.getRow()] == null);
 	}
 	
 	/**

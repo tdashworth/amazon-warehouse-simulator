@@ -5,8 +5,11 @@ import java.text.MessageFormat;
 public class Robot extends Entity implements Actor {
 	private int powerUnits;
 	private StorageShelf storageShelf;
+	private boolean storageShelfVisited;
+	private boolean packingStationVisited;
 	private PackingStation packingStation;
 	private ChargingPod chargingPod;
+	private PathFindingStrategy pathFinder;
 
 	private static int POWER_UNITS_EMPTY;
 	private static int POWER_UNITS_CARRYING;
@@ -19,17 +22,26 @@ public class Robot extends Entity implements Actor {
 		super(uid, location);
 		this.chargingPod = chargingPod;
 		this.powerUnits = powerUnits;
+		this.pathFinder = new PathFindingStrategy();
+		POWER_UNITS_EMPTY = 1;
+		POWER_UNITS_CARRYING = 2;
 	}
 
 	@Override
 	public void tick(Warehouse warehouse) {
-		// TODO determine "state" of robot and call the next action to perform.
-
 		try {
 			if (this.location.equals(chargingPod.getLocation()) && powerUnits < (warehouse.getMaxChargeCapacity()/2) )
 				charge(warehouse.getChargeSpeed());
+			else if (this.storageShelfVisited == false && this.storageShelf != null)
+				move(warehouse, this.storageShelf.getLocation());
+			else if (this.packingStationVisited == false && this.packingStation != null)
+				move(warehouse, this.packingStation.getLocation());
+			else if (!this.location.equals(chargingPod.getLocation()))
+				move(warehouse, this.chargingPod.getLocation());
+			else if (this.location.equals(chargingPod.getLocation()) && this.powerUnits < warehouse.getMaxChargeCapacity())
+				charge(warehouse.getChargeSpeed());
 			else
-				move(warehouse);
+				; //Wait...
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -42,6 +54,7 @@ public class Robot extends Entity implements Actor {
 	public void charge(int chargeSpeed) {
 		// need to get charge speed from simulator
 		powerUnits += chargeSpeed;
+		System.out.println("Robot " + uid + " charging...");
 	}
 
 	/**
@@ -51,24 +64,32 @@ public class Robot extends Entity implements Actor {
 	 * @throws Exception
 	 * 
 	 */
-	private void move(Warehouse warehouse) throws Exception {
-		// TODO ask path finding module for next move and update its location.
-		Location targetLocation;
-		if (this.storageShelf != null)
-			targetLocation = this.storageShelf.getLocation();
-		else if (this.packingStation != null)
-			targetLocation = this.packingStation.getLocation();
-		else 
-			targetLocation = this.chargingPod.getLocation();
+	private void move(Warehouse warehouse, Location targetLocation) throws Exception {
+		//TESTING PATH FINDING
+		System.out.println("\n\n-----<Call to getPath>-----");
+		System.out.println("Robot " + this.uid + ". Power level " + this.powerUnits + " before move.");
+		System.out.println("Current " + this.location);
+		System.out.println("Target " + targetLocation);
+		System.out.println("Path: " + this.pathFinder.getPath(this.location, targetLocation, warehouse));
 		
-		Location newLocation = null; // this.pathFinder.getNextMove(targetLocation); Ask path finder for next location
+		Location newLocation = this.pathFinder.getPath(this.location, targetLocation, warehouse).get(0);
 		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
 
 		if (successfulMove) {
 			this.location = newLocation;
+			
+			if(this.location.equals(this.storageShelf.getLocation()))
+				this.storageShelfVisited = true;
+			if(this.location.equals(this.packingStation.getLocation())) {
+				this.packingStationVisited = true;
+				packingStation.recieveItem(storageShelf);
+			}
 
-			int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;
+			int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;			
 			this.powerUnits = this.powerUnits - powerUnitsToDeduct;
+			
+			System.out.println("Power level " + this.powerUnits + " after move.");
+
 		}
 	}
 
@@ -76,13 +97,21 @@ public class Robot extends Entity implements Actor {
 	 * @param storageShelf
 	 * @param packingStation
 	 * @return
+	 * @throws LocationNotValidException 
 	 */
 	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation) {
-		// TODO check various condition whether the robot can accept a job.
-		boolean acceptJob = !this.hasItem() || this.storageShelf == null;
+		//TODO check various condition whether the robot can accept a job.
+		//TODO Check that the robots current charge is enough to get it from...
+		//    - its current location to the requested shelf (costs 1 per move)
+		//    - from that shelf to the packing station (costs 2 per move)
+		//    - from that packing station to the charging pod (costs 1 per move)
+		
+		boolean acceptJob = !this.hasItem() ;
 		if (acceptJob) {
 			this.storageShelf = storageShelf;
 			this.packingStation = packingStation;
+			this.storageShelfVisited = false;
+			this.packingStationVisited = false;
 		}
 		return acceptJob;
 	}
@@ -93,7 +122,7 @@ public class Robot extends Entity implements Actor {
 	 * @return boolean
 	 */
 	public boolean hasItem() {
-		return this.storageShelf == null && this.packingStation != null;
+		return this.storageShelfVisited == true && this.packingStationVisited == false;
 	}
 	
 	/**
