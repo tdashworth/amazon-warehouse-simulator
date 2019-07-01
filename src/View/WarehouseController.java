@@ -20,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
@@ -43,17 +44,13 @@ public class WarehouseController{
 	@FXML private Label lblCharge;
 	@FXML private Slider sldCharge;
 	@FXML private Label lblCount;
-	@FXML private Rectangle squPS1;
-	@FXML private Circle rb1;
-	private int rows;
-	private int columns;
-	private Floor floor;
 	private HashMap<Location, StackPane> gridCells;
 	private Simulator sim;
 	@FXML ListView<Robot> robotsList;
 	@FXML ListView<Order> unassignedOrders;
 	@FXML ListView<Order> assignedOrders;
 	@FXML ListView<Order> dispatchedOrders;
+	private Robot robot; 
 
 	/**
 	 * initialize the simulation, add listeners to the sliders and text areas.
@@ -70,8 +67,8 @@ public class WarehouseController{
 				}
 			}
 		});
-		
-		
+
+
 		txtCol.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, 
@@ -103,22 +100,21 @@ public class WarehouseController{
 	 * Resets the simulation back to it's default settings
 	 */
 	@FXML public void reset() {
+	
 		sldCapacity.setValue(10.0);
-		txtRows.setText("5");
-		txtCol.setText("5");
+		txtRows.setText("0");
+		txtCol.setText("0");
 		sldCharge.setValue(1.0);
 		lblCount.setText("Total tick count: 0");
-		floor.clear();
-		for(int i = rows; i > 5; i--) {
-			grdWarehouse.getRowConstraints().remove(i-1);
+		for(int i = sim.getFloor().getNumberOfRows()-1; i >= 0; i--) {
+			grdWarehouse.getRowConstraints().remove(i);
 		}
-		for(int i = columns; i > 5; i--) {
-			grdWarehouse.getColumnConstraints().remove(i-1);
+		for(int i = sim.getFloor().getNumberOfColumns()-1; i >= 0 ; i--) {
+			grdWarehouse.getColumnConstraints().remove(i);
 		}
-
-		for(Location key: gridCells.keySet()) {
-			gridCells.get(key).getChildren().clear();
-		}
+		
+		sim.resetSimulator();
+		
 	}
 
 	/**
@@ -132,16 +128,27 @@ public class WarehouseController{
 
 	@FXML public void runOneTick() throws Exception {
 		sim.tick();
+		System.out.println(sim.getTotalTickCount());
+		lblCount.textProperty().setValue("Total tick count: " + sim.getTotalTickCount());
+		Location l = robot.getLocation();
+		grdWarehouse.getChildren().remove(0);
+		Rectangle robot = new Rectangle();
+		robot.setHeight(10);
+		robot.setWidth(10);		
+		robot.setFill(Color.RED);
+		GridPane.setConstraints(robot, l.getRow(), l.getColumn());
+		grdWarehouse.getChildren().add(robot);
+		
+		
+		
 	}
-	
+
 	public void loadSimulation() throws IOException, SimFileFormatException, LocationNotValidException {
 		
+		System.out.println("Loading Simulation");
+		
 		sim = Simulator.createFromFile(Paths.get("./sample-configs/oneOfEverything.sim"));
-				
-		lblCount.textProperty().bind(
-				Bindings.concat("Total tick count:" + sim.getTotalTickCount())
-				);
-				
+
 		//sets the grid size to be the same as the floor in the file
 		Floor f = sim.getFloor();
 		for(int i = 0; i < f.getNumberOfRows(); i++) {
@@ -155,26 +162,25 @@ public class WarehouseController{
 			column.setMinWidth(30);
 			grdWarehouse.getColumnConstraints().add(column);
 		}
-	
 		
+
 		for(int j=0; j < f.getNumberOfColumns(); j++) {
 			for (int i=0; i< f.getNumberOfRows(); i++) {
 				StackPane stk = new StackPane();
-				GridPane.setConstraints(stk, j,i);
+				GridPane.setConstraints(stk, i,j);
 				grdWarehouse.getChildren().add(stk);
 			}  
 		}
-		
+
 		sldCapacity.valueProperty().setValue(sim.getMaxChargeCapacity());
 		sldCharge.valueProperty().setValue(sim.getChargeSpeed());
-		
+
 		txtRows.setText(Integer.toString(f.getNumberOfRows()));
 		txtCol.setText(Integer.toString(f.getNumberOfColumns()));
-		
+
 		List<Actor> actors = sim.getActors();
 		
 		for(Actor a : actors) {	
-			
 			if(a instanceof ChargingPod) {
 				System.out.println("Charge");
 				Location l = ((ChargingPod) a).getLocation();
@@ -187,6 +193,7 @@ public class WarehouseController{
 				stk.getChildren().add(cp1);		
 			}
 			if(a instanceof Robot) {
+				robot = (Robot) a;
 				Location l = ((Robot) a).getLocation();
 				StackPane stk = new StackPane();
 				GridPane.setConstraints(stk, l.getRow(), l.getColumn());
@@ -211,9 +218,8 @@ public class WarehouseController{
 				ps1.setHeight(29);
 				ps1.setWidth(29);
 				stk.getChildren().add(ps1);	
-				
-			//	
 			}
+			//storage shelf not working?
 			if(a instanceof StorageShelf) {
 				System.out.println("store");
 				Location l = ((StorageShelf) a).getLocation();
@@ -227,14 +233,14 @@ public class WarehouseController{
 				stk.getChildren().add(ss1);
 			}
 		}
-		
-		
+
+
 		robotsList.setItems(sim.robotsProperty());
 		unassignedOrders.setItems(sim.unassignedOrdersProperty());
 		assignedOrders.setItems(sim.assignedOrdersProperty());
 		dispatchedOrders.setItems(sim.dispatchedOrdersProperty());
-		
-	
+
+
 	}
 
 	public Simulator getSimulation() {
@@ -244,14 +250,18 @@ public class WarehouseController{
 	@FXML public void runTenTicks() throws Exception {
 		for(int i = 0 ; i < 10; i ++) {
 			sim.tick();
+			grdWarehouse.getChildren();
+			Location l = robot.getLocation();
+			Rectangle robot = new Rectangle();
+			robot.setHeight(10);
+			robot.setWidth(10);		
+			robot.setFill(Color.RED);
+			GridPane.setConstraints(robot, l.getRow(), l.getColumn());
+			grdWarehouse.getChildren().add(robot);
+			lblCount.textProperty().setValue("Total tick count: " + sim.getTotalTickCount());
 		}
-			
+
 	}
-
-	
-		
-	
-
 
 	//1 ticks, 10 ticks or go to end
 	//click on the cells to place the entities
@@ -262,6 +272,6 @@ public class WarehouseController{
 	//Controller - takes input - updates the model
 	//every cell in the grid as an observable list, when cell changes add shape to cells. 
 	//load button - sets up grid, 
-	
+
 
 }

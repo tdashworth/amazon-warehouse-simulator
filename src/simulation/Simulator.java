@@ -190,6 +190,20 @@ public class Simulator {
 		return actors;
 	}
 	
+	public void resetSimulator() {
+		totalTickCount = 0;
+		actors.clear();
+		chargeSpeed = 1;
+		maxChargeCapacity = 10;
+		floor.clear();
+		//shelves.clear();
+		//robots.clear();
+		//chargePods.clear();
+		//dispatchedOrders.clear();
+		//assignedOrders.clear();
+		//unassignedOrders.clear();
+	}
+	
 	
 	
 }

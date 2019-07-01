@@ -59,7 +59,7 @@ public class WarehouseView extends Application {
 		loader.setLocation(getClass().getResource("Warehouse.fxml"));
 		BorderPane mainContainer = (BorderPane) loader.load();
 
-		Scene mainScene = new Scene(mainContainer, 700, 700);
+		Scene mainScene = new Scene(mainContainer, 900, 900);
 		primaryStage.setScene(mainScene);
 		primaryStage.setTitle("Amazon Warehouse Simulator");
 		primaryStage.show();
