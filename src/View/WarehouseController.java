@@ -132,6 +132,7 @@ public class WarehouseController{
 		lblCount.textProperty().setValue("Total tick count: " + sim.getTotalTickCount());
 		Location l = robot.getLocation();
 		grdWarehouse.getChildren().remove(0);
+		
 		Rectangle robot = new Rectangle();
 		robot.setHeight(10);
 		robot.setWidth(10);		
