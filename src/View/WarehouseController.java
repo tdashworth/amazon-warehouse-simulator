@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -131,7 +133,7 @@ public class WarehouseController{
 	@FXML public void runOneTick() throws Exception {
 		sim.tick();
 	}
-
+	
 	public void loadSimulation() throws IOException, SimFileFormatException, LocationNotValidException {
 		
 		sim = Simulator.createFromFile(Paths.get("./sample-configs/oneOfEverything.sim"));
@@ -140,6 +142,7 @@ public class WarehouseController{
 				Bindings.concat("Total tick count:" + sim.getTotalTickCount())
 				);
 				
+		//sets the grid size to be the same as the floor in the file
 		Floor f = sim.getFloor();
 		for(int i = 0; i < f.getNumberOfRows(); i++) {
 			RowConstraints rowConst = new RowConstraints();
@@ -153,26 +156,78 @@ public class WarehouseController{
 			grdWarehouse.getColumnConstraints().add(column);
 		}
 	
-		gridCells = new HashMap<Location, StackPane>();
-		columns = Integer.parseInt(txtCol.getText());
-		rows = Integer.parseInt(txtRows.getText());
-
-		for(int j=0; j < columns; j++) {
-			for (int i=0; i< rows; i++) {
+		
+		for(int j=0; j < f.getNumberOfColumns(); j++) {
+			for (int i=0; i< f.getNumberOfRows(); i++) {
 				StackPane stk = new StackPane();
-				grdWarehouse.add(stk, j, i);
-				Location location = new Location(j,i);
-				gridCells.put(location, stk);
+				GridPane.setConstraints(stk, j,i);
+				grdWarehouse.getChildren().add(stk);
 			}  
 		}
 		
-		/*Example of how to add a shape to a cell
-		StackPane stk1 = gridCells.get("1,3");
-		Circle rb1 = new Circle();
-		rb1.setFill(Color.AQUA);
-		rb1.setRadius(15);
-		stk1.getChildren().add(rb1);
-		 */
+		sldCapacity.valueProperty().setValue(sim.getMaxChargeCapacity());
+		sldCharge.valueProperty().setValue(sim.getChargeSpeed());
+		
+		txtRows.setText(Integer.toString(f.getNumberOfRows()));
+		txtCol.setText(Integer.toString(f.getNumberOfColumns()));
+		
+		List<Actor> actors = sim.getActors();
+		
+		for(Actor a : actors) {	
+			
+			if(a instanceof ChargingPod) {
+				System.out.println("Charge");
+				Location l = ((ChargingPod) a).getLocation();
+				StackPane stk = new StackPane();
+				GridPane.setConstraints(stk, l.getRow(), l.getColumn());
+				grdWarehouse.getChildren().add(stk);
+				Circle cp1 = new Circle();
+				cp1.setFill(Color.AQUA);
+				cp1.setRadius(15);
+				stk.getChildren().add(cp1);		
+			}
+			if(a instanceof Robot) {
+				Location l = ((Robot) a).getLocation();
+				StackPane stk = new StackPane();
+				GridPane.setConstraints(stk, l.getRow(), l.getColumn());
+				grdWarehouse.getChildren().add(stk);
+				Circle cp1 = new Circle();
+				cp1.setFill(Color.CHARTREUSE);
+				cp1.setRadius(15);				
+				stk.getChildren().add(cp1);
+				Rectangle robot = new Rectangle();
+				robot.setHeight(10);
+				robot.setWidth(10);		
+				robot.setFill(Color.RED);
+				stk.getChildren().add(robot);
+			}
+			if(a instanceof PackingStation) {
+				Location l = ((PackingStation) a).getLocation();
+				StackPane stk = new StackPane();
+				GridPane.setConstraints(stk, l.getRow(), l.getColumn());
+				grdWarehouse.getChildren().add(stk);
+				Rectangle ps1 = new Rectangle();
+				ps1.setFill(Color.MIDNIGHTBLUE);
+				ps1.setHeight(29);
+				ps1.setWidth(29);
+				stk.getChildren().add(ps1);	
+				
+			//	
+			}
+			if(a instanceof StorageShelf) {
+				System.out.println("store");
+				Location l = ((StorageShelf) a).getLocation();
+				StackPane stk = new StackPane();
+				GridPane.setConstraints(stk, l.getRow(), l.getColumn());
+				grdWarehouse.getChildren().add(stk);
+				Rectangle ss1 = new Rectangle();
+				ss1.setFill(Color.BURLYWOOD);
+				ss1.setHeight(29);
+				ss1.setWidth(29);
+				stk.getChildren().add(ss1);
+			}
+		}
+		
 		
 		robotsList.setItems(sim.robotsProperty());
 		unassignedOrders.setItems(sim.unassignedOrdersProperty());
@@ -190,7 +245,13 @@ public class WarehouseController{
 		for(int i = 0 ; i < 10; i ++) {
 			sim.tick();
 		}
+			
 	}
+
+	
+		
+	
+
 
 	//1 ticks, 10 ticks or go to end
 	//click on the cells to place the entities

@@ -185,6 +185,10 @@ public class Simulator {
 	public ObservableList<Order> dispatchedOrdersProperty(){
 		return dispatchedOrders;
 	}
+
+	public List<Actor> getActors() {
+		return actors;
+	}
 	
 	
 	
