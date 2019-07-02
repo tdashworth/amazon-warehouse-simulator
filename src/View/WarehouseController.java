@@ -1,28 +1,18 @@
 package View;
-import simulation.*;
-import model.*;
-
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
-import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -31,6 +21,18 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import model.Actor;
+import model.ChargingPod;
+import model.Floor;
+import model.Location;
+import model.LocationNotValidException;
+import model.Order;
+import model.PackingStation;
+import model.Robot;
+import model.StorageShelf;
+import simulation.SimFileFormatException;
+import simulation.Simulator;
+
 
 
 public class WarehouseController{
@@ -129,19 +131,19 @@ public class WarehouseController{
 	@FXML public void runOneTick() throws Exception {
 		sim.tick();
 		System.out.println(sim.getTotalTickCount());
-		lblCount.textProperty().setValue("Total tick count: " + sim.getTotalTickCount());
-		Location l = robot.getLocation();
-		//grdWarehouse.getChildren().remove(0);
+		lblCount.setText("Total tick count: " + sim.getTotalTickCount());
+						
+		Location l = robot.getLocation();				
+		Circle r = new Circle();
+		r.setRadius(10);	
+		r.setFill(Color.RED);
+		GridPane.setConstraints(r, l.getRow(), l.getColumn());
+		grdWarehouse.getChildren().add(r);		
+		Location prev = robot.getPreviousLocation();
+		Node n = getChildByRowColumn(grdWarehouse, prev.getRow(), prev.getColumn());
+		grdWarehouse.getChildren().remove(n);
 		
-		Rectangle robot = new Rectangle();
-		robot.setHeight(10);
-		robot.setWidth(10);		
-		robot.setFill(Color.RED);
-		GridPane.setConstraints(robot, l.getRow(), l.getColumn());
-		grdWarehouse.getChildren().add(robot);
-		
-		
-		
+				
 	}
 
 	public void loadSimulation() throws IOException, SimFileFormatException, LocationNotValidException {
@@ -172,6 +174,8 @@ public class WarehouseController{
 				grdWarehouse.getChildren().add(stk);
 			}  
 		}
+		
+		ObservableList grid = grdWarehouse.getChildren();
 
 		sldCapacity.valueProperty().setValue(sim.getMaxChargeCapacity());
 		sldCharge.valueProperty().setValue(sim.getChargeSpeed());
@@ -203,9 +207,8 @@ public class WarehouseController{
 				cp1.setFill(Color.CHARTREUSE);
 				cp1.setRadius(15);				
 				stk.getChildren().add(cp1);
-				Rectangle robot = new Rectangle();
-				robot.setHeight(10);
-				robot.setWidth(10);		
+				Circle robot = new Circle();
+				robot.setRadius(10);
 				robot.setFill(Color.RED);
 				stk.getChildren().add(robot);
 			}
@@ -259,7 +262,7 @@ public class WarehouseController{
 			robot.setFill(Color.RED);
 			GridPane.setConstraints(robot, l.getRow(), l.getColumn());
 			grdWarehouse.getChildren().add(robot);
-			lblCount.textProperty().setValue("Total tick count: " + sim.getTotalTickCount());
+			lblCount.setText("Total tick count: " + sim.getTotalTickCount());
 		}
 
 	}
@@ -274,5 +277,16 @@ public class WarehouseController{
 	//every cell in the grid as an observable list, when cell changes add shape to cells. 
 	//load button - sets up grid, 
 
+	Node getChildByRowColumn(final GridPane gridPane, final int row, final int col){
 
+	    for(final Node node : gridPane.getChildren()){
+	        if (GridPane.getRowIndex(node) == null) continue ; //ignore Group 
+	        if(GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == col) 
+	        if(node instanceof Circle) {
+	        	return node;
+	        }
+	    }
+	    return null;
+	} 
+		
 }

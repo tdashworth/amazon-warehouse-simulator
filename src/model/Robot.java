@@ -2,6 +2,11 @@ package model;
 
 import java.text.MessageFormat;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+
 public class Robot extends Entity implements Actor {
 	private int powerUnits;
 	private StorageShelf storageShelf;
@@ -10,14 +15,17 @@ public class Robot extends Entity implements Actor {
 	private PackingStation packingStation;
 	private ChargingPod chargingPod;
 	private PathFindingStrategy pathFinder;
-
+	private Location previousLocation;
 	private static int POWER_UNITS_EMPTY;
 	private static int POWER_UNITS_CARRYING;
+	private final IntegerProperty column = new SimpleIntegerProperty(this, "column");
+	private final IntegerProperty row = new SimpleIntegerProperty(this, "row");
+
 
 	/**
 	 * @param uid
 	 * @param location
-	 */
+	 */	
 	public Robot(String uid, Location location, ChargingPod chargingPod, int powerUnits) {
 		super(uid, location);
 		this.chargingPod = chargingPod;
@@ -26,6 +34,8 @@ public class Robot extends Entity implements Actor {
 		POWER_UNITS_EMPTY = 1;
 		POWER_UNITS_CARRYING = 2;
 	}
+
+
 
 	@Override
 	public void tick(Warehouse warehouse) {
@@ -47,7 +57,7 @@ public class Robot extends Entity implements Actor {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Increases the robots power units
 	 */
@@ -71,13 +81,14 @@ public class Robot extends Entity implements Actor {
 		System.out.println("Current " + this.location);
 		System.out.println("Target " + targetLocation);
 		System.out.println("Path: " + this.pathFinder.getPath(this.location, targetLocation, warehouse));
-		
+
 		Location newLocation = this.pathFinder.getPath(this.location, targetLocation, warehouse).get(0);
 		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
 
 		if (successfulMove) {
+			previousLocation = this.location;
 			this.location = newLocation;
-			
+
 			if(this.location.equals(this.storageShelf.getLocation()))
 				this.storageShelfVisited = true;
 			if(this.location.equals(this.packingStation.getLocation())) {
@@ -87,7 +98,7 @@ public class Robot extends Entity implements Actor {
 
 			int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;			
 			this.powerUnits = this.powerUnits - powerUnitsToDeduct;
-			
+
 			System.out.println("Power level " + this.powerUnits + " after move.");
 
 		}
@@ -105,7 +116,7 @@ public class Robot extends Entity implements Actor {
 		//    - its current location to the requested shelf (costs 1 per move)
 		//    - from that shelf to the packing station (costs 2 per move)
 		//    - from that packing station to the charging pod (costs 1 per move)
-		
+
 		boolean acceptJob = !this.hasItem() ;
 		if (acceptJob) {
 			this.storageShelf = storageShelf;
@@ -124,12 +135,16 @@ public class Robot extends Entity implements Actor {
 	public boolean hasItem() {
 		return this.storageShelfVisited == true && this.packingStationVisited == false;
 	}
-	
+
 	/**
 	 * Get the power units
 	 */
 	public int getPowerUnits() {
 		return powerUnits;
+	}
+
+	public Location getPreviousLocation() {
+		return previousLocation;
 	}
 
 	/**
@@ -139,8 +154,8 @@ public class Robot extends Entity implements Actor {
 		return MessageFormat.format(
 				"Robot:" + " - UID: {0}" + " - {1}" + " - Power Units: {2}" + " - StorageShelf: {3}"
 						+ " - Packing Station: {4}" + " - Charging Pod: {5}",
-				this.uid, this.location, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(),
-				this.chargingPod.getUID());
+						this.uid, this.location, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(),
+						this.chargingPod.getUID());
 	}
 
 }
