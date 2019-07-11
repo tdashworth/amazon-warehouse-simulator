@@ -87,7 +87,7 @@
 					</padding>
 				</Label>
 				<Slider fx:id="sldCapacity" blockIncrement="1.0"
-					majorTickUnit="1.0" max="50.0" min="10.0" minorTickCount="1"
+					majorTickUnit="1.0" max="100.0" min="10.0" minorTickCount="1"
 					prefHeight="30.0" prefWidth="100.0" showTickLabels="true"
 					snapToTicks="true" value="10.0">
 					<padding>

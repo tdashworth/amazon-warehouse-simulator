@@ -18,9 +18,7 @@ public class Robot extends Entity implements Actor {
 	private Location previousLocation;
 	private static int POWER_UNITS_EMPTY;
 	private static int POWER_UNITS_CARRYING;
-	private final IntegerProperty column = new SimpleIntegerProperty(this, "column");
-	private final IntegerProperty row = new SimpleIntegerProperty(this, "row");
-
+	
 
 	/**
 	 * @param uid
@@ -62,9 +60,8 @@ public class Robot extends Entity implements Actor {
 	 * Increases the robots power units
 	 */
 	public void charge(int chargeSpeed) {
-		// need to get charge speed from simulator
 		powerUnits += chargeSpeed;
-		System.out.println("Robot " + uid + " charging...");
+		System.out.println("Robot " + uid + " charging at speed " + chargeSpeed);
 	}
 
 	/**
@@ -156,6 +153,10 @@ public class Robot extends Entity implements Actor {
 						+ " - Packing Station: {4}" + " - Charging Pod: {5}",
 						this.uid, this.location, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(),
 						this.chargingPod.getUID());
+	}
+	
+	public void setPowerUnits(int units) {
+		powerUnits = units;
 	}
 
 }

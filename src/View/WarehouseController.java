@@ -1,8 +1,11 @@
 package View;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import org.omg.CORBA.DoubleSeqHelper;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -52,13 +55,14 @@ public class WarehouseController{
 	@FXML ListView<Order> unassignedOrders;
 	@FXML ListView<Order> assignedOrders;
 	@FXML ListView<Order> dispatchedOrders;
-	private Robot robot; 
+	private ArrayList<Robot> robots; 
 
 	/**
 	 * initialize the simulation, add listeners to the sliders and text areas.
 	 */
 	@FXML public void initialize() {
-
+		
+		robots = new ArrayList<Robot>();
 
 		txtRows.textProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -85,12 +89,18 @@ public class WarehouseController{
 
 		sldCapacity.valueProperty().addListener((observable, oldValue, newValue) -> {
 			lblCapacity.setText("Battery Capacity: " + Integer.toString(newValue.intValue()));
+			for(Robot r: robots) {
+				r.setPowerUnits(newValue.intValue());
+			}
+			sim.setMaxChargeCapacity(newValue.intValue());
+			
 		});
 
 		//sldCharge.valueProperty().bind(sim.chargeSpeedProperty());
 
 		sldCharge.valueProperty().addListener((observable, oldValue, newValue) -> {
 			lblCharge.setText("Charge speed:" + Integer.toString(newValue.intValue()));
+			sim.setChargeSpeed(newValue.intValue());
 		});
 
 
@@ -114,7 +124,7 @@ public class WarehouseController{
 		for(int i = sim.getFloor().getNumberOfColumns()-1; i >= 0 ; i--) {
 			grdWarehouse.getColumnConstraints().remove(i);
 		}
-		
+		grdWarehouse.getChildren().clear();
 		sim.resetSimulator();
 		
 	}
@@ -130,19 +140,23 @@ public class WarehouseController{
 
 	@FXML public void runOneTick() throws Exception {
 		sim.tick();
-		System.out.println(sim.getTotalTickCount());
-		lblCount.setText("Total tick count: " + sim.getTotalTickCount());
-						
-		Location l = robot.getLocation();				
+		for(Robot robo : robots) {
+		Location prev = robo.getPreviousLocation();
+			if(prev != null) {
+				System.out.println(prev);
+		Node n = getChildByRowColumn(grdWarehouse, prev.getRow(), prev.getColumn());
+		System.out.println(n);
+		grdWarehouse.getChildren().remove(n);
+		
+			}
+		lblCount.setText("Total tick count: " + sim.getTotalTickCount());	
+		Location l = robo.getLocation();				
 		Circle r = new Circle();
 		r.setRadius(10);	
 		r.setFill(Color.RED);
 		GridPane.setConstraints(r, l.getRow(), l.getColumn());
 		grdWarehouse.getChildren().add(r);		
-		Location prev = robot.getPreviousLocation();
-		Node n = getChildByRowColumn(grdWarehouse, prev.getRow(), prev.getColumn());
-		grdWarehouse.getChildren().remove(n);
-		
+		}
 				
 	}
 
@@ -150,7 +164,7 @@ public class WarehouseController{
 		
 		System.out.println("Loading Simulation");
 		
-		sim = Simulator.createFromFile(Paths.get("./sample-configs/oneOfEverything.sim"));
+		sim = Simulator.createFromFile(Paths.get("./sample-configs/threeOfEverything.sim"));
 
 		//sets the grid size to be the same as the floor in the file
 		Floor f = sim.getFloor();
@@ -166,7 +180,6 @@ public class WarehouseController{
 			grdWarehouse.getColumnConstraints().add(column);
 		}
 		
-
 		for(int j=0; j < f.getNumberOfColumns(); j++) {
 			for (int i=0; i< f.getNumberOfRows(); i++) {
 				StackPane stk = new StackPane();
@@ -198,7 +211,7 @@ public class WarehouseController{
 				stk.getChildren().add(cp1);		
 			}
 			if(a instanceof Robot) {
-				robot = (Robot) a;
+				robots.add((Robot) a);
 				Location l = ((Robot) a).getLocation();
 				StackPane stk = new StackPane();
 				GridPane.setConstraints(stk, l.getRow(), l.getColumn());
@@ -207,10 +220,11 @@ public class WarehouseController{
 				cp1.setFill(Color.CHARTREUSE);
 				cp1.setRadius(15);				
 				stk.getChildren().add(cp1);
-				Circle robot = new Circle();
-				robot.setRadius(10);
-				robot.setFill(Color.RED);
-				stk.getChildren().add(robot);
+				Circle rb1 = new Circle();
+				rb1.setFill(Color.RED);
+				rb1.setRadius(10);
+				stk.getChildren().add(rb1);
+				
 			}
 			if(a instanceof PackingStation) {
 				Location l = ((PackingStation) a).getLocation();
@@ -223,9 +237,7 @@ public class WarehouseController{
 				ps1.setWidth(29);
 				stk.getChildren().add(ps1);	
 			}
-			//storage shelf not working?
 			if(a instanceof StorageShelf) {
-				System.out.println("store");
 				Location l = ((StorageShelf) a).getLocation();
 				StackPane stk = new StackPane();
 				GridPane.setConstraints(stk, l.getRow(), l.getColumn());
@@ -239,7 +251,7 @@ public class WarehouseController{
 		}
 
 
-		robotsList.setItems(sim.robotsProperty());
+		//robotsList.setItems(sim.robotsProperty());
 		unassignedOrders.setItems(sim.unassignedOrdersProperty());
 		assignedOrders.setItems(sim.assignedOrdersProperty());
 		dispatchedOrders.setItems(sim.dispatchedOrdersProperty());
@@ -253,16 +265,7 @@ public class WarehouseController{
 
 	@FXML public void runTenTicks() throws Exception {
 		for(int i = 0 ; i < 10; i ++) {
-			sim.tick();
-			grdWarehouse.getChildren();
-			Location l = robot.getLocation();
-			Rectangle robot = new Rectangle();
-			robot.setHeight(10);
-			robot.setWidth(10);		
-			robot.setFill(Color.RED);
-			GridPane.setConstraints(robot, l.getRow(), l.getColumn());
-			grdWarehouse.getChildren().add(robot);
-			lblCount.setText("Total tick count: " + sim.getTotalTickCount());
+			runOneTick();
 		}
 
 	}
@@ -270,12 +273,11 @@ public class WarehouseController{
 	//1 ticks, 10 ticks or go to end
 	//click on the cells to place the entities
 	//orders randomly generated.
-	//gui read in sim files
 	//Model = state of simulation
 	//View = representation
 	//Controller - takes input - updates the model
 	//every cell in the grid as an observable list, when cell changes add shape to cells. 
-	//load button - sets up grid, 
+ 
 
 	Node getChildByRowColumn(final GridPane gridPane, final int row, final int col){
 

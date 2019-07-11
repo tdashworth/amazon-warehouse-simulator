@@ -2,6 +2,10 @@ package simulation;
 import View.*;
 import javafx.beans.property.IntegerProperty;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -18,7 +22,7 @@ public class Simulator {
 	private int maxChargeCapacity;
 	private WarehouseController controller;
 	private ObservableList<ChargingPod> chargePods;
-	private ObservableList<Robot> robots;
+	private ArrayList<Robot> robots;
 	private ObservableList<PackingStation> packingStations;
 	private ObservableList<StorageShelf> shelves;
 	private ObservableList<Order> assignedOrders;
@@ -84,6 +88,7 @@ public class Simulator {
 	 */
 	public Simulator(Floor floor, int capacity, int chargeSpeed, HashMap<String, Entity> entities, Deque<Order> orders)
 			throws LocationNotValidException {
+		robots = new ArrayList<Robot>();
 		this.floor = floor;
 		this.totalTickCount = 0;
 		this.warehouse = new Warehouse(floor, entities, orders, this);
@@ -96,8 +101,10 @@ public class Simulator {
 		this.chargeSpeed = chargeSpeed;
 		this.maxChargeCapacity = capacity;
 		for (Entity entity : entities.values()) {
-			if (entity instanceof Robot)
+			if (entity instanceof Robot) {
+				robots.add((Robot) entity);
 				floor.loadEntity(entity);
+			}
 		}
 	}
 
@@ -110,8 +117,8 @@ public class Simulator {
 			tick();
 		System.out.println("All orders have been dispatched.");
 	}
-	
-	
+
+
 	/**
 	 * Set the view object
 	 * @param WarehouseView
@@ -119,8 +126,8 @@ public class Simulator {
 	public void setView(WarehouseView view) {
 		this.view = view;
 	}
-	
-		
+
+
 	/**
 	 * Tick method which gets all of the actors to tick simultaneously.
 	 * @throws Exception 
@@ -129,7 +136,7 @@ public class Simulator {
 		this.totalTickCount++;
 		for (Actor actor : actors) {
 			actor.tick(this.warehouse);
-		}
+		}	
 	}
 
 	/**
@@ -143,15 +150,19 @@ public class Simulator {
 	 * sets the tick count
 	 * @param ticks
 	 */
-	
+
 	public void setTotalTickCount(int ticks) {
 		totalTickCount = ticks;
 	}
-	
+
 	public int getChargeSpeed() {
 		return chargeSpeed;
 	}
 	
+	public void setChargeSpeed(int speed) {
+		chargeSpeed = speed;
+	}
+
 	/**
 	 * @return the maxChargeCapacity
 	 */
@@ -159,7 +170,7 @@ public class Simulator {
 	public int getMaxChargeCapacity() {
 		return maxChargeCapacity;
 	}
-	
+
 	public Floor getFloor() {
 		return floor;
 	}
@@ -167,9 +178,9 @@ public class Simulator {
 	public 	ObservableList<ChargingPod> chargePodsProperty(){
 		return chargePods;
 	}
-	public ObservableList<Robot> robotsProperty(){
+	/*public ObservableList<Robot> robotsProperty(){
 		return robots;
-	}
+	}*/
 	public ObservableList<PackingStation> packingStationsProperty(){
 		return packingStations;
 	}
@@ -190,6 +201,14 @@ public class Simulator {
 		return actors;
 	}
 	
+	public ArrayList<Robot> getRobots(){
+		return robots;
+	}
+
+	public void setMaxChargeCapacity(int capacity) {
+		maxChargeCapacity = capacity;
+	}
+	
 	public void resetSimulator() {
 		totalTickCount = 0;
 		actors.clear();
@@ -203,7 +222,7 @@ public class Simulator {
 		//assignedOrders.clear();
 		//unassignedOrders.clear();
 	}
-	
-	
-	
+
+
+
 }

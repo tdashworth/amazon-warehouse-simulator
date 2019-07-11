@@ -8,7 +8,7 @@ import java.text.MessageFormat;
 /**
  *
  */
-public class StorageShelf extends Entity {
+public class StorageShelf extends Entity implements Actor {
 
 	/**
 	 * @param uid
@@ -27,5 +27,9 @@ public class StorageShelf extends Entity {
 				+ " - {1}.", 
 				this.uid, 
 				this.location);
+	}
+	
+	public void tick(Warehouse warehouse) {
+		
 	}
 }
