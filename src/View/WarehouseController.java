@@ -141,14 +141,9 @@ public class WarehouseController{
 	@FXML public void runOneTick() throws Exception {
 		sim.tick();
 		for(Robot robo : robots) {
-		Location prev = robo.getPreviousLocation();
-			if(prev != null) {
-				System.out.println(prev);
-		Node n = getChildByRowColumn(grdWarehouse, prev.getRow(), prev.getColumn());
-		System.out.println(n);
-		grdWarehouse.getChildren().remove(n);
 		
-			}
+		grdWarehouse.getChildren().removeIf(n -> n instanceof Circle);
+					
 		lblCount.setText("Total tick count: " + sim.getTotalTickCount());	
 		Location l = robo.getLocation();				
 		Circle r = new Circle();
