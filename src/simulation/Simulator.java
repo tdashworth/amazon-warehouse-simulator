@@ -1,6 +1,7 @@
 package simulation;
 import View.*;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
@@ -25,6 +26,7 @@ public class Simulator {
 	private ArrayList<Robot> robots;
 	private ObservableList<PackingStation> packingStations;
 	private ObservableList<StorageShelf> shelves;
+	private ObservableList<Robot> robotList;
 	private ObservableList<Order> assignedOrders;
 	private ObservableList<Order> unassignedOrders;
 	private ObservableList<Order> dispatchedOrders;
@@ -89,6 +91,7 @@ public class Simulator {
 	public Simulator(Floor floor, int capacity, int chargeSpeed, HashMap<String, Entity> entities, Deque<Order> orders)
 			throws LocationNotValidException {
 		robots = new ArrayList<Robot>();
+		//robotList = new SimpleListProperty<Robot>();
 		this.floor = floor;
 		this.totalTickCount = 0;
 		this.warehouse = new Warehouse(floor, entities, orders, this);
@@ -103,6 +106,7 @@ public class Simulator {
 		for (Entity entity : entities.values()) {
 			if (entity instanceof Robot) {
 				robots.add((Robot) entity);
+				//robotList.add((Robot) entity);
 				floor.loadEntity(entity);
 			}
 		}
@@ -178,9 +182,9 @@ public class Simulator {
 	public 	ObservableList<ChargingPod> chargePodsProperty(){
 		return chargePods;
 	}
-	/*public ObservableList<Robot> robotsProperty(){
-		return robots;
-	}*/
+	public ObservableList<Robot> robotsProperty(){
+		return robotList;
+	}
 	public ObservableList<PackingStation> packingStationsProperty(){
 		return packingStations;
 	}
@@ -223,6 +227,6 @@ public class Simulator {
 		//unassignedOrders.clear();
 	}
 
-
+	
 
 }

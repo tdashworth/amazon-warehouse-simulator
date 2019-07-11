@@ -49,8 +49,9 @@ public class WarehouseController{
 	@FXML private Label lblCharge;
 	@FXML private Slider sldCharge;
 	@FXML private Label lblCount;
-	private HashMap<Location, StackPane> gridCells;
 	private Simulator sim;
+	@FXML private Label lblRows;
+	@FXML private Label lblCol;
 	@FXML ListView<Robot> robotsList;
 	@FXML ListView<Order> unassignedOrders;
 	@FXML ListView<Order> assignedOrders;
@@ -85,8 +86,6 @@ public class WarehouseController{
 			}
 		});	
 
-		//sldCapacity.valueProperty().bind(sim.chargeCapacityProperty());
-
 		sldCapacity.valueProperty().addListener((observable, oldValue, newValue) -> {
 			lblCapacity.setText("Battery Capacity: " + Integer.toString(newValue.intValue()));
 			for(Robot r: robots) {
@@ -95,8 +94,6 @@ public class WarehouseController{
 			sim.setMaxChargeCapacity(newValue.intValue());
 			
 		});
-
-		//sldCharge.valueProperty().bind(sim.chargeSpeedProperty());
 
 		sldCharge.valueProperty().addListener((observable, oldValue, newValue) -> {
 			lblCharge.setText("Charge speed:" + Integer.toString(newValue.intValue()));
@@ -159,7 +156,7 @@ public class WarehouseController{
 		
 		System.out.println("Loading Simulation");
 		
-		sim = Simulator.createFromFile(Paths.get("./sample-configs/threeOfEverything.sim"));
+		sim = Simulator.createFromFile(Paths.get("./sample-configs/twoShelves-v2.sim"));
 
 		//sets the grid size to be the same as the floor in the file
 		Floor f = sim.getFloor();
@@ -246,7 +243,7 @@ public class WarehouseController{
 		}
 
 
-		//robotsList.setItems(sim.robotsProperty());
+		robotsList.setItems(sim.robotsProperty());
 		unassignedOrders.setItems(sim.unassignedOrdersProperty());
 		assignedOrders.setItems(sim.assignedOrdersProperty());
 		dispatchedOrders.setItems(sim.dispatchedOrdersProperty());

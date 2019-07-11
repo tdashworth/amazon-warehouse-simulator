@@ -281,10 +281,8 @@
 					centerShape="false" gridLinesVisible="true" hgap="1.0"
 					layoutX="10.0" layoutY="10.0" style="-fx-background-color: #3D4849">
 					<columnConstraints>
-
 					</columnConstraints>
 					<rowConstraints>
-
 					</rowConstraints>
 					<children>
 					</children>

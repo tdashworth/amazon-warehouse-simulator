@@ -40,7 +40,6 @@ public class WarehouseView extends Application {
 	@FXML private Label lblCharge;
 	@FXML private Slider sldCharge;
 	@FXML private Label lblCount;
-	private HashMap<String, StackPane> gridCells;
 	@FXML ListView<Robot> robotsList;
 	@FXML ListView<Order> unassignedOrders;
 	@FXML ListView<Order> assignedOrders;
@@ -63,8 +62,6 @@ public class WarehouseView extends Application {
 		primaryStage.setScene(mainScene);
 		primaryStage.setTitle("Amazon Warehouse Simulator");
 		primaryStage.show();
-		
-				
 	}
 	
 	
@@ -73,21 +70,6 @@ public class WarehouseView extends Application {
 		launch(args);
 	}
 	
-	public TextArea getTxtRows() {
-		return txtRows;
-	}
-	
-	public TextArea getTxtCol() {
-		return txtCol;
-	}
-	
-	public Slider getCharge() {
-		return sldCharge;
-	}
-	
-	public Slider getCapacity() {
-		return sldCapacity;
-	}
-	
+
 	
 }
