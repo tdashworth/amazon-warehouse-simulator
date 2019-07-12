@@ -26,9 +26,6 @@ public class Robot extends Entity implements Actor {
 		super(uid, location);
 		this.chargingPod = chargingPod;
 		this.powerUnits = powerUnits;
-
-		POWER_UNITS_EMPTY = 1;
-		POWER_UNITS_CARRYING = 2;
 	}
 
 	@Override
@@ -38,18 +35,18 @@ public class Robot extends Entity implements Actor {
 
 			switch (status) {
 			case CollectingItem:
-				move(warehouse, this.storageShelf.getLocation());
 				this.collectItemFromStorageShelf(warehouse);
 				break;
 
 			case ReturningItem:
-				move(warehouse, this.packingStation.getLocation());
 				this.returnItemToPackingStation(warehouse);
 				break;
 
 			default:
 				// Status: Charging or GoingToCharge
-				if (powerUnits < (warehouse.getMaxChargeCapacity() / 2)) {
+				boolean isAtChargingPod = this.location.equals(this.chargingPod.getLocation());
+				boolean isBatteryBelowHalfCharge = this.powerUnits < (warehouse.getMaxChargeCapacity() / 2);
+				if (isAtChargingPod && isBatteryBelowHalfCharge) {
 					charge(warehouse.getChargeSpeed());
 				} else {
 					move(warehouse, this.chargingPod.getLocation());
@@ -71,13 +68,18 @@ public class Robot extends Entity implements Actor {
 
 	private void collectItemFromStorageShelf(Warehouse warehouse) throws Exception {
 		this.move(warehouse, this.storageShelf.getLocation());
-		this.storageShelf = null;
+
+		if (this.location.equals(this.storageShelf.getLocation()))
+			this.storageShelf = null;
 	}
 
 	private void returnItemToPackingStation(Warehouse warehouse) throws Exception {
 		this.move(warehouse, this.packingStation.getLocation());
-		this.packingStation.recieveItem(storageShelf);
-		this.packingStation = null;
+
+		if (this.location.equals(this.packingStation.getLocation())) {
+			this.packingStation.recieveItem(storageShelf);
+			this.packingStation = null;
+		}
 	}
 
 	/**
@@ -99,8 +101,7 @@ public class Robot extends Entity implements Actor {
 
 		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
 		if (!successfulMove)
-			return;
-		// TODO handle this better!
+			return; // TODO handle this better!
 
 		this.previousLocation = this.location;
 		this.location = newLocation;
@@ -114,23 +115,60 @@ public class Robot extends Entity implements Actor {
 	/**
 	 * @param storageShelf
 	 * @param packingStation
+	 * @param warehouse
 	 * @return
 	 * @throws LocationNotValidException
 	 */
-	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation, Warehouse warehouse) {
-		// TODO check various condition whether the robot can accept a job.
-		// TODO Check that the robots current charge is enough to get it from...
-		// - its current location to the requested shelf (costs 1 per move)
-		// - from that shelf to the packing station (costs 2 per move)
-		// - from that packing station to the charging pod (costs 1 per move)
+	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation, Warehouse warehouse)
+			throws LocationNotValidException {
 
-		boolean acceptJob = !this.hasItem();
-		if (acceptJob) {
-			this.storageShelf = storageShelf;
-			this.packingStation = packingStation;
-			this.pathFinder = new PathFindingStrategy(warehouse.getFloor());
-		}
-		return acceptJob;
+		if (this.hasItem())
+			return false;
+
+		double estimatedCostWithLeeway = estimatePowerUnitCostForJob(storageShelf, packingStation, warehouse);
+
+		if (estimatedCostWithLeeway > this.powerUnits)
+			return false;
+
+		this.storageShelf = storageShelf;
+		this.packingStation = packingStation;
+		this.pathFinder = new PathFindingStrategy(warehouse.getFloor());
+
+		return true;
+	}
+
+	/*
+	 * Given a storage shelf and packing station this will calculate the number of
+	 * power units to make the trip back to its charging pod with a leyway of 20%.
+	 * 
+	 * @param storageShelf
+	 * 
+	 * @param packingStation
+	 * 
+	 * @param warehouse
+	 * 
+	 * @return
+	 * 
+	 * @throws LocationNotValidException
+	 */
+	private double estimatePowerUnitCostForJob(StorageShelf storageShelf, PackingStation packingStation,
+			Warehouse warehouse) throws LocationNotValidException {
+		PathFindingStrategy tempPathFinder = new PathFindingStrategy(warehouse.getFloor(), false);
+
+		tempPathFinder.calculatePath(this.getLocation(), storageShelf.getLocation());
+		int numberOfMovesToStorageShelf = tempPathFinder.getNumberOfRemainingSteps();
+
+		tempPathFinder.calculatePath(storageShelf.getLocation(), packingStation.getLocation());
+		int numberOfMovesToPackingStation = tempPathFinder.getNumberOfRemainingSteps();
+
+		tempPathFinder.calculatePath(packingStation.getLocation(), this.chargingPod.getLocation());
+		int numberOfMovesToChargingStation = tempPathFinder.getNumberOfRemainingSteps();
+
+		double unlaidenedCost = (numberOfMovesToStorageShelf + numberOfMovesToChargingStation) * POWER_UNITS_EMPTY;
+		double carryingCost = (numberOfMovesToPackingStation) * POWER_UNITS_CARRYING;
+
+		double estimatedCostWithLeeway = (unlaidenedCost + carryingCost) * 1.2;
+		return estimatedCostWithLeeway;
 	}
 
 	/*

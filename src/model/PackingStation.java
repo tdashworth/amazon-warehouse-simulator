@@ -5,7 +5,6 @@ package model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,8 +48,9 @@ public class PackingStation extends Entity implements Actor {
 	/**
 	 * Pick an unassigned order from the warehouse
 	 * @param warehouse
+	 * @throws LocationNotValidException 
 	 */
-	private void pickOrder(Warehouse warehouse) {
+	private void pickOrder(Warehouse warehouse) throws LocationNotValidException {
 		this.currentOrder = warehouse.getUnassignedOrder();
 		this.tickCountWhenOrderAssigned = warehouse.getTotalTickCount();
 		this.remainingPackingTicks = this.currentOrder.getNumberOfTicksToPack();
@@ -64,8 +64,9 @@ public class PackingStation extends Entity implements Actor {
 	 * TODO JavaDoc description.
 	 * @param The storage shelf UID.
 	 * @param Thw warehouse reference.
+	 * @throws LocationNotValidException 
 	 */
-	private void requestItems(Warehouse warehouse) {
+	private void requestItems(Warehouse warehouse) throws LocationNotValidException {
 		ArrayList<String> uuidsToRemove = new ArrayList<String>();
 		
 		for (String storageShelfUID : this.unrequestedStorageShelves) {
