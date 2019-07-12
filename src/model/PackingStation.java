@@ -5,7 +5,6 @@ package model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +29,8 @@ public class PackingStation extends Entity implements Actor {
 
 	@Override
 	public void tick(Warehouse warehouse) throws Exception {
+		this.log("Ticking.");
+		
 		if (this.currentOrder == null)
 			this.pickOrder(warehouse);
 		
@@ -49,13 +50,16 @@ public class PackingStation extends Entity implements Actor {
 	/**
 	 * Pick an unassigned order from the warehouse
 	 * @param warehouse
+	 * @throws LocationNotValidException 
 	 */
-	private void pickOrder(Warehouse warehouse) {
+	private void pickOrder(Warehouse warehouse) throws LocationNotValidException {
+		this.log("Picking new order.");
 		this.currentOrder = warehouse.getUnassignedOrder();
 		this.tickCountWhenOrderAssigned = warehouse.getTotalTickCount();
 		this.remainingPackingTicks = this.currentOrder.getNumberOfTicksToPack();
 		this.storageShelvesVisited = new ArrayList<StorageShelf>();
 		this.unrequestedStorageShelves = new ArrayList<String>(this.currentOrder.getStorageShelfUIDs());
+		this.log("Picked order: " + this.currentOrder.hashCode());
 		
 		this.requestItems(warehouse);
 	}
@@ -64,20 +68,22 @@ public class PackingStation extends Entity implements Actor {
 	 * TODO JavaDoc description.
 	 * @param The storage shelf UID.
 	 * @param Thw warehouse reference.
+	 * @throws LocationNotValidException 
 	 */
-	private void requestItems(Warehouse warehouse) {
+	private void requestItems(Warehouse warehouse) throws LocationNotValidException {
+		this.log("Requesting items: " + this.unrequestedStorageShelves);
 		ArrayList<String> uuidsToRemove = new ArrayList<String>();
 		
 		for (String storageShelfUID : this.unrequestedStorageShelves) {
 			StorageShelf storageShelf = (StorageShelf) warehouse.getEntityByUID(storageShelfUID);
 			
-			if (warehouse.assignJobToRobot(storageShelf, this))
+			if (warehouse.assignJobToRobot(storageShelf, this)) {
 				uuidsToRemove.add(storageShelfUID);
+				this.log("Storage Shelf %s assigned to a Robot.", storageShelf.getUID());
+			}
 		}
 		
-		for(int i = 0; i < uuidsToRemove.size(); i++) {
-			this.unrequestedStorageShelves.remove(uuidsToRemove.get(i));
-		}
+		this.unrequestedStorageShelves.removeAll(uuidsToRemove);
 	}
 
 	/**
@@ -85,7 +91,7 @@ public class PackingStation extends Entity implements Actor {
 	 */
 	private void packOrder() {
 		this.remainingPackingTicks--;
-		System.out.println("Packing station " + uid + " packing... " + this.remainingPackingTicks + " ticks remaining.");
+		this.log("Packing order %s. %s ticks remaining.", this.currentOrder.hashCode(), this.remainingPackingTicks);
 	}
 
 	/**
@@ -94,11 +100,11 @@ public class PackingStation extends Entity implements Actor {
 	 * @throws Exception 
 	 */
 	private void dispatchOrder(Warehouse warehouse) throws Exception {
+		this.log("Dispatching order %s.", this.currentOrder.hashCode());
 		int totalNumberOfTicksToPack = warehouse.getTotalTickCount() - this.tickCountWhenOrderAssigned; 
 		this.currentOrder.setTotalNumberOfTicksToPack(totalNumberOfTicksToPack);
 		warehouse.dispatchOrder(this.currentOrder);
 		this.currentOrder = null;
-		System.out.println("Packing station " + uid + " dispatching...");
 	}
 
 	/**
@@ -106,6 +112,7 @@ public class PackingStation extends Entity implements Actor {
 	 * @param The storage shelf reference.
 	 */
 	public void recieveItem(StorageShelf storageShelf) {
+		this.log("Item recieved from %s", storageShelf.getUID());
 		this.storageShelvesVisited.add(storageShelf);
 	}
 

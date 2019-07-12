@@ -32,4 +32,15 @@ public abstract class Entity {
 	public Location getLocation() {
 		return this.location;
 	}
+	
+	protected void log(String message) {
+		String classType = this.getClass().getName();
+
+		System.out.println(String.format("%s %s: %s", classType, this.uid, message));
+	}
+	
+	protected void log(String format, Object... args) {
+		this.log(String.format(format, args));
+	}
+	
 }

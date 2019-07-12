@@ -78,7 +78,7 @@ public class PathFindingStrategy {
 
 		// If both locations are the same, return true (with a path count of 0)
 		if (beginningLocation.equals(targetLocation))
-			return true;
+			return false;
 
 		// Create lists for storing nodes to explore and those explored
 		// TODO add flag to node class?
