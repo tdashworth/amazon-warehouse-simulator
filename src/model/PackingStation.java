@@ -55,6 +55,12 @@ public class PackingStation extends Entity implements Actor {
 	private void pickOrder(Warehouse warehouse) throws LocationNotValidException {
 		this.log("Picking new order.");
 		this.currentOrder = warehouse.getUnassignedOrder();
+		
+		if (this.currentOrder == null) {
+			this.log("No orders left.");
+			return;
+		}
+		
 		this.tickCountWhenOrderAssigned = warehouse.getTotalTickCount();
 		this.remainingPackingTicks = this.currentOrder.getNumberOfTicksToPack();
 		this.storageShelvesVisited = new ArrayList<StorageShelf>();

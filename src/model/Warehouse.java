@@ -1,5 +1,4 @@
 package model;
-import java.text.MessageFormat;
 import java.util.*;
 
 import simulation.Simulator;
@@ -40,8 +39,12 @@ public class Warehouse {
 	 * @return A new order. 
 	 */
 	public Order getUnassignedOrder() {
+		if (this.unassignedOrders.isEmpty()) return null;
+		
 		Order order = this.unassignedOrders.pop();
 		this.assignedOrders.add(order);
+		
+		this.log("Order %s assigned. %s remaining to assign.", order.hashCode(), this.unassignedOrders.size());
 		return order;
 	}
 	
@@ -56,6 +59,7 @@ public class Warehouse {
 		
 		this.assignedOrders.remove(order);
 		this.dispatchedOrders.add(order);
+		this.log("Order %s dispatched. %s remaining to dispatch.", order.hashCode(), this.assignedOrders.size());
 	}
 	
 	/**
@@ -118,5 +122,15 @@ public class Warehouse {
 				+ "unassignedOrders: " + unassignedOrders.size()
 				+ "assignedOrders: " + assignedOrders.size()
 				+ "dispatchedOrders: " + dispatchedOrders.size();
+	}
+	
+	protected void log(String message) {
+		String classType = this.getClass().getName();
+
+		System.out.println(String.format("%s: %s", classType, message));
+	}
+	
+	protected void log(String format, Object... args) {
+		this.log(String.format(format, args));
 	}
 }

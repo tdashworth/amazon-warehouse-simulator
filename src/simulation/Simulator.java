@@ -51,6 +51,7 @@ public class Simulator {
 			System.exit(1);
 		} catch (Exception e) {
 			System.out.println("Error running simulation - " + e.toString());
+			e.printStackTrace();
 			System.exit(1);
 		}
 	}
