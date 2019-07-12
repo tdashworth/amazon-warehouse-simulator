@@ -14,11 +14,16 @@ public class Robot extends Entity implements Actor {
 	private boolean packingStationVisited;
 	private PackingStation packingStation;
 	private ChargingPod chargingPod;
+
 	private PathFindingStrategy pathFinder;
 	private Location previousLocation;
-	private static int POWER_UNITS_EMPTY;
-	private static int POWER_UNITS_CARRYING;
-	
+
+	private static int POWER_UNITS_EMPTY = 1;
+	private static int POWER_UNITS_CARRYING = 2;
+
+	public static enum Status {
+		GoingToCharge, Charging, CollectingItem, ReturningItem
+	}
 
 	/**
 	 * @param uid
@@ -127,6 +132,20 @@ public class Robot extends Entity implements Actor {
 			this.packingStationVisited = false;
 		}
 		return acceptJob;
+	}
+	
+	/*
+	 * Determines the robot's status based on its current state.
+	 */
+	public Status getStatus() {
+		if (this.location.equals(chargingPod.getLocation()))
+			return Status.Charging;
+		else if (this.storageShelf != null)
+			return Status.CollectingItem;
+		else if (this.hasItem())
+			return Status.ReturningItem;
+		else
+			return Status.GoingToCharge;
 	}
 
 	/**
