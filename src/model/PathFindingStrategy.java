@@ -1,145 +1,274 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
+/**
+ * A strategy to finding an optimal path between two location on a floor. This
+ * strategy explores nodes in a recursive fashion choosing the "most efficient"
+ * node to explore next. The most efficient node is determined by a combination
+ * of heuristic (closest direct distance) and cost (number of steps it took to
+ * travel to the node).
+ */
 public class PathFindingStrategy {
-	
-	//TODO Test robot collision on path finding
-	
+	private boolean avoidCollisions;
+	private Floor floor;
+	private Deque<Location> path;
+	private Node[][] floorNodes;
+
+	List<Node> unexploredNodes;
+	List<Node> exploredNodes;
+
 	/**
-	 * Calculates the optimum path from one location to another
+	 * Constructs a strategy for path finding with a default value to avoid
+	 * collisions.
 	 * 
-	 * @param currentPos
-	 * @param targetPos
-	 * @param warehouse
-	 * @return
+	 * @param floor the floor determining the size and location of other robots.
+	 */
+	public PathFindingStrategy(Floor floor) {
+		this(floor, true);
+	}
+
+	/**
+	 * Constructs a strategy for path finding.
+	 * 
+	 * @param floor           the floor determining the size and location of other
+	 *                        robots.
+	 * @param avoidCollisions a flag allowing the search to avoid location of
+	 *                        current robots.
+	 */
+	public PathFindingStrategy(Floor floor, boolean avoidCollisions) {
+		this.floor = floor;
+		this.avoidCollisions = avoidCollisions;
+		this.path = new LinkedList<Location>();
+		this.floorNodes = PathFindingStrategy.buildFloorWithNodes(this.floor.getNumberOfColumns(),
+				this.floor.getNumberOfRows());
+	}
+
+	/**
+	 * Given a number of columns and rows (typically for the Floor), this recreates
+	 * it with Nodes used by the searching.
+	 * 
+	 * This is a static method as it does not use or modify anything locally.
+	 * 
+	 * @param columns the number to columns in the floor.
+	 * @param rows    the number of rows in the floor.
+	 * @return a two dimensional array storing the nodes in their grid format.
+	 */
+	private static Node[][] buildFloorWithNodes(int columns, int rows) {
+		Node[][] nodes = new Node[columns][rows];
+
+		for (int column = 0; column < columns; column++) {
+			for (int row = 0; row < rows; row++) {
+				nodes[column][row] = new Node(column, row);
+			}
+		}
+
+		return nodes;
+	}
+
+	/**
+	 * Given two location, this will find an optimal path between them.
+	 * 
+	 * @param beginningLocation the Location to start the search.
+	 * @param targetLocation    the Location to end the search.
+	 * @return a boolean value; true if a path was found, otherwise false.
 	 * @throws LocationNotValidException
 	 */
-	public ArrayList<Location> getPath(Location currentPos, Location targetPos, Warehouse warehouse) throws LocationNotValidException {
-		
-		//An ArrayList for storing open (unexplored) and closed (explored) Locations
-		ArrayList<Node> closed = new ArrayList<Node>();
-		ArrayList<Node> open = new ArrayList<Node>();
-		
-		//Store the variables that are used often to prevent repeated method calls
-		int targetX = targetPos.getColumn();
-		int targetY = targetPos.getRow();
-		int currentX = currentPos.getColumn();
-		int currentY = currentPos.getRow();
-		
-		Floor floor = warehouse.getFloor();
-		int floorMaxX = floor.getNumberOfColumns();
-		int floorMaxY = floor.getNumberOfRows();
-		
-		//TODO Some of the below checking may not be needed as it may be covered within an earlier class
-		//TODO These will also need to be handled if kept, rather than just printing to console
-		if(!floor.locationIsValid(currentPos)) {
-			System.out.println("The robots current destination is invalid.");
-			System.exit(1);
-		}
-		if(!floor.locationIsValid(targetPos)) {
-			System.out.println("The robots target destination is invalid.");
-			System.exit(2);
-		}
-		if(currentPos.equals(targetPos)) {
-			System.out.println("We are already at the target destination.");
-			System.exit(3);
-		}
+	public boolean calculatePath(Location beginningLocation, Location targetLocation) {
 
+		// If both locations are the same, return true (with a path count of 0)
+		if (beginningLocation.equals(targetLocation))
+			return true;
 
-		//The 'nodes' variable is used to store the floor tiles as nodes, which have added variables used for searching
-		Node[][] nodes = new Node[floorMaxX][floorMaxY];
-		for (int x=0;x<floorMaxX;x++) {
-			for (int y=0;y<floorMaxY;y++) {
-				Node n = new Node(x,y);
-				nodes[x][y] = n;
-			}
-		}
+		// Create lists for storing nodes to explore and those explored
+		// TODO add flag to node class?
+		this.unexploredNodes = new ArrayList<Node>(this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
+		this.exploredNodes = new ArrayList<Node>(this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
 
-		//Add the node the robot is currently at to the open list
-		open.add(nodes[currentX][currentY]);
-		Collections.sort(open);
+		// Convert Locations to Nodes
+		Node beginningNode = this.getNodeAtLocation(beginningLocation);
+		Node targetNode = this.getNodeAtLocation(targetLocation);
 
-		
-		//Whilst there is still nodes to explore....
-		while(open.size() != 0) {
-			//Get the first element from open (this will be the one with the lowest heuristic value)
-			Node current = open.get(0);
+		// Add current location to begin search
+		this.unexploredNodes.add(beginningNode);
 
-			//If we have the target node, we have a full path. Exit the loop
-			if (current == nodes[targetX][targetY]) {
-				break;
-			}
+		searchForPath(targetLocation);
 
-			open.remove(current);
-			closed.add(current);
+		// No path was found
+		if (targetNode.getParent() == null)
+			return false;
 
-			//Evaluate the four tiles surrounding the current one as possible next steps
-			for (int x=-1; x<2; x++) {
-				for (int y=-1; y<2; y++) {
-					
-					//If we are attempting to assess the node we are already at, skip it and continue
-					if ((x == 0) && (y == 0)) {
-						continue;
-					}
+		// Populate the path with calculated route.
+		this.path = PathFindingStrategy.convertLinkedNodesToPath(beginningNode, targetNode);
 
-					//If we are attempting to assess a node diagonal to the current node, skip it and continue
-					if ((x != 0) && (y != 0)) {
-						continue;
-					}
+		return true;
 
-					//Calculate the location of the neighbour node and evaluate it
-					int assessedNodeX = x + current.getX();
-					int assessedNodeY = y + current.getY();
+	}
 
-					if (!((assessedNodeX < 0) || (assessedNodeY < 0) || (assessedNodeX >= floorMaxX) || (assessedNodeY >= floorMaxY ) || (floor.getEntities()[assessedNodeX][assessedNodeY] != null))) {
-						
-						//The nextStepCost is the cost to get to the current node +1
-						float nextStepCost = current.getCost() + 1;
-						Node neighbour = nodes[assessedNodeX][assessedNodeY];
-
-						if (nextStepCost < neighbour.getCost()) {
-							if (open.contains(neighbour)) {
-								open.remove(neighbour);
-							}
-							if (closed.contains(neighbour)) {
-								closed.remove(neighbour);
-							}
-						}
-
-						//If the node hasn't been assessed before, set it's cost to the current cost and add it to the open list
-						if (!open.contains(neighbour) && !closed.contains(neighbour)) {
-							neighbour.setCost(nextStepCost);
-							int dx = targetX - assessedNodeX;
-							int dy = targetY - assessedNodeY;
-							float heuristic = (float) Math.sqrt((dx*dx)+(dy*dy));
-							neighbour.setHeuristic(heuristic);
-							neighbour.setParent(current);
-							open.add(neighbour);
-							Collections.sort(open);
-						}
-					}
-				}
-			}
-		}
-
-		//No path was found
-		//TODO return some sort of exception to deal with this
-		if (nodes[targetX][targetY].getParent() == null) {
+	/**
+	 * Returns a node at a given x, y coordinates. Returns null if the given
+	 * coordinates are Out Of Bounds
+	 * 
+	 * @param column
+	 * @param row
+	 * @return
+	 */
+	private Node getNodeAtLocation(int column, int row) {
+		try {
+			return this.floorNodes[column][row];
+		} catch (ArrayIndexOutOfBoundsException execption) {
 			return null;
 		}
+	}
 
-		//A path was found - iterate these into a 'path' variable to return them in the correct order
-		ArrayList<Location> path = new ArrayList<Location>();
-		Node target = nodes[targetX][targetY];
-		
-		while (target != nodes[currentX][currentY]) {
-			path.add(0, new Location(target.getX(),target.getY()));
-			target = target.getParent();
+	/**
+	 * Returns a node at a given Location. Returns null if the given Location is Out
+	 * Of Bounds
+	 * 
+	 * @param location
+	 * @return
+	 */
+	private Node getNodeAtLocation(Location location) {
+		return this.getNodeAtLocation(location.getColumn(), location.getRow());
+	}
+
+	/**
+	 * Begins the recursive like search through the unexplored Nodes.
+	 * 
+	 * @param targetLocation the location used to determine success.
+	 */
+	private void searchForPath(Location targetLocation) {
+		Node targetNode = this.getNodeAtLocation(targetLocation);
+		do {
+			Collections.sort(this.unexploredNodes);
+
+			Node currentNode = this.unexploredNodes.get(0);
+
+			// Found target, breaking out to stop search
+			if (currentNode.toLocation().equals(targetLocation))
+				break;
+
+			int nextStepCost = currentNode.getCost() + 1;
+
+			this.checkNodeForExplorationInDirection(nextStepCost, currentNode, targetNode, +0, -1); // ABOVE
+			this.checkNodeForExplorationInDirection(nextStepCost, currentNode, targetNode, +1, +0); // RIGHT
+			this.checkNodeForExplorationInDirection(nextStepCost, currentNode, targetNode, +0, +1); // BELOW
+			this.checkNodeForExplorationInDirection(nextStepCost, currentNode, targetNode, -1, +0); // LEFT
+
+			// Move current node to explored.
+			this.unexploredNodes.remove(currentNode);
+			this.exploredNodes.add(currentNode);
+
+		} while (unexploredNodes.size() > 0);
+	}
+
+	/**
+	 * A wrapper around checkNodeForExploration(...) defining the current node as
+	 * the relative position change from the previous node.
+	 * 
+	 * @param nextStepCost the cost taken to travel to this node.
+	 * @param previous     the previous node to the one being explored.
+	 * @param target       the target node used to determine heuristic later.
+	 * @param columnChange the relative change in column.
+	 * @param rowChange    the relative change in row.
+	 */
+	private void checkNodeForExplorationInDirection(int nextStepCost, Node previous, Node target, int columnChange,
+			int rowChange) {
+		Node current = this.getNodeAtLocation(previous.getX() + columnChange, previous.getY() + rowChange);
+		if (current != null)
+			this.checkNodeForExploration(current, nextStepCost, previous, target);
+	}
+
+	/**
+	 * Adding a node to explore checking the location is valid, it hasn't been
+	 * explored already.
+	 * 
+	 * @param current      the current node to explore.
+	 * @param nextStepCost the cost taken to travel to this node.
+	 * @param previous     the previous node to the one being explored.
+	 * @param target       the target node used to determine heuristic later.
+	 */
+	private void checkNodeForExploration(Node current, int nextStepCost, Node previous, Node target) {
+		// Check location validity
+		if (!this.floor.locationIsValid(current.toLocation()))
+			return;
+		if (this.avoidCollisions && !this.floor.locationIsEmpty(current.toLocation()))
+			return;
+
+		// If the node's current cost is greater than the nextStepCost, remove from
+		// lists as a more efficient path has been found.
+		if (nextStepCost < current.getCost()) {
+			this.exploredNodes.remove(current);
+			this.unexploredNodes.remove(current);
 		}
-		
+
+		// This node has already been handled.
+		if (this.unexploredNodes.contains(current) || this.exploredNodes.contains(current))
+			return;
+
+		current.setCost(nextStepCost);
+		current.setHeuristic(PathFindingStrategy.calculateHeuristic(current, target));
+		current.setParent(previous);
+		this.unexploredNodes.add(current);
+	}
+
+	/**
+	 * Converts the linked nodes to a path stack.
+	 * 
+	 * This is static because it doesn't use or modify anything locally.
+	 * 
+	 * @param start the beginning node of the path (used as a stopping condition)
+	 * @param end   the target node of the path (used as the initial point)
+	 */
+	private static Deque<Location> convertLinkedNodesToPath(Node start, Node end) {
+		Deque<Location> path = new LinkedList<Location>();
+		Node currentNode = end;
+
+		while (!currentNode.equals(start)) {
+			path.addFirst(currentNode.toLocation());
+			currentNode = currentNode.getParent();
+		}
+
 		return path;
+	}
+
+	/**
+	 * Calculates the heuristic between the two given nodes. The heuristic is simply
+	 * the direct distance between the two nodes calculated using Pythagoras
+	 * Theorem.
+	 * 
+	 * This is static because it doesn't use or modify anything locally.
+	 * 
+	 * @param n1 the first Node.
+	 * @param n2 the second Node.
+	 * @return the direct distance between them.
+	 */
+	private static double calculateHeuristic(Node n1, Node n2) {
+		int differenceInColumns = Math.abs(n1.getX() - n2.getX());
+		int differenceInRows = Math.abs(n1.getY() - n2.getY());
+
+		return Math.sqrt(differenceInRows ^ 2 + differenceInColumns ^ 2);
+	}
+
+	/**
+	 * @return the entire path.
+	 */
+	public Collection<Location> getPath() {
+		return this.path;
+	}
+
+	/**
+	 * @return the next step in the path (which is removed).
+	 */
+	public Location getNextLocation() {
+		return this.path.pop();
+	}
+
+	/**
+	 * @return the number of steps in the path.
+	 */
+	public int getNumberOfRemainingSteps() {
+		return this.path.size();
 	}
 
 }

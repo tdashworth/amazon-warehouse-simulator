@@ -28,7 +28,7 @@ public class Robot extends Entity implements Actor {
 		super(uid, location);
 		this.chargingPod = chargingPod;
 		this.powerUnits = powerUnits;
-		this.pathFinder = new PathFindingStrategy();
+		
 		POWER_UNITS_EMPTY = 1;
 		POWER_UNITS_CARRYING = 2;
 	}
@@ -77,9 +77,13 @@ public class Robot extends Entity implements Actor {
 		System.out.println("Robot " + this.uid + ". Power level " + this.powerUnits + " before move.");
 		System.out.println("Current " + this.location);
 		System.out.println("Target " + targetLocation);
-		System.out.println("Path: " + this.pathFinder.getPath(this.location, targetLocation, warehouse));
+		
+		if (!this.pathFinder.calculatePath(this.location, targetLocation))
+			throw new Exception("No path could be found");
+		
+		System.out.println("Path: " + this.pathFinder.getPath());
 
-		Location newLocation = this.pathFinder.getPath(this.location, targetLocation, warehouse).get(0);
+		Location newLocation = this.pathFinder.getNextLocation();
 		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
 
 		if (successfulMove) {
@@ -107,7 +111,7 @@ public class Robot extends Entity implements Actor {
 	 * @return
 	 * @throws LocationNotValidException 
 	 */
-	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation) {
+	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation, Warehouse warehouse) {
 		//TODO check various condition whether the robot can accept a job.
 		//TODO Check that the robots current charge is enough to get it from...
 		//    - its current location to the requested shelf (costs 1 per move)
@@ -118,6 +122,7 @@ public class Robot extends Entity implements Actor {
 		if (acceptJob) {
 			this.storageShelf = storageShelf;
 			this.packingStation = packingStation;
+			this.pathFinder = new PathFindingStrategy(warehouse.getFloor());
 			this.storageShelfVisited = false;
 			this.packingStationVisited = false;
 		}

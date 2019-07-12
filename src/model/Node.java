@@ -3,13 +3,13 @@ package model;
 /**
  * A single node in the search graph
  */
-public class Node implements Comparable {
+public class Node implements Comparable<Node> {
 	
 	private int x;
 	private int y;
-	private float cost;
+	private int cost;
 	private Node parent;
-	private float heuristic;
+	private double heuristic;
 
 	/**
 	 * Create a new node
@@ -34,11 +34,11 @@ public class Node implements Comparable {
 	/**
 	 * compare the nodes by their heuristic value
 	 */
-	public int compareTo(Object other) {
+	public int compareTo(Node other) {
 		Node o = (Node) other;
 
-		float f = heuristic + cost;
-		float of = o.heuristic + o.cost;
+		double f = heuristic + cost;
+		double of = o.heuristic + o.cost;
 
 		if (f < of) {
 			return -1;
@@ -72,7 +72,7 @@ public class Node implements Comparable {
 	 * 
 	 * @return
 	 */
-	public float getCost() {
+	public int getCost() {
 		return cost;
 	}
 	
@@ -81,7 +81,7 @@ public class Node implements Comparable {
 	 * 
 	 * @return
 	 */
-	public void setCost(float cost) {
+	public void setCost(int cost) {
 		this.cost = cost;
 	}
 	
@@ -99,7 +99,11 @@ public class Node implements Comparable {
 	 * 
 	 * @return
 	 */
-	public void setHeuristic(float heuristic) {
+	public void setHeuristic(double heuristic) {
 		this.heuristic = heuristic;
+	}
+	
+	public Location toLocation() {
+		return new Location(x, y);
 	}
 }
