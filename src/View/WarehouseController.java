@@ -1,5 +1,7 @@
 package View;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,8 +12,15 @@ import org.omg.CORBA.DoubleSeqHelper;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
@@ -21,9 +30,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import model.Actor;
 import model.ChargingPod;
 import model.Floor;
@@ -57,12 +69,15 @@ public class WarehouseController{
 	@FXML ListView<Order> assignedOrders;
 	@FXML ListView<Order> dispatchedOrders;
 	private ArrayList<Robot> robots; 
+	@FXML private Button btnUploadFile;
+	private Path filePath;
+	@FXML private Label lblFile;
 
 	/**
 	 * initialize the simulation, add listeners to the sliders and text areas.
 	 */
 	@FXML public void initialize() {
-		
+
 		robots = new ArrayList<Robot>();
 
 		txtRows.textProperty().addListener(new ChangeListener<String>() {
@@ -92,7 +107,7 @@ public class WarehouseController{
 				r.setPowerUnits(newValue.intValue());
 			}
 			sim.setMaxChargeCapacity(newValue.intValue());
-			
+
 		});
 
 		sldCharge.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -102,6 +117,69 @@ public class WarehouseController{
 
 
 		//unassignedOrders.setCellFactory((view) -> new OrderCell());
+
+
+		btnUploadFile.setOnAction(new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent event) {
+				Parent root;
+				FXMLLoader loader = new FXMLLoader();
+				loader.setLocation(getClass().getResource("Uploader.fxml"));
+				Stage stage = new Stage();
+				stage.setTitle("FileChooser"); 
+				// create a File chooser 
+				FileChooser fil_chooser = new FileChooser(); 
+				// create a Label 
+				Label label = new Label("no files selected"); 
+				// create a Button 
+				Button button = new Button("Select File"); 
+
+				// create an Event Handler 
+				EventHandler<ActionEvent> event1 =  
+						new EventHandler<ActionEvent>() { 
+
+					public void handle(ActionEvent e) 
+					{ 
+						// get the file selected 
+						File file = fil_chooser.showOpenDialog(stage); 
+
+						if (file != null) { 
+
+							label.setText(file.getAbsolutePath()); 
+							lblFile.setText("File: " + file.getAbsolutePath()  
+									+ "  selected");
+							
+						} 
+					} 
+				}; 
+				button.setOnAction(event1); 
+
+
+				Button btnConfirm = new Button("Confirm");
+
+				EventHandler<ActionEvent> confirm =  
+						new EventHandler<ActionEvent>() { 
+					
+					public void handle(ActionEvent e) 
+					{ 
+						filePath = Paths.get(label.getText());
+						Stage stage = (Stage) btnConfirm.getScene().getWindow();
+						stage.close();
+					} 
+				}; 
+				
+				btnConfirm.setOnAction(confirm);
+
+				// create a VBox 
+				VBox vbox = new VBox(30, label, button, btnConfirm); 
+
+				// set Alignment 
+				vbox.setAlignment(Pos.CENTER); 
+				Scene scene = new Scene(vbox, 800, 500); 
+				stage.setScene(scene); 
+				stage.show();
+
+			}
+		});
 	}
 
 
@@ -109,7 +187,7 @@ public class WarehouseController{
 	 * Resets the simulation back to it's default settings
 	 */
 	@FXML public void reset() {
-	
+
 		sldCapacity.setValue(10.0);
 		txtRows.setText("0");
 		txtCol.setText("0");
@@ -123,7 +201,7 @@ public class WarehouseController{
 		}
 		grdWarehouse.getChildren().clear();
 		sim.resetSimulator();
-		
+
 	}
 
 	/**
@@ -137,26 +215,26 @@ public class WarehouseController{
 
 	@FXML public void runOneTick() throws Exception {
 		sim.tick();
-		
+
 		grdWarehouse.getChildren().removeIf(n -> n instanceof Circle);
 		lblCount.setText("Total tick count: " + sim.getTotalTickCount());
-		
+
 		for(Robot robo : robots) {
-		Location l = robo.getLocation();	
-		Circle r = new Circle();
-		r.setRadius(10);	
-		r.setFill(Color.RED);
-		GridPane.setConstraints(r, l.getRow(), l.getColumn());
-		grdWarehouse.getChildren().add(r);			
+			Location l = robo.getLocation();	
+			Circle r = new Circle();
+			r.setRadius(10);	
+			r.setFill(Color.RED);
+			GridPane.setConstraints(r, l.getRow(), l.getColumn());
+			grdWarehouse.getChildren().add(r);			
 		}
-				
+
 	}
 
 	public void loadSimulation() throws IOException, SimFileFormatException, LocationNotValidException {
-		
+
 		System.out.println("Loading Simulation");
-		
-		sim = Simulator.createFromFile(Paths.get("./sample-configs/twoRobotsTwoShelves.sim"));
+
+		sim = Simulator.createFromFile(filePath);
 
 		//sets the grid size to be the same as the floor in the file
 		Floor f = sim.getFloor();
@@ -171,7 +249,7 @@ public class WarehouseController{
 			column.setMinWidth(30);
 			grdWarehouse.getColumnConstraints().add(column);
 		}
-		
+
 		for(int j=0; j < f.getNumberOfColumns(); j++) {
 			for (int i=0; i< f.getNumberOfRows(); i++) {
 				StackPane stk = new StackPane();
@@ -179,7 +257,7 @@ public class WarehouseController{
 				grdWarehouse.getChildren().add(stk);
 			}  
 		}
-		
+
 		ObservableList grid = grdWarehouse.getChildren();
 
 		sldCapacity.valueProperty().setValue(sim.getMaxChargeCapacity());
@@ -189,7 +267,7 @@ public class WarehouseController{
 		txtCol.setText(Integer.toString(f.getNumberOfColumns()));
 
 		List<Actor> actors = sim.getActors();
-		
+
 		for(Actor a : actors) {	
 			if(a instanceof ChargingPod) {
 				System.out.println("Charge");
@@ -216,7 +294,7 @@ public class WarehouseController{
 				rb1.setFill(Color.RED);
 				rb1.setRadius(10);
 				stk.getChildren().add(rb1);
-				
+
 			}
 			if(a instanceof PackingStation) {
 				Location l = ((PackingStation) a).getLocation();
@@ -262,6 +340,8 @@ public class WarehouseController{
 
 	}
 
+
+
 	//1 ticks, 10 ticks or go to end
 	//click on the cells to place the entities
 	//orders randomly generated.
@@ -269,18 +349,18 @@ public class WarehouseController{
 	//View = representation
 	//Controller - takes input - updates the model
 	//every cell in the grid as an observable list, when cell changes add shape to cells. 
- 
+
 
 	Node getChildByRowColumn(final GridPane gridPane, final int row, final int col){
 
-	    for(final Node node : gridPane.getChildren()){
-	        if (GridPane.getRowIndex(node) == null) continue ; //ignore Group 
-	        if(GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == col) 
-	        if(node instanceof Circle) {
-	        	return node;
-	        }
-	    }
-	    return null;
+		for(final Node node : gridPane.getChildren()){
+			if (GridPane.getRowIndex(node) == null) continue ; //ignore Group 
+			if(GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == col) 
+				if(node instanceof Circle) {
+					return node;
+				}
+		}
+		return null;
 	} 
-		
+
 }
