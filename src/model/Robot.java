@@ -63,13 +63,13 @@ public class Robot extends Entity implements Actor {
 	 * Increases the robots power units
 	 */
 	public void charge(int chargeSpeed, int maxCharge) {
-		if (this.powerUnits >= maxCharge) {
+		if (this.powerUnits + chargeSpeed >= maxCharge) {
+			this.powerUnits = maxCharge;
 			this.log("Fully charged to %s", this.powerUnits);
-			return;
+		} else {
+			this.powerUnits += chargeSpeed;
+			this.log("Charge increased to %s.", this.powerUnits);
 		}
-		
-		this.powerUnits += chargeSpeed;
-		this.log("Charge increased to %s.", this.powerUnits);
 	}
 
 	private void collectItemFromStorageShelf(Warehouse warehouse) throws Exception {
