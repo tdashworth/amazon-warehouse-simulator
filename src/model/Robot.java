@@ -31,7 +31,7 @@ public class Robot extends Entity implements Actor {
 	@Override
 	public void tick(Warehouse warehouse) {
 		try {
-			Status status = this.getStatus();
+			Status status = this.getStatus(warehouse);
 
 			switch (status) {
 			case CollectingItem:
@@ -42,15 +42,14 @@ public class Robot extends Entity implements Actor {
 				this.returnItemToPackingStation(warehouse);
 				break;
 
-			default:
-				// Status: Charging or GoingToCharge
-				boolean isAtChargingPod = this.location.equals(this.chargingPod.getLocation());
-				boolean isBatteryBelowHalfCharge = this.powerUnits < (warehouse.getMaxChargeCapacity() / 2);
-				if (isAtChargingPod && isBatteryBelowHalfCharge) {
-					charge(warehouse.getChargeSpeed());
-				} else {
-					move(warehouse, this.chargingPod.getLocation());
-				}
+			case Charging:
+				charge(warehouse.getChargeSpeed());
+				break;
+
+			case GoingToCharge:
+				this.move(warehouse, this.chargingPod.getLocation());
+				break;
+
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -93,7 +92,10 @@ public class Robot extends Entity implements Actor {
 		this.log(String.format("Moving from %s to %s.", this.location, targetLocation));
 		this.log("Power Units (pre move): " + this.powerUnits);
 
-		this.pathFinder.calculatePath(this.location, targetLocation);
+		boolean pathFound = this.pathFinder.calculatePath(this.location, targetLocation);
+
+		if (!pathFound)
+			return; // TODO handle better!
 
 		this.log("Path: " + this.pathFinder.getPath());
 
@@ -122,7 +124,7 @@ public class Robot extends Entity implements Actor {
 	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation, Warehouse warehouse)
 			throws LocationNotValidException {
 
-		if (this.hasItem())
+		if (this.storageShelf != null || this.hasItem())
 			return false;
 
 		double estimatedCostWithLeeway = estimatePowerUnitCostForJob(storageShelf, packingStation, warehouse);
@@ -174,15 +176,20 @@ public class Robot extends Entity implements Actor {
 	/*
 	 * Determines the robot's status based on its current state.
 	 */
-	public Status getStatus() {
-		if (this.location.equals(chargingPod.getLocation()))
+	public Status getStatus(Warehouse warehouse) {
+		boolean isAtChargingPod = this.location.equals(this.chargingPod.getLocation());
+		boolean isBatteryBelowHalfCharge = this.powerUnits < (warehouse.getMaxChargeCapacity() * 0.5);
+
+		if (isBatteryBelowHalfCharge && isAtChargingPod) // Running low of powerUnits
 			return Status.Charging;
-		else if (this.storageShelf != null)
+		else if (this.storageShelf != null) // Storage Shelf Assigned
 			return Status.CollectingItem;
 		else if (this.hasItem())
-			return Status.ReturningItem;
+			return Status.ReturningItem; // Item collected
+		else if (isAtChargingPod)
+			return Status.Charging; // Nothing to do and already at Charging Pod
 		else
-			return Status.GoingToCharge;
+			return Status.GoingToCharge; // Nothing to do so go charge
 	}
 
 	/**
