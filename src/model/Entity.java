@@ -38,4 +38,9 @@ public abstract class Entity {
 
 		System.out.println(String.format("%s %s: %s", classType, this.uid, message));
 	}
+	
+	protected void log(String format, Object... args) {
+		this.log(String.format(format, args));
+	}
+	
 }

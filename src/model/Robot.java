@@ -5,6 +5,7 @@ import java.text.MessageFormat;
 public class Robot extends Entity implements Actor {
 	private int powerUnits;
 	private StorageShelf storageShelf;
+	private StorageShelf holdingItem;
 	private PackingStation packingStation;
 	private ChargingPod chargingPod;
 
@@ -32,6 +33,7 @@ public class Robot extends Entity implements Actor {
 	public void tick(Warehouse warehouse) {
 		try {
 			Status status = this.getStatus(warehouse);
+			this.log("Ticking with status: %s.", status);
 
 			switch (status) {
 			case CollectingItem:
@@ -62,22 +64,29 @@ public class Robot extends Entity implements Actor {
 	 */
 	public void charge(int chargeSpeed) {
 		this.powerUnits += chargeSpeed;
-		this.log("Charge increased to " + this.powerUnits);
+		this.log("Charge increased to %s.", this.powerUnits);
 	}
 
 	private void collectItemFromStorageShelf(Warehouse warehouse) throws Exception {
 		this.move(warehouse, this.storageShelf.getLocation());
+		this.log("Moved closer to assigned Storage Shelf.");
 
-		if (this.location.equals(this.storageShelf.getLocation()))
+		if (this.location.equals(this.storageShelf.getLocation())) {
+			this.holdingItem = this.storageShelf;
 			this.storageShelf = null;
+			this.log("Reached assigned Storage Shelf.");
+		}
 	}
 
 	private void returnItemToPackingStation(Warehouse warehouse) throws Exception {
 		this.move(warehouse, this.packingStation.getLocation());
+		this.log("Moved closer to assigned Packing Station.");
 
 		if (this.location.equals(this.packingStation.getLocation())) {
-			this.packingStation.recieveItem(storageShelf);
+			this.packingStation.recieveItem(this.holdingItem);
 			this.packingStation = null;
+			this.holdingItem = null;
+			this.log("Reached assigned Packing Station.");
 		}
 	}
 
@@ -89,15 +98,14 @@ public class Robot extends Entity implements Actor {
 	 * 
 	 */
 	private void move(Warehouse warehouse, Location targetLocation) throws Exception {
-		this.log(String.format("Moving from %s to %s.", this.location, targetLocation));
-		this.log("Power Units (pre move): " + this.powerUnits);
+		this.log("Moving from %s to %s.", this.location, targetLocation);
 
 		boolean pathFound = this.pathFinder.calculatePath(this.location, targetLocation);
 
 		if (!pathFound)
 			return; // TODO handle better!
 
-		this.log("Path: " + this.pathFinder.getPath());
+		// this.log("Path: " + this.pathFinder.getPath());
 
 		Location newLocation = this.pathFinder.getNextLocation();
 
@@ -111,7 +119,7 @@ public class Robot extends Entity implements Actor {
 		int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;
 		this.powerUnits -= powerUnitsToDeduct;
 
-		this.log("Power Units (post move): " + this.powerUnits);
+		this.log("Power Units (post move): %s.", this.powerUnits);
 	}
 
 	/**
@@ -135,13 +143,15 @@ public class Robot extends Entity implements Actor {
 		this.storageShelf = storageShelf;
 		this.packingStation = packingStation;
 		this.pathFinder = new PathFindingStrategy(warehouse.getFloor());
+		
+		this.log("Accepted Job to %s then %s.", storageShelf.getLocation(), packingStation.getLocation());
 
 		return true;
 	}
 
 	/*
 	 * Given a storage shelf and packing station this will calculate the number of
-	 * power units to make the trip back to its charging pod with a leyway of 20%.
+	 * power units to make the trip back to its charging pod with a leeway of 20%.
 	 * 
 	 * @param storageShelf
 	 * 
@@ -198,7 +208,7 @@ public class Robot extends Entity implements Actor {
 	 * @return boolean
 	 */
 	public boolean hasItem() {
-		return this.storageShelf == null && this.packingStation != null;
+		return this.holdingItem != null;
 	}
 
 	/**
