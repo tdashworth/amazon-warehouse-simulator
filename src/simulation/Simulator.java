@@ -1,13 +1,5 @@
 package simulation;
-import View.*;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
@@ -21,7 +13,6 @@ public class Simulator {
 	private Warehouse warehouse;
 	private int chargeSpeed;
 	private int maxChargeCapacity;
-	private WarehouseController controller;
 	private ObservableList<ChargingPod> chargePods;
 	private ArrayList<Robot> robots;
 	private ObservableList<PackingStation> packingStations;
@@ -30,9 +21,7 @@ public class Simulator {
 	private ObservableList<Order> assignedOrders;
 	private ObservableList<Order> unassignedOrders;
 	private ObservableList<Order> dispatchedOrders;
-	private WarehouseView view;
 	private Floor floor;
-	private boolean simComplete;
 	/**
 	 * Main method, creates a simulator and starts the simulation run method.
 	 */
@@ -105,7 +94,6 @@ public class Simulator {
 				.collect(Collectors.toList());
 		this.chargeSpeed = chargeSpeed;
 		this.maxChargeCapacity = capacity;
-		this.simComplete = false;
 		for (Entity entity : entities.values()) {
 			if (entity instanceof Robot) {
 				robots.add((Robot) entity);
@@ -121,21 +109,11 @@ public class Simulator {
 	public void run() throws Exception {
 		while (!this.warehouse.areAllOrdersDispatched())
 			tick();
-		System.out.println("All orders have been dispatched.");
-		simComplete =true;
-	}
-
-
-	/**
-	 * Set the view object
-	 * @param WarehouseView
-	 */
-	public void setView(WarehouseView view) {
-		this.view = view;
+		System.out.println(String.format("All orders have been dispatched. It took %s ticks.", this.totalTickCount));
 	}
 	
-	public boolean simComplete() {
-		return simComplete;
+	public boolean isComplete() {
+		return this.warehouse.areAllOrdersDispatched();
 	}
 
 
@@ -227,14 +205,6 @@ public class Simulator {
 		chargeSpeed = 1;
 		maxChargeCapacity = 10;
 		floor.clear();
-		//shelves.clear();
-		//robots.clear();
-		//chargePods.clear();
-		//dispatchedOrders.clear();
-		//assignedOrders.clear();
-		//unassignedOrders.clear();
 	}
-
-	
 
 }

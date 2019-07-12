@@ -7,14 +7,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*; 
 import javafx.stage.Stage; 
 import javafx.geometry.*; 
-import javafx.scene.paint.*; 
-import javafx.scene.canvas.*; 
-import javafx.scene.text.*; 
-import javafx.scene.Group; 
-import javafx.scene.shape.*; 
 import javafx.event.ActionEvent; 
 import javafx.event.EventHandler; 
-import javafx.collections.*; 
 import java.io.*; 
 import javafx.stage.FileChooser; 
    

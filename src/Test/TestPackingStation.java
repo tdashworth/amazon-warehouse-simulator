@@ -5,10 +5,7 @@ import model.*;
 
 public class TestPackingStation {
 
-	private Order currentOrder;
 	private Location l;
-	private StorageShelf ss;
-	private int remainingPackTicks;
 	
 	@Before
 	public void setUp() {

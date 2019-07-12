@@ -5,25 +5,18 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import org.omg.CORBA.DoubleSeqHelper;
-
-import javafx.animation.Animation;
-import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -138,7 +131,6 @@ public class WarehouseController {
 
 		btnUploadFile.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
-				Parent root;
 				FXMLLoader loader = new FXMLLoader();
 				loader.setLocation(getClass().getResource("Uploader.fxml"));
 				Stage stage = new Stage();
@@ -236,7 +228,7 @@ public class WarehouseController {
 			Circle r = new Circle();
 			r.setRadius(10);
 			r.setFill(Color.RED);
-			GridPane.setConstraints(r, l.getRow(), l.getColumn());
+			GridPane.setConstraints(r, l.getColumn(), l.getRow());
 			grdWarehouse.getChildren().add(r);
 		}
 
@@ -266,21 +258,11 @@ public class WarehouseController {
 			grdWarehouse.getRowConstraints().add(rowConst);
 		}
 
-		for (int i = 0; i < f.getNumberOfRows(); i++) {
+		for (int i = 0; i < f.getNumberOfColumns(); i++) {
 			ColumnConstraints column = new ColumnConstraints();
 			column.setMinWidth(30);
 			grdWarehouse.getColumnConstraints().add(column);
 		}
-
-		for (int j = 0; j < f.getNumberOfColumns(); j++) {
-			for (int i = 0; i < f.getNumberOfRows(); i++) {
-				StackPane stk = new StackPane();
-				GridPane.setConstraints(stk, i, j);
-				grdWarehouse.getChildren().add(stk);
-			}
-		}
-
-		ObservableList grid = grdWarehouse.getChildren();
 
 		sldCapacity.valueProperty().setValue(sim.getMaxChargeCapacity());
 		sldCharge.valueProperty().setValue(sim.getChargeSpeed());
@@ -295,7 +277,7 @@ public class WarehouseController {
 				System.out.println("Charge");
 				Location l = ((ChargingPod) a).getLocation();
 				StackPane stk = new StackPane();
-				GridPane.setConstraints(stk, l.getRow(), l.getColumn());
+				GridPane.setConstraints(stk, l.getColumn(), l.getRow());
 				grdWarehouse.getChildren().add(stk);
 				Circle cp1 = new Circle();
 				cp1.setFill(Color.AQUA);
@@ -306,7 +288,7 @@ public class WarehouseController {
 				robots.add((Robot) a);
 				Location l = ((Robot) a).getLocation();
 				StackPane stk = new StackPane();
-				GridPane.setConstraints(stk, l.getRow(), l.getColumn());
+				GridPane.setConstraints(stk, l.getColumn(), l.getRow());
 				grdWarehouse.getChildren().add(stk);
 				Circle cp1 = new Circle();
 				cp1.setFill(Color.CHARTREUSE);
@@ -321,7 +303,7 @@ public class WarehouseController {
 			if (a instanceof PackingStation) {
 				Location l = ((PackingStation) a).getLocation();
 				StackPane stk = new StackPane();
-				GridPane.setConstraints(stk, l.getRow(), l.getColumn());
+				GridPane.setConstraints(stk, l.getColumn(), l.getRow());
 				grdWarehouse.getChildren().add(stk);
 				Rectangle ps1 = new Rectangle();
 				ps1.setFill(Color.MIDNIGHTBLUE);
@@ -332,7 +314,7 @@ public class WarehouseController {
 			if (a instanceof StorageShelf) {
 				Location l = ((StorageShelf) a).getLocation();
 				StackPane stk = new StackPane();
-				GridPane.setConstraints(stk, l.getRow(), l.getColumn());
+				GridPane.setConstraints(stk, l.getColumn(), l.getRow());
 				grdWarehouse.getChildren().add(stk);
 				Rectangle ss1 = new Rectangle();
 				ss1.setFill(Color.BURLYWOOD);
@@ -362,18 +344,14 @@ public class WarehouseController {
 
 	@FXML
 	public void runToEnd() throws Exception {
-		AnimationTimer timer = new AnimationTimer() {
-            @Override
-            public void handle(long l) {
-            	if (sim.simComplete())stop();
-            }
-		};
-		
-		Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), ea -> runOneTickSaftely()));
+		Timeline timeline = new Timeline();
+		timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0.25), ea -> {
+			runOneTickSaftely();
+			if (sim.isComplete())
+				timeline.stop();
+		}));
 		timeline.setCycleCount(Timeline.INDEFINITE);
-		
 		timeline.play();
-		timer.start();
 	}
 
 	// 1 ticks, 10 ticks or go to end
