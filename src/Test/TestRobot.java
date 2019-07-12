@@ -39,9 +39,9 @@ public class TestRobot {
 	@Test
 	public void testRobot() {
 		Robot r = new Robot("r1", l, ch, 10);
-		r.charge(2);
+		r.charge(2, 10);
 		assertEquals(12, r.getPowerUnits());
-		r.charge(5);
+		r.charge(5, 10);
 		assertEquals(17, r.getPowerUnits());
 		assertEquals(l,r.getLocation());
 				

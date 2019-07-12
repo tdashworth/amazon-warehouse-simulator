@@ -45,7 +45,7 @@ public class Robot extends Entity implements Actor {
 				break;
 
 			case Charging:
-				charge(warehouse.getChargeSpeed());
+				charge(warehouse.getChargeSpeed(), warehouse.getMaxChargeCapacity());
 				break;
 
 			case GoingToCharge:
@@ -62,7 +62,12 @@ public class Robot extends Entity implements Actor {
 	/**
 	 * Increases the robots power units
 	 */
-	public void charge(int chargeSpeed) {
+	public void charge(int chargeSpeed, int maxCharge) {
+		if (this.powerUnits >= maxCharge) {
+			this.log("Fully charged to %s", this.powerUnits);
+			return;
+		}
+		
 		this.powerUnits += chargeSpeed;
 		this.log("Charge increased to %s.", this.powerUnits);
 	}
