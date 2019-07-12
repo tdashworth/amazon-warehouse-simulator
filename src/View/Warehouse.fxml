@@ -142,7 +142,21 @@
 						</Button>
 					</children>
 				</GridPane>
-            <Button fx:id="btnUploadFile" mnemonicParsing="false" text="Upload File" />
+            <Button fx:id="btnUploadFile" mnemonicParsing="false" text="Upload File">
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding></Button>
+            <Button fx:id="btnRunToEnd" mnemonicParsing="false" onAction="#runToEnd" text="Run to end">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </Button>
 			</children>
 			<padding>
 				<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

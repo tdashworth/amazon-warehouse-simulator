@@ -32,6 +32,7 @@ public class Simulator {
 	private ObservableList<Order> dispatchedOrders;
 	private WarehouseView view;
 	private Floor floor;
+	private boolean simComplete;
 	/**
 	 * Main method, creates a simulator and starts the simulation run method.
 	 */
@@ -103,6 +104,7 @@ public class Simulator {
 				.collect(Collectors.toList());
 		this.chargeSpeed = chargeSpeed;
 		this.maxChargeCapacity = capacity;
+		this.simComplete = false;
 		for (Entity entity : entities.values()) {
 			if (entity instanceof Robot) {
 				robots.add((Robot) entity);
@@ -119,6 +121,7 @@ public class Simulator {
 		while (!this.warehouse.areAllOrdersDispatched())
 			tick();
 		System.out.println("All orders have been dispatched.");
+		simComplete =true;
 	}
 
 
@@ -128,6 +131,10 @@ public class Simulator {
 	 */
 	public void setView(WarehouseView view) {
 		this.view = view;
+	}
+	
+	public boolean simComplete() {
+		return simComplete;
 	}
 
 

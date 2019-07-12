@@ -339,6 +339,13 @@ public class WarehouseController{
 		}
 
 	}
+	
+	@FXML public void runToEnd() throws Exception{
+		while(!sim.simComplete()) {
+			runOneTick();
+			Thread.sleep(30);
+		}
+	}
 
 
 
