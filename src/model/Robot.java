@@ -2,16 +2,9 @@ package model;
 
 import java.text.MessageFormat;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-
 public class Robot extends Entity implements Actor {
 	private int powerUnits;
 	private StorageShelf storageShelf;
-	private boolean storageShelfVisited;
-	private boolean packingStationVisited;
 	private PackingStation packingStation;
 	private ChargingPod chargingPod;
 
@@ -28,33 +21,40 @@ public class Robot extends Entity implements Actor {
 	/**
 	 * @param uid
 	 * @param location
-	 */	
+	 */
 	public Robot(String uid, Location location, ChargingPod chargingPod, int powerUnits) {
 		super(uid, location);
 		this.chargingPod = chargingPod;
 		this.powerUnits = powerUnits;
-		
+
 		POWER_UNITS_EMPTY = 1;
 		POWER_UNITS_CARRYING = 2;
 	}
 
-
-
 	@Override
 	public void tick(Warehouse warehouse) {
 		try {
-			if (this.location.equals(chargingPod.getLocation()) && powerUnits < (warehouse.getMaxChargeCapacity()/2) )
-				charge(warehouse.getChargeSpeed());
-			else if (this.storageShelfVisited == false && this.storageShelf != null)
+			Status status = this.getStatus();
+
+			switch (status) {
+			case CollectingItem:
 				move(warehouse, this.storageShelf.getLocation());
-			else if (this.packingStationVisited == false && this.packingStation != null)
+				this.collectItemFromStorageShelf(warehouse);
+				break;
+
+			case ReturningItem:
 				move(warehouse, this.packingStation.getLocation());
-			else if (!this.location.equals(chargingPod.getLocation()))
-				move(warehouse, this.chargingPod.getLocation());
-			else if (this.location.equals(chargingPod.getLocation()) && this.powerUnits < warehouse.getMaxChargeCapacity())
-				charge(warehouse.getChargeSpeed());
-			else
-				; //Wait...
+				this.returnItemToPackingStation(warehouse);
+				break;
+
+			default:
+				// Status: Charging or GoingToCharge
+				if (powerUnits < (warehouse.getMaxChargeCapacity() / 2)) {
+					charge(warehouse.getChargeSpeed());
+				} else {
+					move(warehouse, this.chargingPod.getLocation());
+				}
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,8 +65,19 @@ public class Robot extends Entity implements Actor {
 	 * Increases the robots power units
 	 */
 	public void charge(int chargeSpeed) {
-		powerUnits += chargeSpeed;
-		System.out.println("Robot " + uid + " charging at speed " + chargeSpeed);
+		this.powerUnits += chargeSpeed;
+		this.log("Charge increased to " + this.powerUnits);
+	}
+
+	private void collectItemFromStorageShelf(Warehouse warehouse) throws Exception {
+		this.move(warehouse, this.storageShelf.getLocation());
+		this.storageShelf = null;
+	}
+
+	private void returnItemToPackingStation(Warehouse warehouse) throws Exception {
+		this.move(warehouse, this.packingStation.getLocation());
+		this.packingStation.recieveItem(storageShelf);
+		this.packingStation = null;
 	}
 
 	/**
@@ -77,63 +88,51 @@ public class Robot extends Entity implements Actor {
 	 * 
 	 */
 	private void move(Warehouse warehouse, Location targetLocation) throws Exception {
-		//TESTING PATH FINDING
-		System.out.println("\n\n-----<Call to getPath>-----");
-		System.out.println("Robot " + this.uid + ". Power level " + this.powerUnits + " before move.");
-		System.out.println("Current " + this.location);
-		System.out.println("Target " + targetLocation);
-		
-		if (!this.pathFinder.calculatePath(this.location, targetLocation))
-			throw new Exception("No path could be found");
-		
-		System.out.println("Path: " + this.pathFinder.getPath());
+		this.log(String.format("Moving from %s to %s.", this.location, targetLocation));
+		this.log("Power Units (pre move): " + this.powerUnits);
+
+		this.pathFinder.calculatePath(this.location, targetLocation);
+
+		this.log("Path: " + this.pathFinder.getPath());
 
 		Location newLocation = this.pathFinder.getNextLocation();
+
 		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
+		if (!successfulMove)
+			return;
+		// TODO handle this better!
 
-		if (successfulMove) {
-			previousLocation = this.location;
-			this.location = newLocation;
+		this.previousLocation = this.location;
+		this.location = newLocation;
 
-			if(this.location.equals(this.storageShelf.getLocation()))
-				this.storageShelfVisited = true;
-			if(this.location.equals(this.packingStation.getLocation())) {
-				this.packingStationVisited = true;
-				packingStation.recieveItem(storageShelf);
-			}
+		int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;
+		this.powerUnits -= powerUnitsToDeduct;
 
-			int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;			
-			this.powerUnits = this.powerUnits - powerUnitsToDeduct;
-
-			System.out.println("Power level " + this.powerUnits + " after move.");
-
-		}
+		this.log("Power Units (post move): " + this.powerUnits);
 	}
 
 	/**
 	 * @param storageShelf
 	 * @param packingStation
 	 * @return
-	 * @throws LocationNotValidException 
+	 * @throws LocationNotValidException
 	 */
 	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation, Warehouse warehouse) {
-		//TODO check various condition whether the robot can accept a job.
-		//TODO Check that the robots current charge is enough to get it from...
-		//    - its current location to the requested shelf (costs 1 per move)
-		//    - from that shelf to the packing station (costs 2 per move)
-		//    - from that packing station to the charging pod (costs 1 per move)
+		// TODO check various condition whether the robot can accept a job.
+		// TODO Check that the robots current charge is enough to get it from...
+		// - its current location to the requested shelf (costs 1 per move)
+		// - from that shelf to the packing station (costs 2 per move)
+		// - from that packing station to the charging pod (costs 1 per move)
 
-		boolean acceptJob = !this.hasItem() ;
+		boolean acceptJob = !this.hasItem();
 		if (acceptJob) {
 			this.storageShelf = storageShelf;
 			this.packingStation = packingStation;
 			this.pathFinder = new PathFindingStrategy(warehouse.getFloor());
-			this.storageShelfVisited = false;
-			this.packingStationVisited = false;
 		}
 		return acceptJob;
 	}
-	
+
 	/*
 	 * Determines the robot's status based on its current state.
 	 */
@@ -154,7 +153,7 @@ public class Robot extends Entity implements Actor {
 	 * @return boolean
 	 */
 	public boolean hasItem() {
-		return this.storageShelfVisited == true && this.packingStationVisited == false;
+		return this.storageShelf == null && this.packingStation != null;
 	}
 
 	/**
@@ -175,10 +174,10 @@ public class Robot extends Entity implements Actor {
 		return MessageFormat.format(
 				"Robot:" + " - UID: {0}" + " - {1}" + " - Power Units: {2}" + " - StorageShelf: {3}"
 						+ " - Packing Station: {4}" + " - Charging Pod: {5}",
-						this.uid, this.location, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(),
-						this.chargingPod.getUID());
+				this.uid, this.location, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(),
+				this.chargingPod.getUID());
 	}
-	
+
 	public void setPowerUnits(int units) {
 		powerUnits = units;
 	}
