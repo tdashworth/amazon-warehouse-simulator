@@ -137,17 +137,17 @@ public class WarehouseController{
 
 	@FXML public void runOneTick() throws Exception {
 		sim.tick();
-		for(Robot robo : robots) {
 		
 		grdWarehouse.getChildren().removeIf(n -> n instanceof Circle);
-					
-		lblCount.setText("Total tick count: " + sim.getTotalTickCount());	
-		Location l = robo.getLocation();				
+		lblCount.setText("Total tick count: " + sim.getTotalTickCount());
+		
+		for(Robot robo : robots) {
+		Location l = robo.getLocation();	
 		Circle r = new Circle();
 		r.setRadius(10);	
 		r.setFill(Color.RED);
 		GridPane.setConstraints(r, l.getRow(), l.getColumn());
-		grdWarehouse.getChildren().add(r);		
+		grdWarehouse.getChildren().add(r);			
 		}
 				
 	}
@@ -156,7 +156,7 @@ public class WarehouseController{
 		
 		System.out.println("Loading Simulation");
 		
-		sim = Simulator.createFromFile(Paths.get("./sample-configs/twoShelves-v2.sim"));
+		sim = Simulator.createFromFile(Paths.get("./sample-configs/twoRobotsTwoShelves.sim"));
 
 		//sets the grid size to be the same as the floor in the file
 		Floor f = sim.getFloor();

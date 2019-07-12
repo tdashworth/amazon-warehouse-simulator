@@ -106,7 +106,6 @@ public class Simulator {
 		for (Entity entity : entities.values()) {
 			if (entity instanceof Robot) {
 				robots.add((Robot) entity);
-				//robotList.add((Robot) entity);
 				floor.loadEntity(entity);
 			}
 		}
@@ -140,6 +139,7 @@ public class Simulator {
 		this.totalTickCount++;
 		for (Actor actor : actors) {
 			actor.tick(this.warehouse);
+			
 		}	
 	}
 

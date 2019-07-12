@@ -280,12 +280,6 @@
 				<GridPane fx:id="grdWarehouse" alignment="CENTER"
 					centerShape="false" gridLinesVisible="true" hgap="1.0"
 					layoutX="10.0" layoutY="10.0" style="-fx-background-color: #3D4849">
-					<columnConstraints>
-					</columnConstraints>
-					<rowConstraints>
-					</rowConstraints>
-					<children>
-					</children>
 					<padding>
 						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
 					</padding>
