@@ -423,19 +423,7 @@ public class WarehouseController {
 	}
 
 
-	Node getChildByRowColumn(final GridPane gridPane, final int row, final int col) {
-
-		for (final Node node : gridPane.getChildren()) {
-			if (GridPane.getRowIndex(node) == null)
-				continue; // ignore Group
-			if (GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == col)
-				if (node instanceof Circle) {
-					return node;
-				}
-		}
-		return null;
-	}
-
+	
 	/**
 	 * Informs the ListView that one of its items has been modified.
 	 *
