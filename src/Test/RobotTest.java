@@ -4,13 +4,18 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+
 import org.junit.Test;
+
+import model.Actor;
 import model.ChargingPod;
 import model.Location;
 import model.LocationNotValidException;
 import model.PackingStation;
 import model.Robot;
 import model.StorageShelf;
+import model.Warehouse;
 import simulation.SimFileFormatException;
 import simulation.Simulator;
 
@@ -21,14 +26,12 @@ public class RobotTest {
 		//Set up and create a new robot, ready for testing
 		Location l = new Location(2, 2); 
 		ChargingPod cp = new ChargingPod("1", l); 
-		String robotUID = "2";
-		int robotCharge = 8;
-		Robot r = new Robot(robotUID, l, cp, robotCharge);
+		Robot r = new Robot("2", l, cp, 8);
 				
 		//Test to ensure that the robot was created in the way we wanted it to be
 		assertEquals(l, r.getLocation());
-		assertEquals(robotUID, r.getUID());
-		assertEquals(robotCharge, r.getPowerUnits());
+		assertEquals("2", r.getUID());
+		assertEquals(8, r.getPowerUnits());
 		assertEquals(false, r.hasItem());
 		assertEquals(null, r.getPreviousLocation());
 		assertEquals("STRING", r.toString());
@@ -39,9 +42,7 @@ public class RobotTest {
 		//Set up and create a new robot, ready for testing
 		Location l = new Location(2, 2); 
 		ChargingPod cp = new ChargingPod("1", l); 
-		String robotUID = "2";
-		int robotCharge = 8;
-		Robot r = new Robot(robotUID, l, cp, robotCharge);
+		Robot r = new Robot("2", l, cp, 8);
 		int maxCharge = 20;
 		int chargeSpeed = 1;
 				
@@ -63,7 +64,7 @@ public class RobotTest {
 	@Test
 	public void acceptJobTest() {
 		//Create a new simulator and warehouse from file so that the robot can assess jobs
-		Simulator s;
+		Simulator s = null;
 		try {
 			s = Simulator.createFromFile(Paths.get("./sample-configs/oneOfEverything.sim"));
 		} catch (IOException | SimFileFormatException | LocationNotValidException e) {
@@ -76,11 +77,14 @@ public class RobotTest {
 		}
 		
 		//Get the storage shelf and packing station for the robot to assess
-		StorageShelf storageShelf = (StorageShelf) s.getActors().get(0);
 		PackingStation packingStation = (PackingStation) s.getActors().get(0);
-		s.getRobots().get(0).acceptJob(storageShelf, packingStation, warehouse);
+		Robot robot = (Robot) s.getActors().get(1);
+		StorageShelf storageShelf = (StorageShelf) s.getActors().get(2);
+		//Warehouse warehouse = s.
 		
-		
+		//Test to ensure that the acceptJob method is working successfully
+		////assertEquals(true, robot.acceptJob(storageShelf, packingStation, warehouse));
+		////assertEquals(false, robot.acceptJob(storageShelf, packingStation, warehouse));
 		
 		fail("Not yet implemented");
 	}
@@ -101,9 +105,7 @@ public class RobotTest {
 		//Set up and create a new robot, ready for testing
 		Location l = new Location(2, 2); 
 		ChargingPod cp = new ChargingPod("1", l); 
-		String robotUID = "2";
-		int robotCharge = 8;
-		Robot r = new Robot(robotUID, l, cp, robotCharge);
+		Robot r = new Robot("2", l, cp, 8);
 		
 		//Test tick when robot needs to charge and is at charging station
 		
