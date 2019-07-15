@@ -1,5 +1,9 @@
 package simulation;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.util.Callback;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
@@ -100,6 +104,10 @@ public class Simulator {
 				floor.loadEntity(entity);
 			}
 		}
+		
+		setRobots(FXCollections.observableArrayList(robots));
+				
+		
 	}
 
 	/**
@@ -111,6 +119,11 @@ public class Simulator {
 			tick();
 		System.out.println(String.format("All orders have been dispatched. It took %s ticks.", this.totalTickCount));
 	}
+	
+	/**
+	 * returns true if all orders have been dispatched.
+	 * @return boolean
+	 */
 	
 	public boolean isComplete() {
 		return this.warehouse.areAllOrdersDispatched();
@@ -171,6 +184,10 @@ public class Simulator {
 	public ObservableList<Robot> robotsProperty(){
 		return robotList;
 	}
+	
+	public void setRobots(ObservableList<Robot> robots) {
+		robotList = robots;
+	}
 	public ObservableList<PackingStation> packingStationsProperty(){
 		return packingStations;
 	}
@@ -205,6 +222,10 @@ public class Simulator {
 		chargeSpeed = 1;
 		maxChargeCapacity = 10;
 		floor.clear();
+	}
+	
+	public Warehouse getWarehouse() {
+		return warehouse;
 	}
 
 }

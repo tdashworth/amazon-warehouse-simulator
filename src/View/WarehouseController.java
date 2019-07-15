@@ -6,13 +6,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -127,7 +131,6 @@ public class WarehouseController {
 			sim.setChargeSpeed(newValue.intValue());
 		});
 
-		// unassignedOrders.setCellFactory((view) -> new OrderCell());
 
 		btnUploadFile.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
@@ -167,6 +170,18 @@ public class WarehouseController {
 						filePath = Paths.get(label.getText());
 						Stage stage = (Stage) btnConfirm.getScene().getWindow();
 						stage.close();
+						try {
+							loadSimulation();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (SimFileFormatException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (LocationNotValidException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 				};
 
@@ -183,6 +198,8 @@ public class WarehouseController {
 
 			}
 		});
+				
+		
 	}
 
 	/**
@@ -226,11 +243,28 @@ public class WarehouseController {
 		for (Robot robo : robots) {
 			Location l = robo.getLocation();
 			Circle r = new Circle();
-			r.setRadius(10);
+			r.setRadius(15);
 			r.setFill(Color.RED);
 			GridPane.setConstraints(r, l.getColumn(), l.getRow());
 			grdWarehouse.getChildren().add(r);
 		}
+		//robotsList.setItems(sim.robotsProperty());
+		
+		new Thread(() -> {
+            IntStream.range(0, sim.robotsProperty().size()).forEach(i -> {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(sim.robotsProperty().get(i));
+                Platform.runLater(() -> {
+                    // Where the magic happens.
+                    sim.robotsProperty().get(i);
+                    triggerUpdate(robotsList, sim.robotsProperty().get(i), i);
+                });            
+            });
+        }).start();
 
 	}
 
@@ -249,18 +283,19 @@ public class WarehouseController {
 		System.out.println("Loading Simulation");
 
 		sim = Simulator.createFromFile(filePath);
+		
 
 		// sets the grid size to be the same as the floor in the file
 		Floor f = sim.getFloor();
 		for (int i = 0; i < f.getNumberOfRows(); i++) {
 			RowConstraints rowConst = new RowConstraints();
-			rowConst.setMinHeight(30);
+			rowConst.setMinHeight(40);
 			grdWarehouse.getRowConstraints().add(rowConst);
 		}
 
 		for (int i = 0; i < f.getNumberOfColumns(); i++) {
 			ColumnConstraints column = new ColumnConstraints();
-			column.setMinWidth(30);
+			column.setMinWidth(40);
 			grdWarehouse.getColumnConstraints().add(column);
 		}
 
@@ -273,17 +308,8 @@ public class WarehouseController {
 		List<Actor> actors = sim.getActors();
 
 		for (Actor a : actors) {
-			if (a instanceof ChargingPod) {
-				System.out.println("Charge");
-				Location l = ((ChargingPod) a).getLocation();
-				StackPane stk = new StackPane();
-				GridPane.setConstraints(stk, l.getColumn(), l.getRow());
-				grdWarehouse.getChildren().add(stk);
-				Circle cp1 = new Circle();
-				cp1.setFill(Color.AQUA);
-				cp1.setRadius(15);
-				stk.getChildren().add(cp1);
-			}
+		
+			
 			if (a instanceof Robot) {
 				robots.add((Robot) a);
 				Location l = ((Robot) a).getLocation();
@@ -291,12 +317,12 @@ public class WarehouseController {
 				GridPane.setConstraints(stk, l.getColumn(), l.getRow());
 				grdWarehouse.getChildren().add(stk);
 				Circle cp1 = new Circle();
-				cp1.setFill(Color.CHARTREUSE);
-				cp1.setRadius(15);
+				cp1.setFill(Color.MEDIUMORCHID);
+				cp1.setRadius(25);
 				stk.getChildren().add(cp1);
 				Circle rb1 = new Circle();
 				rb1.setFill(Color.RED);
-				rb1.setRadius(10);
+				rb1.setRadius(15);
 				stk.getChildren().add(rb1);
 
 			}
@@ -306,9 +332,9 @@ public class WarehouseController {
 				GridPane.setConstraints(stk, l.getColumn(), l.getRow());
 				grdWarehouse.getChildren().add(stk);
 				Rectangle ps1 = new Rectangle();
-				ps1.setFill(Color.MIDNIGHTBLUE);
-				ps1.setHeight(29);
-				ps1.setWidth(29);
+				ps1.setFill(Color.AQUAMARINE);
+				ps1.setHeight(35);
+				ps1.setWidth(35);
 				stk.getChildren().add(ps1);
 			}
 			if (a instanceof StorageShelf) {
@@ -317,9 +343,9 @@ public class WarehouseController {
 				GridPane.setConstraints(stk, l.getColumn(), l.getRow());
 				grdWarehouse.getChildren().add(stk);
 				Rectangle ss1 = new Rectangle();
-				ss1.setFill(Color.BURLYWOOD);
-				ss1.setHeight(29);
-				ss1.setWidth(29);
+				ss1.setFill(Color.DARKSALMON);
+				ss1.setHeight(35);
+				ss1.setWidth(35);
 				stk.getChildren().add(ss1);
 			}
 		}
@@ -328,6 +354,8 @@ public class WarehouseController {
 		unassignedOrders.setItems(sim.unassignedOrdersProperty());
 		assignedOrders.setItems(sim.assignedOrdersProperty());
 		dispatchedOrders.setItems(sim.dispatchedOrdersProperty());
+		
+	
 
 	}
 
@@ -354,14 +382,6 @@ public class WarehouseController {
 		timeline.play();
 	}
 
-	// 1 ticks, 10 ticks or go to end
-	// click on the cells to place the entities
-	// orders randomly generated.
-	// Model = state of simulation
-	// View = representation
-	// Controller - takes input - updates the model
-	// every cell in the grid as an observable list, when cell changes add shape to
-	// cells.
 
 	Node getChildByRowColumn(final GridPane gridPane, final int row, final int col) {
 
@@ -374,6 +394,19 @@ public class WarehouseController {
 				}
 		}
 		return null;
+	}
+	
+	/**
+	 * Informs the ListView that one of its items has been modified.
+	 *
+	 * @param listView The ListView to trigger.
+	 * @param newValue The new value of the list item that changed.
+	 * @param i The index of the list item that changed.
+	 */
+	public static <T> void triggerUpdate(ListView<T> listView, T newValue, int i) {
+	    EventType<? extends ListView.EditEvent<T>> type = ListView.editCommitEvent();
+	    Event event = new ListView.EditEvent<>(listView, type, newValue, i);
+	    listView.fireEvent(event);
 	}
 
 }

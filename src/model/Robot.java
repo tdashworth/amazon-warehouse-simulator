@@ -1,6 +1,7 @@
 package model;
 
 import java.text.MessageFormat;
+import java.util.Observable;
 
 public class Robot extends Entity implements Actor {
 	private int powerUnits;
@@ -11,7 +12,7 @@ public class Robot extends Entity implements Actor {
 
 	private PathFindingStrategy pathFinder;
 	private Location previousLocation;
-
+	private Observable status;
 	private static int POWER_UNITS_EMPTY = 1;
 	private static int POWER_UNITS_CARRYING = 2;
 
@@ -32,23 +33,27 @@ public class Robot extends Entity implements Actor {
 	@Override
 	public void tick(Warehouse warehouse) {
 		try {
-			Status status = this.getStatus(warehouse);
+			Status status = this.calculateStatus(warehouse);
 			this.log("Ticking with status: %s.", status);
 
 			switch (status) {
 			case CollectingItem:
+				status = Status.CollectingItem;
 				this.collectItemFromStorageShelf(warehouse);
 				break;
 
 			case ReturningItem:
+				status = Status.ReturningItem;
 				this.returnItemToPackingStation(warehouse);
 				break;
 
 			case Charging:
+				status = Status.Charging;
 				charge(warehouse.getChargeSpeed(), warehouse.getMaxChargeCapacity());
 				break;
 
 			case GoingToCharge:
+				status = Status.GoingToCharge;
 				this.move(warehouse, this.chargingPod.getLocation());
 				break;
 
@@ -148,7 +153,7 @@ public class Robot extends Entity implements Actor {
 		this.storageShelf = storageShelf;
 		this.packingStation = packingStation;
 		this.pathFinder = new PathFindingStrategy(warehouse.getFloor());
-		
+
 		this.log("Accepted Job to %s then %s.", storageShelf.getLocation(), packingStation.getLocation());
 
 		return true;
@@ -188,10 +193,10 @@ public class Robot extends Entity implements Actor {
 		return estimatedCostWithLeeway;
 	}
 
-	/*
+	/**
 	 * Determines the robot's status based on its current state.
 	 */
-	public Status getStatus(Warehouse warehouse) {
+	public Status calculateStatus(Warehouse warehouse) {
 		boolean isAtChargingPod = this.location.equals(this.chargingPod.getLocation());
 		boolean isBatteryBelowHalfCharge = this.powerUnits < (warehouse.getMaxChargeCapacity() * 0.5);
 
@@ -205,8 +210,17 @@ public class Robot extends Entity implements Actor {
 			return Status.Charging; // Nothing to do and already at Charging Pod
 		else
 			return Status.GoingToCharge; // Nothing to do so go charge
+			
 	}
-
+	
+	/**
+	 *Returns the robot's current status 
+	 * @return Status
+	 */
+	public Observable getStatus() {
+		return status;
+	}
+	
 	/**
 	 * Checks to see if the robot is carrying an item
 	 * 
@@ -231,11 +245,19 @@ public class Robot extends Entity implements Actor {
 	 * @return A string representation of a robot.
 	 */
 	public String toString() {
-		return MessageFormat.format(
-				"Robot:" + " - UID: {0}" + " - {1}" + " - Power Units: {2}" + " - StorageShelf: {3}"
-						+ " - Packing Station: {4}" + " - Charging Pod: {5}",
-				this.uid, this.location, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(),
-				this.chargingPod.getUID());
+
+		if(this.packingStation != null && this.storageShelf != null ) {
+			return MessageFormat.format(
+					"Robot:" + " - UID: {0}" + " - {1}" + " - Power Units: {2}" + " - StorageShelf: {3}"
+							+ " - Packing Station: {4}" + " - Charging Pod: {5}" + this.status ,
+							this.uid, this.location, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(),
+							this.chargingPod.getUID());
+		}
+		else { return MessageFormat.format(
+				"Robot:" + " - UID: {0}" + " - {1}" + " - Power Units: {2}" + " - StorageShelf: null"
+						+ " - Packing Station: null" + " - Charging Pod: {3}" + this.status,
+						this.uid, this.location, this.powerUnits, this.chargingPod.getUID());
+		}
 	}
 
 	public void setPowerUnits(int units) {

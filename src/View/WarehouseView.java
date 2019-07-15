@@ -1,6 +1,8 @@
 package View;
 import model.*;
 
+import java.util.stream.IntStream;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -41,6 +43,11 @@ public class WarehouseView extends Application {
 		primaryStage.setScene(mainScene);
 		primaryStage.setTitle("Amazon Warehouse Simulator");
 		primaryStage.show();
+		
+		
+		
+		
+		
 	}
 	
 	
