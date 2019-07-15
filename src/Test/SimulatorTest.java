@@ -89,7 +89,57 @@ public class SimulatorTest {
 	
 	@Test
 	public void resetSimulatorTest() {
-		fail("Not yet implemented");
+		//Set up and create a simulator which will be used for testing
+		Floor floor = new Floor(2, 2);
+		int chargeSpeed = 1;
+		int capacity = 20;
+		HashMap<String, Entity> entities = new HashMap<String, Entity>();
+		Deque<Order> orders = new LinkedList<Order>();
+		ArrayList<String> sids = new ArrayList<String>();
+		sids.add("ss0");
+		orders.add(new Order(sids, 10));
+		Robot r = new Robot("r0", new Location(0,0), new ChargingPod("c0", new Location(0,0)), 2); 
+		entities.put(r.getUID(), r);
+		
+		Simulator s = null;
+		try {
+			s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
+		} catch (LocationNotValidException e) {
+			e.printStackTrace();
+		}
+		
+		//Ensure that the result simulation matches the file that was read in
+		assertEquals(0, s.getTotalTickCount());
+		assertEquals(1, s.getChargeSpeed());
+		assertEquals(20, s.getMaxChargeCapacity());
+		assertEquals(false, s.isComplete());
+		assertEquals(1, s.getActors().size());
+		//Robot tests
+		assertEquals(1, s.getRobots().size());
+		assertTrue(new Location(0, 0).equals(s.getRobots().get(0).getLocation()));
+		assertEquals(2, s.getRobots().get(0).getPowerUnits());
+		assertEquals("r0", s.getRobots().get(0).getUID());
+		//Floor tests
+		assertEquals(2, s.getFloor().getNumberOfColumns());
+		assertEquals(2, s.getFloor().getNumberOfRows());
+		assertEquals("Floor: - Size: 2 rows by 2 columns.", s.getFloor().toString());
+		
+		//Reset the simulator and ensure that all correct things were reset
+		s.resetSimulator();
+		assertEquals(0, s.getTotalTickCount());
+		assertEquals(1, s.getChargeSpeed());
+		assertEquals(10, s.getMaxChargeCapacity());
+		assertEquals(false, s.isComplete());
+		assertEquals(0, s.getActors().size());
+		//Robot tests
+		assertEquals(1, s.getRobots().size());
+		assertTrue(new Location(0, 0).equals(s.getRobots().get(0).getLocation()));
+		assertEquals(2, s.getRobots().get(0).getPowerUnits());
+		assertEquals("r0", s.getRobots().get(0).getUID());
+		//Floor tests
+		assertEquals(2, s.getFloor().getNumberOfColumns());
+		assertEquals(2, s.getFloor().getNumberOfRows());
+		assertEquals("Floor: - Size: 2 rows by 2 columns.", s.getFloor().toString());
 	}
 	
 	@Test
