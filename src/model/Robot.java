@@ -12,7 +12,7 @@ public class Robot extends Entity implements Actor {
 
 	private PathFindingStrategy pathFinder;
 	private Location previousLocation;
-	private Observable status;
+	private Status status;
 	private static int POWER_UNITS_EMPTY = 1;
 	private static int POWER_UNITS_CARRYING = 2;
 
@@ -28,6 +28,7 @@ public class Robot extends Entity implements Actor {
 		super(uid, location);
 		this.chargingPod = chargingPod;
 		this.powerUnits = powerUnits;
+		this.status = Status.Charging;
 	}
 
 	@Override
@@ -200,24 +201,33 @@ public class Robot extends Entity implements Actor {
 		boolean isAtChargingPod = this.location.equals(this.chargingPod.getLocation());
 		boolean isBatteryBelowHalfCharge = this.powerUnits < (warehouse.getMaxChargeCapacity() * 0.5);
 
-		if (isBatteryBelowHalfCharge && isAtChargingPod) // Running low of powerUnits
+		if (isBatteryBelowHalfCharge && isAtChargingPod) {// Running low of powerUnits
+			status = Status.Charging;
 			return Status.Charging;
-		else if (this.storageShelf != null) // Storage Shelf Assigned
+		}
+		else if (this.storageShelf != null) {// Storage Shelf Assigned
+			status = Status.CollectingItem;
 			return Status.CollectingItem;
-		else if (this.hasItem())
+		}
+		else if (this.hasItem()) {
+			status = Status.ReturningItem;		
 			return Status.ReturningItem; // Item collected
-		else if (isAtChargingPod)
+		}	
+		else if (isAtChargingPod) {
+			status = Status.Charging;		
 			return Status.Charging; // Nothing to do and already at Charging Pod
-		else
+		}
+		else {
+			status = Status.GoingToCharge;
 			return Status.GoingToCharge; // Nothing to do so go charge
-			
+		}		
 	}
 	
 	/**
 	 *Returns the robot's current status 
 	 * @return Status
 	 */
-	public Observable getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 	
@@ -249,14 +259,14 @@ public class Robot extends Entity implements Actor {
 		if(this.packingStation != null && this.storageShelf != null ) {
 			return MessageFormat.format(
 					"Robot:" + " - UID: {0}" + " - {1}" + " - Power Units: {2}" + " - StorageShelf: {3}"
-							+ " - Packing Station: {4}" + " - Charging Pod: {5}" + this.status ,
+							+ " - Packing Station: {4}" + " - Charging Pod: {5}" + " - Status: {6}" ,
 							this.uid, this.location, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(),
-							this.chargingPod.getUID());
+							this.chargingPod.getUID(), this.status);
 		}
 		else { return MessageFormat.format(
 				"Robot:" + " - UID: {0}" + " - {1}" + " - Power Units: {2}" + " - StorageShelf: null"
-						+ " - Packing Station: null" + " - Charging Pod: {3}" + this.status,
-						this.uid, this.location, this.powerUnits, this.chargingPod.getUID());
+						+ " - Packing Station: null" + " - Charging Pod: {3}" + " - Status: {4} ",
+						this.uid, this.location, this.powerUnits, this.chargingPod.getUID(), this.status);
 		}
 	}
 
