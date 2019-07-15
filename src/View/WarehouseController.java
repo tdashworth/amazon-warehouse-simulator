@@ -27,6 +27,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -374,7 +375,7 @@ public class WarehouseController {
 				grdWarehouse.getColumnConstraints().add(column);
 			}
 		}
-		
+
 		robotsList.setItems(sim.robotsProperty());
 		unassignedOrders.setItems(sim.unassignedOrdersProperty());
 		assignedOrders.setItems(sim.assignedOrdersProperty());
@@ -399,8 +400,23 @@ public class WarehouseController {
 		Timeline timeline = new Timeline();
 		timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0.25), ea -> {
 			runOneTickSaftely();
-			if (sim.isComplete())
+			if (sim.isComplete()) {
 				timeline.stop();
+				FXMLLoader loader = new FXMLLoader();
+				loader.setLocation(getClass().getResource("Complete.fxml"));
+				Stage stage = new Stage();
+				stage.setTitle("Congratulations");
+				BorderPane mainContainer;
+				try {
+					mainContainer = (BorderPane) loader.load();
+					Scene scene = new Scene(mainContainer, 800, 500);
+					stage.setScene(scene);
+					stage.show();
+				} catch (IOException e) {	
+					e.printStackTrace();
+				}
+		
+			}
 		}));
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.play();

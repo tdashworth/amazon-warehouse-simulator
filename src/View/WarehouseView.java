@@ -44,12 +44,7 @@ public class WarehouseView extends Application {
 		primaryStage.setTitle("Amazon Warehouse Simulator");
 		primaryStage.show();
 		
-		
-		
-		
-		
 	}
-	
 	
 
 	public static void main (String[] args) {
