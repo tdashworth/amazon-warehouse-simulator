@@ -52,7 +52,7 @@
 						</Label>
       						<TextArea fx:id="txtCol" prefHeight="30.0" prefWidth="40.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
-                        <Font size="14.0" />
+                        <Font size="12.0" />
                      </font>
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -60,7 +60,7 @@
       						</TextArea>
       						<TextArea fx:id="txtRows" prefHeight="30.0" prefWidth="50.0" text="0" GridPane.rowIndex="2">
                      <font>
-                        <Font size="14.0" />
+                        <Font size="12.0" />
                      </font>
                      <GridPane.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -208,7 +208,7 @@
 	<right>
 		<VBox minWidth="200.0" BorderPane.alignment="CENTER">
 			<children>
-				<ListView fx:id="robotsList" prefHeight="200.0" prefWidth="350.0" />
+				<ListView fx:id="robotsList" prefHeight="200.0" prefWidth="400.0" />
 				<ListView fx:id="unassignedOrders" prefHeight="200.0" prefWidth="200.0" />
 				<ListView fx:id="assignedOrders" prefHeight="200.0" prefWidth="200.0" />
 				<ListView fx:id="dispatchedOrders" prefHeight="200.0" prefWidth="200.0" />
@@ -240,7 +240,7 @@
 						</Label>
 						<Label contentDisplay="CENTER" text="Team 3 Simulation" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
 							<font>
-								<Font name="Tahoma" size="15.0" />
+								<Font size="15.0" />
 							</font>
 							<GridPane.margin>
 								<Insets bottom="7.5" left="7.5" right="7.5" top="7.5" />

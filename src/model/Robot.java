@@ -39,22 +39,18 @@ public class Robot extends Entity implements Actor {
 
 			switch (status) {
 			case CollectingItem:
-				status = Status.CollectingItem;
 				this.collectItemFromStorageShelf(warehouse);
 				break;
 
 			case ReturningItem:
-				status = Status.ReturningItem;
 				this.returnItemToPackingStation(warehouse);
 				break;
 
 			case Charging:
-				status = Status.Charging;
 				charge(warehouse.getChargeSpeed(), warehouse.getMaxChargeCapacity());
 				break;
 
 			case GoingToCharge:
-				status = Status.GoingToCharge;
 				this.move(warehouse, this.chargingPod.getLocation());
 				break;
 
@@ -258,13 +254,13 @@ public class Robot extends Entity implements Actor {
 
 		if(this.packingStation != null && this.storageShelf != null ) {
 			return MessageFormat.format(
-					"Robot:" + " - UID: {0}" + " - {1}" + " - Power Units: {2}" + " - StorageShelf: {3}"
+					"Robot:" + " - UID: {0}" + " - {1}" + " - Power: {2}" + " - StorageShelf: {3}"
 							+ " - Packing Station: {4}" + " - Charging Pod: {5}" + " - Status: {6}" ,
 							this.uid, this.location, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(),
 							this.chargingPod.getUID(), this.status);
 		}
 		else { return MessageFormat.format(
-				"Robot:" + " - UID: {0}" + " - {1}" + " - Power Units: {2}" + " - StorageShelf: null"
+				"Robot:" + " - UID: {0}" + " - {1}" + " - Power: {2}" + " - StorageShelf: null"
 						+ " - Packing Station: null" + " - Charging Pod: {3}" + " - Status: {4} ",
 						this.uid, this.location, this.powerUnits, this.chargingPod.getUID(), this.status);
 		}
