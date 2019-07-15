@@ -121,6 +121,14 @@ public class PackingStation extends Entity implements Actor {
 		this.log("Item recieved from %s", storageShelf.getUID());
 		this.storageShelvesVisited.add(storageShelf);
 	}
+	
+	/**
+	 * Returns the storage shelves which have been delivered from by the robots. 
+	 * @return The storage shelves visited.
+	 */
+	public List<StorageShelf> getStorageShelvesVisited() {
+		return storageShelvesVisited;
+	}
 
 	/**
 	 * @return A string representation of a packing station.
