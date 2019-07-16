@@ -2,7 +2,6 @@ package View;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,6 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -33,7 +30,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -41,7 +37,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.Actor;
-import model.ChargingPod;
 import model.Floor;
 import model.Location;
 import model.LocationNotValidException;
@@ -88,14 +83,13 @@ public class WarehouseController {
 	private ArrayList<Robot> robots;
 	@FXML
 	private Button btnUploadFile;
-	private Path filePath;
 	@FXML
 	private Label lblFile;
 	private int rows;
 	private int columns;
 
 	/**
-	 * initialize the simulation, add listeners to the sliders and text areas.
+	 * initialize the simulation, add listeners to the sliders and text areas, buttons
 	 */
 	@FXML
 	public void initialize() {
@@ -137,74 +131,17 @@ public class WarehouseController {
 		});
 
 
-		btnUploadFile.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent event) {
-				FXMLLoader loader = new FXMLLoader();
-				loader.setLocation(getClass().getResource("Uploader.fxml"));
-				Stage stage = new Stage();
-				stage.setTitle("FileChooser");
-				// create a File chooser
+		// create an Event Handler
+		EventHandler<ActionEvent> event1 = new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
 				FileChooser fil_chooser = new FileChooser();
-				// create a Label
-				Label label = new Label("no files selected");
-				// create a Button
-				Button button = new Button("Select File");
-
-				// create an Event Handler
-				EventHandler<ActionEvent> event1 = new EventHandler<ActionEvent>() {
-
-					public void handle(ActionEvent e) {
-						// get the file selected
-						File file = fil_chooser.showOpenDialog(stage);
-
-						if (file != null) {
-
-							label.setText(file.getAbsolutePath());
-							lblFile.setText("File: " + file.getAbsolutePath() + "  selected");
-
-						}
-					}
-				};
-				button.setOnAction(event1);
-
-				Button btnConfirm = new Button("Confirm");
-
-				EventHandler<ActionEvent> confirm = new EventHandler<ActionEvent>() {
-
-					public void handle(ActionEvent e) {
-						filePath = Paths.get(label.getText());
-						Stage stage = (Stage) btnConfirm.getScene().getWindow();
-						stage.close();
-						try {
-							loadSimulation();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (SimFileFormatException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (LocationNotValidException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-				};
-
-				btnConfirm.setOnAction(confirm);
-
-				// create a VBox
-				VBox vbox = new VBox(30, label, button, btnConfirm);
-
-				// set Alignment
-				vbox.setAlignment(Pos.CENTER);
-				Scene scene = new Scene(vbox, 800, 500);
-				stage.setScene(scene);
-				stage.show();
-
+				File file = fil_chooser.showOpenDialog(WarehouseView.getPrimaryStage());
+				if (file != null) {
+					lblFile.setText(file.getAbsolutePath());
+				}
 			}
-		});
-
-
+		};
+		btnUploadFile.setOnAction(event1);
 	}
 
 	/**
@@ -213,11 +150,6 @@ public class WarehouseController {
 	@FXML
 	public void reset() {
 
-		sldCapacity.setValue(10.0);
-		txtRows.setText("0");
-		txtCol.setText("0");
-		sldCharge.setValue(1.0);
-		lblCount.setText("Total tick count: 0");
 		for (int i = sim.getFloor().getNumberOfRows() - 1; i >= 0; i--) {
 			grdWarehouse.getRowConstraints().remove(i);
 		}
@@ -253,12 +185,11 @@ public class WarehouseController {
 			GridPane.setConstraints(r, l.getColumn(), l.getRow());
 			grdWarehouse.getChildren().add(r);
 		}
-		//robotsList.setItems(sim.robotsProperty());
-
+	
 		new Thread(() -> {
 			IntStream.range(0, sim.robotsProperty().size()).forEach(i -> {
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -283,13 +214,20 @@ public class WarehouseController {
 		}
 	}
 
+	/**
+	 * Loads up the simulation using either a file or user configurations
+	 * 
+	 * @throws IOException
+	 * @throws SimFileFormatException
+	 * @throws LocationNotValidException
+	 */
 	public void loadSimulation() throws IOException, SimFileFormatException, LocationNotValidException {
 
 		System.out.println("Loading Simulation");
 
-		if(filePath != null) {
+		if(lblFile.getText() != null) {
 
-			sim = Simulator.createFromFile(filePath);
+			sim = Simulator.createFromFile(Paths.get(lblFile.getText()));
 
 			// sets the grid size to be the same as the floor in the file
 			Floor f = sim.getFloor();
@@ -359,6 +297,7 @@ public class WarehouseController {
 		}
 
 		else {
+			//needs to create a simulator from user configurations
 
 			Floor floor = new Floor(rows, columns);
 
@@ -387,6 +326,11 @@ public class WarehouseController {
 	public Simulator getSimulation() {
 		return sim;
 	}
+	
+	/**
+	 * Runs the simulation for ten ticks
+	 * @throws Exception
+	 */
 
 	@FXML
 	public void runTenTicks() throws Exception {
@@ -394,7 +338,10 @@ public class WarehouseController {
 		timeline.setCycleCount(10);
 		timeline.play();
 	}
-
+	/**
+	 * Runs the simulation to the end, pops up a new window with stats
+	 * @throws Exception
+	 */
 	@FXML
 	public void runToEnd() throws Exception {
 		Timeline timeline = new Timeline();
@@ -415,7 +362,7 @@ public class WarehouseController {
 				} catch (IOException e) {	
 					e.printStackTrace();
 				}
-		
+
 			}
 		}));
 		timeline.setCycleCount(Timeline.INDEFINITE);
@@ -423,7 +370,6 @@ public class WarehouseController {
 	}
 
 
-	
 	/**
 	 * Informs the ListView that one of its items has been modified.
 	 *

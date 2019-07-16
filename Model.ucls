@@ -48,7 +48,7 @@
   </class>  
   <class id="6" language="java" name="model.LocationNotValidException" project="DC2300-Coursework" 
     file="/DC2300-Coursework/src/model/LocationNotValidException.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="148" y="148"/>    
+    <position height="-1" width="-1" x="136" y="225"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
