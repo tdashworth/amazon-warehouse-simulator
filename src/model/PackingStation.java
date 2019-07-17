@@ -129,6 +129,14 @@ public class PackingStation extends Entity implements Actor {
 	public List<StorageShelf> getStorageShelvesVisited() {
 		return storageShelvesVisited;
 	}
+	
+	/**
+	 * Returns the current order of the packing station. 
+	 * @return the current order. 
+	 */
+	public Order getCurrentOrder() {
+		return currentOrder;
+	}
 
 	/**
 	 * @return A string representation of a packing station.
