@@ -5,15 +5,22 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 import org.junit.Test;
 
 import model.Actor;
 import model.ChargingPod;
+import model.Entity;
+import model.Floor;
 import model.Location;
 import model.LocationNotValidException;
+import model.Order;
 import model.PackingStation;
 import model.Robot;
+import model.Robot.Status;
 import model.StorageShelf;
 import model.Warehouse;
 import simulation.SimFileFormatException;
@@ -64,29 +71,70 @@ public class RobotTest {
 	@Test
 	public void acceptJobTest() {
 		//Create a new simulator and warehouse from file so that the robot can assess jobs
+		Floor floor = new Floor(3, 3);
+		HashMap<String, Entity> entities = new HashMap<String, Entity>();
+		Deque<Order> orders = new LinkedList<Order>();
+		
+		//Set up the basic simulator variables
+		int chargeSpeed = 1;
+		int capacity = 20;
+		
+		//Create an order for the simulation
+		ArrayList<String> sids = new ArrayList<String>();
+		sids.add("ss0");
+		orders.add(new Order(sids, 10));
+		
+		//Add one of each entity to the entities list
+		Robot r = new Robot("r0", new Location(0,0), new ChargingPod("c0", new Location(0,0)), 2);
+		entities.put(r.getUID(), r);
+		
+		StorageShelf ss = new StorageShelf("ss0", new Location(1,0));
+		entities.put(ss.getUID(), ss);
+		
+		PackingStation ps = new PackingStation("ps0", new Location(2,0));
+		entities.put(ps.getUID(), ps);
+		
+		//Create the simulator
 		Simulator s = null;
 		try {
-			s = Simulator.createFromFile(Paths.get("./sample-configs/oneOfEverything.sim"));
-		} catch (IOException | SimFileFormatException | LocationNotValidException e) {
-			System.out.println("Testing Error reading SIM file - " + e.toString());
-			System.exit(1);
-		} catch (Exception e) {
-			System.out.println("Testing Error running simulation - " + e.toString());
+			s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
+		} catch (LocationNotValidException e) {
 			e.printStackTrace();
-			System.exit(1);
 		}
 		
 		//Get the storage shelf and packing station for the robot to assess
 		PackingStation packingStation = (PackingStation) s.getActors().get(0);
 		Robot robot = (Robot) s.getActors().get(1);
 		StorageShelf storageShelf = (StorageShelf) s.getActors().get(2);
-		//Warehouse warehouse = s.
+		Warehouse warehouse = s.getWarehouse();
 		
 		//Test to ensure that the acceptJob method is working successfully
-		////assertEquals(true, robot.acceptJob(storageShelf, packingStation, warehouse));
-		////assertEquals(false, robot.acceptJob(storageShelf, packingStation, warehouse));
+		boolean test = true;
+		try {
+			test = robot.acceptJob(storageShelf, packingStation, warehouse);
+		} catch (LocationNotValidException e) {
+			e.printStackTrace();
+		}
+		assertFalse(test);
 		
-		fail("Not yet implemented");
+		//Ensure the robot has just enough charge to accept the job, and test the accept method again
+		((Robot) s.getActors().get(1)).charge(4, 20);
+		test = true;
+		try {
+			test = robot.acceptJob(storageShelf, packingStation, warehouse);
+		} catch (LocationNotValidException e) {
+			e.printStackTrace();
+		}
+		assertTrue(test);
+		
+		//Ensure that acceptJob fails, as the robot already has a storage shelf
+		test = true;
+		try {
+			test = robot.acceptJob(storageShelf, packingStation, warehouse);
+		} catch (LocationNotValidException e) {
+			e.printStackTrace();
+		}
+		assertFalse(test);
 	}
 	
 	@Test
