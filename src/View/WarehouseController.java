@@ -201,6 +201,11 @@ public class WarehouseController {
 				});            
 			});
 		}).start();
+		
+		unassignedOrders.setItems(sim.unassignedOrdersProperty());
+		assignedOrders.setItems(sim.assignedOrdersProperty());
+		dispatchedOrders.setItems(sim.dispatchedOrdersProperty());
+	
 
 	}
 
@@ -263,7 +268,7 @@ public class WarehouseController {
 					grdWarehouse.getChildren().add(stk);
 					Circle cp1 = new Circle();
 					cp1.setFill(Color.MEDIUMORCHID);
-					cp1.setRadius(25);
+					cp1.setRadius(20);
 					stk.getChildren().add(cp1);
 					Circle rb1 = new Circle();
 					rb1.setFill(Color.RED);
@@ -317,8 +322,8 @@ public class WarehouseController {
 
 		robotsList.setItems(sim.robotsProperty());
 		unassignedOrders.setItems(sim.unassignedOrdersProperty());
-		assignedOrders.setItems(sim.assignedOrdersProperty());
-		dispatchedOrders.setItems(sim.dispatchedOrdersProperty());
+		
+		//dispatchedOrders.setItems(sim.dispatchedOrdersProperty());
 
 
 	}

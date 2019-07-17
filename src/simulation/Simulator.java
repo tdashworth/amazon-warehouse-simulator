@@ -17,12 +17,11 @@ public class Simulator {
 	private ObservableList<ChargingPod> chargePods;
 	private ArrayList<Robot> robots;
 	private ObservableList<PackingStation> packingStations;
-	private ObservableList<StorageShelf> shelves;
 	private ObservableList<Robot> robotList;
+	private Floor floor;
 	private ObservableList<Order> assignedOrders;
 	private ObservableList<Order> unassignedOrders;
 	private ObservableList<Order> dispatchedOrders;
-	private Floor floor;
 	/**
 	 * Main method, creates a simulator and starts the simulation run method.
 	 */
@@ -83,7 +82,6 @@ public class Simulator {
 	public Simulator(Floor floor, int capacity, int chargeSpeed, HashMap<String, Entity> entities, Deque<Order> orders)
 			throws LocationNotValidException {
 		robots = new ArrayList<Robot>();
-		//robotList = new SimpleListProperty<Robot>();
 		this.floor = floor;
 		this.totalTickCount = 0;
 		this.warehouse = new Warehouse(floor, entities, orders, this);
@@ -103,6 +101,7 @@ public class Simulator {
 		}
 		
 		setRobots(FXCollections.observableArrayList(robots));
+		setUnassignedOrders(FXCollections.observableArrayList(orders));
 				
 		
 	}
@@ -136,7 +135,9 @@ public class Simulator {
 		for (Actor actor : actors) {
 			actor.tick(this.warehouse);
 			
-		}	
+		}
+		setAssignedOrders(FXCollections.observableArrayList(warehouse.getAssignedOrders()));
+		setDispatchedOrders(FXCollections.observableArrayList(warehouse.getDispatchedOrders()));
 	}
 
 	/**
@@ -185,12 +186,19 @@ public class Simulator {
 	public void setRobots(ObservableList<Robot> robots) {
 		robotList = robots;
 	}
+	
+	public void setAssignedOrders(ObservableList<Order> assignedOrders) {
+		this.assignedOrders = assignedOrders;
+	}
+	
+	public void setDispatchedOrders(ObservableList<Order> dispatchedOrders) {
+		this.dispatchedOrders = dispatchedOrders;
+	}
+	
 	public ObservableList<PackingStation> packingStationsProperty(){
 		return packingStations;
 	}
-	public ObservableList<StorageShelf> storageShelfProperty(){
-		return shelves;
-	}	
+	
 	public ObservableList<Order> assignedOrdersProperty(){
 		return assignedOrders;
 	}
@@ -200,6 +208,11 @@ public class Simulator {
 	public ObservableList<Order> dispatchedOrdersProperty(){
 		return dispatchedOrders;
 	}
+	
+	public void setUnassignedOrders(ObservableList<Order> orders) {
+		unassignedOrders = orders;
+	}
+
 
 	public List<Actor> getActors() {
 		return actors;

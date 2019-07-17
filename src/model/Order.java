@@ -57,7 +57,7 @@ public class Order {
 		return MessageFormat.format("Order: "
 				+ " - Storage Shelf UIDs: {0}"
 				+ " - Number of ticks to pack order: {1}"
-				+ " - Total number of tick to pack from assigned: {3}.", 
+				+ " - Total number of tick to pack from assigned: {2}.", 
 				String.join(", ", this.storageShelfUIDs), 
 				this.numberOfTicksToPack,
 				this.totalNumberOfTicksToPack);
