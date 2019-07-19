@@ -43,7 +43,7 @@ public class Location {
 	 */
 	@Override
 	public String toString() {
-		return MessageFormat.format("Location: {0}, {1} [Row, Column]", this.row, this.column);
+		return MessageFormat.format("Location: {0}, {1}", this.row, this.column);
 	}
 	
 	/**

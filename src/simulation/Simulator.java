@@ -102,8 +102,6 @@ public class Simulator {
 		
 		setRobots(FXCollections.observableArrayList(robots));
 		setUnassignedOrders(FXCollections.observableArrayList(orders));
-				
-		
 	}
 
 	/**
@@ -212,7 +210,6 @@ public class Simulator {
 	public void setUnassignedOrders(ObservableList<Order> orders) {
 		unassignedOrders = orders;
 	}
-
 
 	public List<Actor> getActors() {
 		return actors;

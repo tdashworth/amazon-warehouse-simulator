@@ -131,19 +131,15 @@ public class WarehouseController {
 			lblCharge.setText("Charge speed:" + Integer.toString(newValue.intValue()));
 			sim.setChargeSpeed(newValue.intValue());
 		});
+		
+	}
 
-
-		// create an Event Handler
-		EventHandler<ActionEvent> event1 = new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent e) {
-				FileChooser fil_chooser = new FileChooser();
-				File file = fil_chooser.showOpenDialog(WarehouseView.getPrimaryStage());
-				if (file != null) {
-					lblFile.setText(file.getAbsolutePath());
-				}
-			}
-		};
-		btnUploadFile.setOnAction(event1);
+	public void upload() {
+		FileChooser fil_chooser = new FileChooser();
+		File file = fil_chooser.showOpenDialog(WarehouseView.getPrimaryStage());
+		if (file != null) {
+			lblFile.setText(file.getAbsolutePath());
+		}
 	}
 
 	/**
@@ -187,27 +183,13 @@ public class WarehouseController {
 			GridPane.setConstraints(r, l.getColumn(), l.getRow());
 			grdWarehouse.getChildren().add(r);
 		}
-	
-		new Thread(() -> {
-			IntStream.range(0, sim.robotsProperty().size()).forEach(i -> {
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				System.out.println(sim.robotsProperty().get(i));
-				Platform.runLater(() -> {
-					// Where the magic happens.
-					sim.robotsProperty().get(i);
-					triggerUpdate(robotsList, sim.robotsProperty().get(i), i);
-				});            
-			});
-		}).start();
-		
+
+		robotListChanges();
+
 		unassignedOrders.setItems(sim.unassignedOrdersProperty());
 		assignedOrders.setItems(sim.assignedOrdersProperty());
 		dispatchedOrders.setItems(sim.dispatchedOrdersProperty());
-	
+
 
 	}
 
@@ -324,16 +306,14 @@ public class WarehouseController {
 
 		robotsList.setItems(sim.robotsProperty());
 		unassignedOrders.setItems(sim.unassignedOrdersProperty());
+
 		
-		//dispatchedOrders.setItems(sim.dispatchedOrdersProperty());
-
-
 	}
 
 	public Simulator getSimulation() {
 		return sim;
 	}
-	
+
 	/**
 	 * Runs the simulation for ten ticks
 	 * @throws Exception
@@ -381,4 +361,21 @@ public class WarehouseController {
 		listView.fireEvent(event);
 	}
 
+	public void robotListChanges() {
+		new Thread(() -> {
+			IntStream.range(0, sim.robotsProperty().size()).forEach(i -> {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				System.out.println(sim.robotsProperty().get(i));
+				Platform.runLater(() -> {
+					// Where the magic happens.
+					sim.robotsProperty().get(i);
+					triggerUpdate(robotsList, sim.robotsProperty().get(i), i);
+				});            
+			});
+		}).start();
+	}
 }

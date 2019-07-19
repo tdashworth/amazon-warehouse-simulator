@@ -144,7 +144,7 @@
                         <Font size="12.0" />
                      </font>
 						</Button>
-                  <Button fx:id="btnUploadFile" mnemonicParsing="false" text="Upload File" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <Button fx:id="btnUploadFile" mnemonicParsing="false" onAction="#upload" text="Upload File" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <font>
                         <Font size="12.0" />
                      </font>
@@ -222,7 +222,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
             </Label>
-				<ListView fx:id="robotsList" prefHeight="200.0" prefWidth="500.0" />
+				<ListView fx:id="robotsList" editable="true" prefWidth="500.0" VBox.vgrow="ALWAYS" />
             <Label text="Unassigned Orders">
                <font>
                   <Font size="14.0" />
@@ -231,7 +231,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
             </Label>
-				<ListView fx:id="unassignedOrders" prefHeight="200.0" prefWidth="200.0" />
+				<ListView fx:id="unassignedOrders" editable="true" prefWidth="200.0" VBox.vgrow="ALWAYS" />
             <Label text="Assigned Orders">
                <font>
                   <Font size="14.0" />
@@ -240,7 +240,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
             </Label>
-				<ListView fx:id="assignedOrders" prefHeight="200.0" prefWidth="200.0" />
+				<ListView fx:id="assignedOrders" editable="true" prefWidth="200.0" VBox.vgrow="ALWAYS" />
             <Label text="Dispatched Orders">
                <font>
                   <Font size="14.0" />
@@ -249,7 +249,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
             </Label>
-				<ListView fx:id="dispatchedOrders" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+				<ListView fx:id="dispatchedOrders" editable="true" prefWidth="200.0" VBox.vgrow="ALWAYS" />
 			</children>
 		</VBox>
 	</right>
