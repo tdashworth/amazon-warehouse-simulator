@@ -287,7 +287,6 @@ public class WarehouseController {
 
 		else {
 			//needs to create a simulator from user configurations
-
 			Floor floor = new Floor(rows, columns);
 
 			//sim = new Simulator(floor );
@@ -371,11 +370,11 @@ public class WarehouseController {
 				}
 				System.out.println(sim.robotsProperty().get(i));
 				Platform.runLater(() -> {
-					// Where the magic happens.
 					sim.robotsProperty().get(i);
 					triggerUpdate(robotsList, sim.robotsProperty().get(i), i);
 				});            
 			});
 		}).start();
 	}
+	
 }

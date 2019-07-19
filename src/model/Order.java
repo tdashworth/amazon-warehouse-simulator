@@ -54,13 +54,23 @@ public class Order {
 	 */
 	@Override
 	public String toString() {
+		
+		if(this.totalNumberOfTicksToPack > 0) {
+			return MessageFormat.format("Order: "
+					+ " Storage Shelf: {0}"
+					+ " Number of ticks to pack: {1}"
+					+ " Total number of ticks used: {2}.", 
+					String.join(", ", this.storageShelfUIDs), 
+					this.numberOfTicksToPack,
+					this.totalNumberOfTicksToPack);
+		}
+		else {
 		return MessageFormat.format("Order: "
-				+ " - Storage Shelf UIDs: {0}"
-				+ " - Number of ticks to pack order: {1}"
-				+ " - Total number of tick to pack from assigned: {2}.", 
+				+ " Storage Shelf: {0}"
+				+ " Number of ticks to pack: {1}",
 				String.join(", ", this.storageShelfUIDs), 
-				this.numberOfTicksToPack,
-				this.totalNumberOfTicksToPack);
+				this.numberOfTicksToPack);
+	}
 	}
 
 	

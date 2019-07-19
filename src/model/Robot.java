@@ -253,22 +253,22 @@ public class Robot extends Entity implements Actor {
 
 		if(this.packingStation != null && this.storageShelf != null ) {
 			return MessageFormat.format(
-					"Robot:" + " - UID: {0}" + " - {1}" + " - Power: {2}" + " - StorageShelf: {3}"
-							+ " - Packing Station: {4}" + " - Status: {5}" ,
-							this.uid, this.location, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(),
-							this.robotStatus);
+					"Robot:" + " {0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: {3}"
+							+ "- Packing Station: {4}" + " {5}" ,
+							this.uid, this.robotStatus, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(), this.location 
+							);
 		}
 		else if(this.packingStation != null ){
 			return MessageFormat.format(
-				"Robot:" + " - UID: {0}" + " - {1}" + " - Power: {2}" + " - StorageShelf: {3}"
-						+ " - Packing Station: null" + " - Robot Status: {4} ",
-						this.uid, this.location, this.powerUnits, this.storageShelf, this.robotStatus);
+				"Robot:" + "{0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: {3}"
+						+ " Packing Station: null" + " {4} ",
+						this.uid, this.robotStatus, this.powerUnits, this.storageShelf, this.location);
 		}
 		else {
 			return MessageFormat.format(
-				"Robot:" + " - UID: {0}" + " - {1}" + " - Power: {2}" + " - StorageShelf: null"
-						+ " - Packing Station: {3}" + " - Robot Status: {4} ",
-						this.uid, this.location, this.powerUnits, this.packingStation, this.robotStatus);
+				"Robot:" + "{0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: null"
+						+ "- Packing Station: {3}" + " {4} ",
+						this.uid, this.robotStatus, this.powerUnits, this.packingStation, this.location);
 		}
 	}
 
