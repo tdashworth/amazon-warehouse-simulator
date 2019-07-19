@@ -19,6 +19,8 @@ import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -354,20 +356,11 @@ public class WarehouseController {
 			runOneTickSaftely();
 			if (sim.isComplete()) {
 				timeline.stop();
-				FXMLLoader loader = new FXMLLoader();
-				loader.setLocation(getClass().getResource("Complete.fxml"));
-				Stage stage = new Stage();
-				stage.setTitle("Congratulations");
-				BorderPane mainContainer;
-				try {
-					mainContainer = (BorderPane) loader.load();
-					Scene scene = new Scene(mainContainer, 800, 500);
-					stage.setScene(scene);
-					stage.show();
-				} catch (IOException e) {	
-					e.printStackTrace();
-				}
-
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Information Dialog");
+				alert.setHeaderText("Congratulations, the simulation is complete!");
+				alert.setContentText("Total tick count: "+ sim.getTotalTickCount());
+				alert.show();
 			}
 		}));
 		timeline.setCycleCount(Timeline.INDEFINITE);

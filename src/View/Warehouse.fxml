@@ -8,7 +8,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.WarehouseController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.WarehouseController">
 	<left>
 		<VBox alignment="CENTER" maxWidth="250.0" spacing="5.0" style="-fx-background-color: #62656b;" BorderPane.alignment="TOP_CENTER">
 			<children>
@@ -109,9 +109,9 @@
 					<columnConstraints>
 						<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
 						<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-						<ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
 					</columnConstraints>
 					<rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" />
 						<RowConstraints />
 						<RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
 						<RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
@@ -120,49 +120,49 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
 					</rowConstraints>
 					<children>
-						<Button fx:id="btn1tick" alignment="CENTER" mnemonicParsing="false" onAction="#runOneTick" prefHeight="74.0" prefWidth="57.0" text="One Tick" GridPane.rowIndex="2">
+						<Button fx:id="btn1tick" alignment="CENTER" minWidth="75.0" mnemonicParsing="false" onAction="#runOneTick" text="One Tick" GridPane.rowIndex="2">
 							<font>
-								<Font size="10.0" />
+								<Font size="12.0" />
 							</font>
 							<GridPane.margin>
 								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 							</GridPane.margin>
 						</Button>
-						<Button fx:id="btn10Ticks" mnemonicParsing="false" onAction="#runTenTicks" text="10 Ticks" GridPane.columnIndex="1" GridPane.rowIndex="2">
+						<Button fx:id="btn10Ticks" minWidth="75.0" mnemonicParsing="false" onAction="#runTenTicks" text="10 Ticks" GridPane.columnIndex="1" GridPane.rowIndex="2">
 							<font>
-								<Font size="10.0" />
+								<Font size="12.0" />
 							</font>
 							<GridPane.margin>
 								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 							</GridPane.margin>
 						</Button>
-						<Button fx:id="btnLoad" mnemonicParsing="false" onAction="#loadSimulation" prefWidth="50.0" text="Load" GridPane.rowIndex="4">
+						<Button fx:id="btnLoad" minWidth="75.0" mnemonicParsing="false" onAction="#loadSimulation" text="Load" GridPane.rowIndex="4">
 							<GridPane.margin>
 								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 							</GridPane.margin>
                      <font>
-                        <Font size="10.0" />
+                        <Font size="12.0" />
                      </font>
 						</Button>
                   <Button fx:id="btnUploadFile" mnemonicParsing="false" text="Upload File" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <font>
-                        <Font size="10.0" />
+                        <Font size="12.0" />
                      </font>
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="btnRunToEnd" mnemonicParsing="false" onAction="#runToEnd" text="Run to end" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                  <Button fx:id="btnRunToEnd" minWidth="75.0" mnemonicParsing="false" onAction="#runToEnd" text="Run to end" GridPane.rowIndex="6">
                      <font>
-                        <Font size="10.0" />
+                        <Font size="12.0" />
                      </font>
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </GridPane.margin>
                   </Button>
-      						<Button fx:id="btnReset" mnemonicParsing="false" onAction="#reset" prefWidth="50.0" text="Reset" GridPane.columnIndex="2" GridPane.rowIndex="4">
+      						<Button fx:id="btnReset" minWidth="75.0" mnemonicParsing="false" onAction="#reset" text="Reset" GridPane.columnIndex="1" GridPane.rowIndex="6">
       							<font>
-      								<Font size="10.0" />
+      								<Font size="12.0" />
       							</font>
                      <GridPane.margin>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -218,24 +218,36 @@
                <font>
                   <Font size="14.0" />
                </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
             </Label>
-				<ListView fx:id="robotsList" prefHeight="200.0" prefWidth="600.0" />
+				<ListView fx:id="robotsList" prefHeight="200.0" prefWidth="500.0" />
             <Label text="Unassigned Orders">
                <font>
                   <Font size="14.0" />
                </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
             </Label>
 				<ListView fx:id="unassignedOrders" prefHeight="200.0" prefWidth="200.0" />
             <Label text="Assigned Orders">
                <font>
                   <Font size="14.0" />
                </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
             </Label>
 				<ListView fx:id="assignedOrders" prefHeight="200.0" prefWidth="200.0" />
             <Label text="Dispatched Orders">
                <font>
                   <Font size="14.0" />
                </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
             </Label>
 				<ListView fx:id="dispatchedOrders" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
 			</children>
