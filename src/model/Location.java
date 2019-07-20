@@ -1,6 +1,3 @@
-/**
- * 
- */
 package model;
 
 import java.text.MessageFormat;
@@ -42,7 +39,7 @@ public class Location {
 	 */
 	@Override
 	public String toString() {
-		return MessageFormat.format("Location: {0}, {1} [column, row]", this.column, this.row);
+		return MessageFormat.format("Location: {0}, {1}", this.column, this.row);
 	}
 	
 	/**
@@ -51,5 +48,31 @@ public class Location {
 	 */
 	public boolean equals(Location location) {
 		return (this.row == location.getRow()) && (this.column == location.getColumn());
+	}
+	
+	/**
+	 * Calculates the distance following the rows and columns of the grid to locations reside on.
+	 * 
+	 * @param location The location to calculate distance to.
+	 * @return The shortest distance from this to the given location.
+	 */
+	public int getManhattanDistanceTo(Location location) {
+		int differenceInColumns = Math.abs(this.getColumn() - location.getColumn());
+		int differenceInRows = Math.abs(this.getRow() - location.getRow());
+
+		return differenceInColumns + differenceInRows;
+	}
+	
+	/**
+	 * Calculates the direct distance (line of sight) often diagonal.
+	 * 
+	 * @param location The location to calculate distance to.
+	 * @return The shortest distance from this to the given location.
+	 */
+	public double getEuclideanDistanceTo(Location location) {
+		int differenceInColumns = Math.abs(this.getColumn() - location.getColumn());
+		int differenceInRows = Math.abs(this.getRow() - location.getRow());
+
+		return Math.sqrt(differenceInRows ^ 2 + differenceInColumns ^ 2);
 	}
 }

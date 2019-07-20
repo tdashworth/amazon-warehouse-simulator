@@ -9,7 +9,7 @@ import java.util.*;
  * of heuristic (closest direct distance) and cost (number of steps it took to
  * travel to the node).
  */
-public class PathFindingStrategy {
+public class AStarPathFinder implements PathFinder {
 	private boolean avoidCollisions;
 	private Floor floor;
 	private Deque<Location> path;
@@ -24,7 +24,7 @@ public class PathFindingStrategy {
 	 * 
 	 * @param floor the floor determining the size and location of other robots.
 	 */
-	public PathFindingStrategy(Floor floor) {
+	public AStarPathFinder(Floor floor) {
 		this(floor, true);
 	}
 
@@ -36,11 +36,11 @@ public class PathFindingStrategy {
 	 * @param avoidCollisions a flag allowing the search to avoid location of
 	 *                        current robots.
 	 */
-	public PathFindingStrategy(Floor floor, boolean avoidCollisions) {
+	public AStarPathFinder(Floor floor, boolean avoidCollisions) {
 		this.floor = floor;
 		this.avoidCollisions = avoidCollisions;
 		this.path = new LinkedList<Location>();
-		this.floorNodes = PathFindingStrategy.buildFloorWithNodes(this.floor.getNumberOfColumns(),
+		this.floorNodes = AStarPathFinder.buildFloorWithNodes(this.floor.getNumberOfColumns(),
 				this.floor.getNumberOfRows());
 	}
 
@@ -74,6 +74,7 @@ public class PathFindingStrategy {
 	 * @return a boolean value; true if a path was found, otherwise false.
 	 * @throws LocationNotValidException
 	 */
+	@Override
 	public boolean calculatePath(Location beginningLocation, Location targetLocation) {
 
 		// If both locations are the same, return true (with a path count of 0)
@@ -99,7 +100,7 @@ public class PathFindingStrategy {
 			return false;
 
 		// Populate the path with calculated route.
-		this.path = PathFindingStrategy.convertLinkedNodesToPath(beginningNode, targetNode);
+		this.path = AStarPathFinder.convertLinkedNodesToPath(beginningNode, targetNode);
 
 		return true;
 
@@ -207,7 +208,7 @@ public class PathFindingStrategy {
 			return;
 
 		current.setNumberOfStepsFromStart(nextStepCost);
-		current.setDirectDistanceToTarget(PathFindingStrategy.calculateHeuristic(current, target));
+		current.setDirectDistanceToTarget(current.getEuclideanDistanceTo(target));
 		current.setPreviousNodeInPath(previous);
 		this.unexploredNodes.add(current);
 	}
@@ -233,26 +234,9 @@ public class PathFindingStrategy {
 	}
 
 	/**
-	 * Calculates the heuristic between the two given nodes. The heuristic is simply
-	 * the direct distance between the two nodes calculated using Pythagoras
-	 * Theorem.
-	 * 
-	 * This is static because it doesn't use or modify anything locally.
-	 * 
-	 * @param n1 the first Node.
-	 * @param n2 the second Node.
-	 * @return the direct distance between them.
-	 */
-	private static double calculateHeuristic(Node n1, Node n2) {
-		int differenceInColumns = Math.abs(n1.getColumn() - n2.getColumn());
-		int differenceInRows = Math.abs(n1.getRow() - n2.getRow());
-
-		return Math.sqrt(differenceInRows ^ 2 + differenceInColumns ^ 2);
-	}
-
-	/**
 	 * @return the entire path.
 	 */
+	@Override
 	public Collection<Location> getPath() {
 		return this.path;
 	}
@@ -260,6 +244,7 @@ public class PathFindingStrategy {
 	/**
 	 * @return the next step in the path (which is removed).
 	 */
+	@Override
 	public Location getNextLocation() {
 		return this.path.pop();
 	}
@@ -267,6 +252,7 @@ public class PathFindingStrategy {
 	/**
 	 * @return the number of steps in the path.
 	 */
+	@Override
 	public int getNumberOfRemainingSteps() {
 		return this.path.size();
 	}

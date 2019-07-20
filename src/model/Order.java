@@ -57,17 +57,17 @@ public class Order {
 		
 		if(this.totalNumberOfTicksToPack > 0) {
 			return MessageFormat.format("Order: "
-					+ " Storage Shelf: {0}"
-					+ " Number of ticks to pack: {1}"
-					+ " Total number of ticks used: {2}.", 
+					+ " Storage Shelfs: {0}"
+					+ " Ticks to pack: {1}"
+					+ " Total ticks used: {2}.", 
 					String.join(", ", this.storageShelfUIDs), 
 					this.numberOfTicksToPack,
 					this.totalNumberOfTicksToPack);
 		}
 		else {
 		return MessageFormat.format("Order: "
-				+ " Storage Shelf: {0}"
-				+ " Number of ticks to pack: {1}",
+				+ " Storage Shelfs: {0}"
+				+ " Ticks to pack: {1}.",
 				String.join(", ", this.storageShelfUIDs), 
 				this.numberOfTicksToPack);
 	}

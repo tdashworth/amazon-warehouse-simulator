@@ -9,7 +9,7 @@ public class Robot extends Entity implements Actor {
 	private PackingStation packingStation;
 	private ChargingPod chargingPod;
 
-	private PathFindingStrategy pathFinder;
+	private PathFinder pathFinder;
 	private Location previousLocation;
 	private RobotStatus robotStatus;
 	private static int POWER_UNITS_EMPTY = 1;
@@ -133,60 +133,44 @@ public class Robot extends Entity implements Actor {
 	 * @param packingStation
 	 * @param warehouse
 	 * @return
-	 * @throws LocationNotValidException
 	 */
-	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation, Warehouse warehouse)
-			throws LocationNotValidException {
-
+	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation, Warehouse warehouse) {
 		if (this.storageShelf != null || this.hasItem())
 			return false;
 
-		double estimatedCostWithLeeway = estimatePowerUnitCostForJob(storageShelf, packingStation, warehouse);
+		double estimatedCostWithLeeway = estimatePowerUnitCostForJob(storageShelf, packingStation);
 
 		if (estimatedCostWithLeeway > this.powerUnits)
 			return false;
 
 		this.storageShelf = storageShelf;
 		this.packingStation = packingStation;
-		this.pathFinder = new PathFindingStrategy(warehouse.getFloor());
+		this.pathFinder = new AStarPathFinder(warehouse.getFloor());
 
 		this.log("Accepted Job to %s then %s.", storageShelf.getLocation(), packingStation.getLocation());
 
 		return true;
+
 	}
 
-	/*
+	/**
 	 * Given a storage shelf and packing station this will calculate the number of
 	 * power units to make the trip back to its charging pod with a leeway of 20%.
 	 * 
 	 * @param storageShelf
-	 * 
 	 * @param packingStation
-	 * 
 	 * @param warehouse
-	 * 
 	 * @return
 	 * 
 	 * @throws LocationNotValidException
 	 */
-	private double estimatePowerUnitCostForJob(StorageShelf storageShelf, PackingStation packingStation,
-			Warehouse warehouse) throws LocationNotValidException {
-		PathFindingStrategy tempPathFinder = new PathFindingStrategy(warehouse.getFloor(), false);
-
-		tempPathFinder.calculatePath(this.getLocation(), storageShelf.getLocation());
-		int numberOfMovesToStorageShelf = tempPathFinder.getNumberOfRemainingSteps();
-
-		tempPathFinder.calculatePath(storageShelf.getLocation(), packingStation.getLocation());
-		int numberOfMovesToPackingStation = tempPathFinder.getNumberOfRemainingSteps();
-
-		tempPathFinder.calculatePath(packingStation.getLocation(), this.chargingPod.getLocation());
-		int numberOfMovesToChargingStation = tempPathFinder.getNumberOfRemainingSteps();
-
-		double unlaidenedCost = (numberOfMovesToStorageShelf + numberOfMovesToChargingStation) * POWER_UNITS_EMPTY;
-		double carryingCost = (numberOfMovesToPackingStation) * POWER_UNITS_CARRYING;
-
-		double estimatedCostWithLeeway = (unlaidenedCost + carryingCost) * 1.2;
-		return estimatedCostWithLeeway;
+	private double estimatePowerUnitCostForJob(StorageShelf storageShelf, PackingStation packingStation) {
+		PathCostEstimator costEstimator = new BasicPathCostEstimator(POWER_UNITS_EMPTY, POWER_UNITS_CARRYING);
+		costEstimator.setStart(this.location);
+		costEstimator.addUnladenedStop(storageShelf.getLocation());
+		costEstimator.addLadenedStop(packingStation.getLocation());
+		costEstimator.addUnladenedStop(this.chargingPod.getLocation());
+		return costEstimator.getEstimatedCost(.2);
 	}
 
 	/**
@@ -199,33 +183,30 @@ public class Robot extends Entity implements Actor {
 		if (isBatteryBelowHalfCharge && isAtChargingPod) {// Running low of powerUnits
 			robotStatus = RobotStatus.Charging;
 			return RobotStatus.Charging;
-		}
-		else if (this.storageShelf != null) {// Storage Shelf Assigned
+		} else if (this.storageShelf != null) {// Storage Shelf Assigned
 			robotStatus = RobotStatus.CollectingItem;
 			return RobotStatus.CollectingItem;
-		}
-		else if (this.hasItem()) {
-			robotStatus = RobotStatus.ReturningItem;		
+		} else if (this.hasItem()) {
+			robotStatus = RobotStatus.ReturningItem;
 			return RobotStatus.ReturningItem; // Item collected
-		}	
-		else if (isAtChargingPod) {
-			robotStatus = RobotStatus.Charging;		
+		} else if (isAtChargingPod) {
+			robotStatus = RobotStatus.Charging;
 			return RobotStatus.Charging; // Nothing to do and already at Charging Pod
-		}
-		else {
+		} else {
 			robotStatus = RobotStatus.GoingToCharge;
 			return RobotStatus.GoingToCharge; // Nothing to do so go charge
-		}		
+		}
 	}
-	
+
 	/**
-	 *Returns the robot's current status 
+	 * Returns the robot's current status
+	 * 
 	 * @return Status
 	 */
 	public RobotStatus getStatus() {
 		return robotStatus;
 	}
-	
+
 	/**
 	 * Checks to see if the robot is carrying an item
 	 * 
@@ -251,24 +232,22 @@ public class Robot extends Entity implements Actor {
 	 */
 	public String toString() {
 
-		if(this.packingStation != null && this.storageShelf != null ) {
+		if (this.packingStation != null && this.storageShelf != null) {
 			return MessageFormat.format(
 					"Robot:" + " {0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: {3}"
-							+ "- Packing Station: {4}" + " {5}" ,
-							this.uid, this.robotStatus, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(), this.location 
-							);
-		}
-		else if(this.packingStation != null ){
+							+ "- Packing Station: {4}" + " {5}",
+					this.uid, this.robotStatus, this.powerUnits, this.storageShelf.getUID(),
+					this.packingStation.getUID(), this.location);
+		} else if (this.packingStation != null) {
 			return MessageFormat.format(
-				"Robot:" + "{0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: {3}"
-						+ " Packing Station: null" + " {4} ",
-						this.uid, this.robotStatus, this.powerUnits, this.storageShelf, this.location);
-		}
-		else {
+					"Robot:" + "{0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: {3}"
+							+ " Packing Station: null" + " {4} ",
+					this.uid, this.robotStatus, this.powerUnits, this.storageShelf, this.location);
+		} else {
 			return MessageFormat.format(
-				"Robot:" + "{0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: null"
-						+ "- Packing Station: {3}" + " {4} ",
-						this.uid, this.robotStatus, this.powerUnits, this.packingStation, this.location);
+					"Robot:" + "{0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: null"
+							+ "- Packing Station: {3}" + " {4} ",
+					this.uid, this.robotStatus, this.powerUnits, this.packingStation, this.location);
 		}
 	}
 
