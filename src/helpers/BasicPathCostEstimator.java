@@ -1,4 +1,6 @@
-package model;
+package helpers;
+
+import model.Location;
 
 /**
  * A strategy to calculating the power cost of a journey on a tile based

@@ -2,6 +2,11 @@ package model;
 
 import java.text.MessageFormat;
 
+import helpers.AStarPathFinder;
+import helpers.BasicPathCostEstimator;
+import helpers.PathCostEstimator;
+import helpers.PathFinder;
+
 public class Robot extends Entity implements Actor {
 	private int powerUnits;
 	private StorageShelf storageShelf;
@@ -11,7 +16,7 @@ public class Robot extends Entity implements Actor {
 
 	private PathFinder pathFinder;
 	private Location previousLocation;
-	private RobotStatus robotStatus;
+	private RobotStatus status;
 	private static int POWER_UNITS_EMPTY = 1;
 	private static int POWER_UNITS_CARRYING = 2;
 
@@ -27,36 +32,30 @@ public class Robot extends Entity implements Actor {
 		super(uid, location);
 		this.chargingPod = chargingPod;
 		this.powerUnits = powerUnits;
-		this.robotStatus = RobotStatus.Charging;
+		this.status = RobotStatus.Charging;
 	}
 
 	@Override
-	public void tick(Warehouse warehouse) {
-		try {
-			RobotStatus status = this.calculateStatus(warehouse);
-			this.log("Ticking with status: %s.", status);
+	public void tick(Warehouse warehouse) throws Exception {
+		this.status = this.calculateStatus(warehouse);
+		this.log("Ticking with status: %s.", status);
 
-			switch (status) {
-			case CollectingItem:
-				this.collectItemFromStorageShelf(warehouse);
-				break;
+		switch (status) {
+		case CollectingItem:
+			this.collectItemFromStorageShelf(warehouse);
+			break;
 
-			case ReturningItem:
-				this.returnItemToPackingStation(warehouse);
-				break;
+		case ReturningItem:
+			this.returnItemToPackingStation(warehouse);
+			break;
 
-			case Charging:
-				charge(warehouse.getChargeSpeed(), warehouse.getMaxChargeCapacity());
-				break;
+		case Charging:
+			charge(warehouse.getChargeSpeed(), warehouse.getMaxChargeCapacity());
+			break;
 
-			case GoingToCharge:
-				this.move(warehouse, this.chargingPod.getLocation());
-				break;
-
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		case GoingToCharge:
+			this.move(warehouse, this.chargingPod.getLocation());
+			break;
 		}
 	}
 
@@ -181,19 +180,14 @@ public class Robot extends Entity implements Actor {
 		boolean isBatteryBelowHalfCharge = this.powerUnits < (warehouse.getMaxChargeCapacity() * 0.5);
 
 		if (isBatteryBelowHalfCharge && isAtChargingPod) {// Running low of powerUnits
-			robotStatus = RobotStatus.Charging;
 			return RobotStatus.Charging;
 		} else if (this.storageShelf != null) {// Storage Shelf Assigned
-			robotStatus = RobotStatus.CollectingItem;
 			return RobotStatus.CollectingItem;
 		} else if (this.hasItem()) {
-			robotStatus = RobotStatus.ReturningItem;
 			return RobotStatus.ReturningItem; // Item collected
 		} else if (isAtChargingPod) {
-			robotStatus = RobotStatus.Charging;
 			return RobotStatus.Charging; // Nothing to do and already at Charging Pod
 		} else {
-			robotStatus = RobotStatus.GoingToCharge;
 			return RobotStatus.GoingToCharge; // Nothing to do so go charge
 		}
 	}
@@ -204,7 +198,7 @@ public class Robot extends Entity implements Actor {
 	 * @return Status
 	 */
 	public RobotStatus getStatus() {
-		return robotStatus;
+		return status;
 	}
 
 	/**
@@ -236,18 +230,18 @@ public class Robot extends Entity implements Actor {
 			return MessageFormat.format(
 					"Robot:" + " {0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: {3}"
 							+ "- Packing Station: {4}" + " {5}",
-					this.uid, this.robotStatus, this.powerUnits, this.storageShelf.getUID(),
+					this.uid, this.status, this.powerUnits, this.storageShelf.getUID(),
 					this.packingStation.getUID(), this.location);
 		} else if (this.packingStation != null) {
 			return MessageFormat.format(
 					"Robot:" + "{0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: {3}"
 							+ " Packing Station: null" + " {4} ",
-					this.uid, this.robotStatus, this.powerUnits, this.storageShelf, this.location);
+					this.uid, this.status, this.powerUnits, this.storageShelf, this.location);
 		} else {
 			return MessageFormat.format(
 					"Robot:" + "{0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: null"
 							+ "- Packing Station: {3}" + " {4} ",
-					this.uid, this.robotStatus, this.powerUnits, this.packingStation, this.location);
+					this.uid, this.status, this.powerUnits, this.packingStation, this.location);
 		}
 	}
 

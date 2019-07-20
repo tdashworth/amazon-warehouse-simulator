@@ -1,4 +1,6 @@
-package model;
+package helpers;
+
+import model.Location;
 
 /**
  * A single Node in the search graph

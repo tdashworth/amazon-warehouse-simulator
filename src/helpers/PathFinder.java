@@ -1,6 +1,9 @@
-package model;
+package helpers;
 
 import java.util.Collection;
+
+import model.Location;
+import model.LocationNotValidException;
 
 public interface PathFinder {
 

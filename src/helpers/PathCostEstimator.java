@@ -1,4 +1,6 @@
-package model;
+package helpers;
+
+import model.Location;
 
 public interface PathCostEstimator {
 
