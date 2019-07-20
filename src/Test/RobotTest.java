@@ -20,7 +20,7 @@ import model.LocationNotValidException;
 import model.Order;
 import model.PackingStation;
 import model.Robot;
-import model.Robot.Status;
+import model.Robot.RobotStatus;
 import model.StorageShelf;
 import model.Warehouse;
 import simulation.SimFileFormatException;

@@ -11,11 +11,11 @@ public class Robot extends Entity implements Actor {
 
 	private PathFindingStrategy pathFinder;
 	private Location previousLocation;
-	private Status robotStatus;
+	private RobotStatus robotStatus;
 	private static int POWER_UNITS_EMPTY = 1;
 	private static int POWER_UNITS_CARRYING = 2;
 
-	public static enum Status {
+	public static enum RobotStatus {
 		GoingToCharge, Charging, CollectingItem, ReturningItem
 	}
 
@@ -27,13 +27,13 @@ public class Robot extends Entity implements Actor {
 		super(uid, location);
 		this.chargingPod = chargingPod;
 		this.powerUnits = powerUnits;
-		this.robotStatus = Status.Charging;
+		this.robotStatus = RobotStatus.Charging;
 	}
 
 	@Override
 	public void tick(Warehouse warehouse) {
 		try {
-			Status status = this.calculateStatus(warehouse);
+			RobotStatus status = this.calculateStatus(warehouse);
 			this.log("Ticking with status: %s.", status);
 
 			switch (status) {
@@ -192,29 +192,29 @@ public class Robot extends Entity implements Actor {
 	/**
 	 * Determines the robot's status based on its current state.
 	 */
-	public Status calculateStatus(Warehouse warehouse) {
+	public RobotStatus calculateStatus(Warehouse warehouse) {
 		boolean isAtChargingPod = this.location.equals(this.chargingPod.getLocation());
 		boolean isBatteryBelowHalfCharge = this.powerUnits < (warehouse.getMaxChargeCapacity() * 0.5);
 
 		if (isBatteryBelowHalfCharge && isAtChargingPod) {// Running low of powerUnits
-			robotStatus = Status.Charging;
-			return Status.Charging;
+			robotStatus = RobotStatus.Charging;
+			return RobotStatus.Charging;
 		}
 		else if (this.storageShelf != null) {// Storage Shelf Assigned
-			robotStatus = Status.CollectingItem;
-			return Status.CollectingItem;
+			robotStatus = RobotStatus.CollectingItem;
+			return RobotStatus.CollectingItem;
 		}
 		else if (this.hasItem()) {
-			robotStatus = Status.ReturningItem;		
-			return Status.ReturningItem; // Item collected
+			robotStatus = RobotStatus.ReturningItem;		
+			return RobotStatus.ReturningItem; // Item collected
 		}	
 		else if (isAtChargingPod) {
-			robotStatus = Status.Charging;		
-			return Status.Charging; // Nothing to do and already at Charging Pod
+			robotStatus = RobotStatus.Charging;		
+			return RobotStatus.Charging; // Nothing to do and already at Charging Pod
 		}
 		else {
-			robotStatus = Status.GoingToCharge;
-			return Status.GoingToCharge; // Nothing to do so go charge
+			robotStatus = RobotStatus.GoingToCharge;
+			return RobotStatus.GoingToCharge; // Nothing to do so go charge
 		}		
 	}
 	
@@ -222,7 +222,7 @@ public class Robot extends Entity implements Actor {
 	 *Returns the robot's current status 
 	 * @return Status
 	 */
-	public Status getStatus() {
+	public RobotStatus getStatus() {
 		return robotStatus;
 	}
 	
