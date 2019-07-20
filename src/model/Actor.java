@@ -10,5 +10,5 @@ public interface Actor {
 	 * @param warehouse
 	 * @throws Exception 
 	 */
-	public abstract void tick(Warehouse warehouse) throws Exception;
+	public abstract void tick(Floor floor) throws Exception;
 }

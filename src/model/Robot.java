@@ -8,7 +8,11 @@ import helpers.PathCostEstimator;
 import helpers.PathFinder;
 
 public class Robot extends Entity implements Actor {
-	private int powerUnits;
+	private int currentPowerUnits;
+	private final int maxPowerUnits;
+	private static int POWER_UNITS_EMPTY = 1;
+	private static int POWER_UNITS_CARRYING = 2;
+
 	private StorageShelf storageShelf;
 	private StorageShelf holdingItem;
 	private PackingStation packingStation;
@@ -17,8 +21,6 @@ public class Robot extends Entity implements Actor {
 	private PathFinder pathFinder;
 	private Location previousLocation;
 	private RobotStatus status;
-	private static int POWER_UNITS_EMPTY = 1;
-	private static int POWER_UNITS_CARRYING = 2;
 
 	public static enum RobotStatus {
 		GoingToCharge, Charging, CollectingItem, ReturningItem
@@ -31,30 +33,30 @@ public class Robot extends Entity implements Actor {
 	public Robot(String uid, Location location, ChargingPod chargingPod, int powerUnits) {
 		super(uid, location);
 		this.chargingPod = chargingPod;
-		this.powerUnits = powerUnits;
+		this.currentPowerUnits = powerUnits;
+		this.maxPowerUnits = powerUnits;
 		this.status = RobotStatus.Charging;
 	}
 
 	@Override
-	public void tick(Warehouse warehouse) throws Exception {
-		this.status = this.calculateStatus(warehouse);
+	public void tick(Floor floor) throws Exception {
+		this.status = this.getStatus();
 		this.log("Ticking with status: %s.", status);
 
 		switch (status) {
 		case CollectingItem:
-			this.collectItemFromStorageShelf(warehouse);
+			this.collectItemFromStorageShelf(floor);
 			break;
 
 		case ReturningItem:
-			this.returnItemToPackingStation(warehouse);
+			this.returnItemToPackingStation(floor);
 			break;
 
 		case Charging:
-			charge(warehouse.getChargeSpeed(), warehouse.getMaxChargeCapacity());
 			break;
 
 		case GoingToCharge:
-			this.move(warehouse, this.chargingPod.getLocation());
+			this.move(floor, this.chargingPod.getLocation());
 			break;
 		}
 	}
@@ -62,18 +64,17 @@ public class Robot extends Entity implements Actor {
 	/**
 	 * Increases the robots power units
 	 */
-	public void charge(int chargeSpeed, int maxCharge) {
-		if (this.powerUnits + chargeSpeed >= maxCharge) {
-			this.powerUnits = maxCharge;
-			this.log("Fully charged to %s", this.powerUnits);
-		} else {
-			this.powerUnits += chargeSpeed;
-			this.log("Charge increased to %s.", this.powerUnits);
-		}
+	public void charge(ChargingPod chargingPod, int chargeSpeed) {
+		if (!this.chargingPod.equals(chargingPod))
+			throw new IllegalArgumentException("Invalid 'chargingPod' given. It must be the same as the one registed");
+
+		int proposedPowerUnits = this.currentPowerUnits + chargeSpeed;
+		this.currentPowerUnits = Integer.min(proposedPowerUnits, this.maxPowerUnits);
+		this.log("Charged to %s.", this.currentPowerUnits);
 	}
 
-	private void collectItemFromStorageShelf(Warehouse warehouse) throws Exception {
-		this.move(warehouse, this.storageShelf.getLocation());
+	private void collectItemFromStorageShelf(Floor floor) throws Exception {
+		this.move(floor, this.storageShelf.getLocation());
 		this.log("Moved closer to assigned Storage Shelf.");
 
 		if (this.location.equals(this.storageShelf.getLocation())) {
@@ -83,8 +84,8 @@ public class Robot extends Entity implements Actor {
 		}
 	}
 
-	private void returnItemToPackingStation(Warehouse warehouse) throws Exception {
-		this.move(warehouse, this.packingStation.getLocation());
+	private void returnItemToPackingStation(Floor floor) throws Exception {
+		this.move(floor, this.packingStation.getLocation());
 		this.log("Moved closer to assigned Packing Station.");
 
 		if (this.location.equals(this.packingStation.getLocation())) {
@@ -102,7 +103,7 @@ public class Robot extends Entity implements Actor {
 	 * @throws Exception
 	 * 
 	 */
-	private void move(Warehouse warehouse, Location targetLocation) throws Exception {
+	private void move(Floor floor, Location targetLocation) throws Exception {
 		this.log("Moving from %s to %s.", this.location, targetLocation);
 
 		boolean pathFound = this.pathFinder.calculatePath(this.location, targetLocation);
@@ -114,7 +115,7 @@ public class Robot extends Entity implements Actor {
 
 		Location newLocation = this.pathFinder.getNextLocation();
 
-		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
+		boolean successfulMove = floor.moveEntity(this.location, newLocation);
 		if (!successfulMove)
 			return; // TODO handle this better!
 
@@ -122,9 +123,9 @@ public class Robot extends Entity implements Actor {
 		this.location = newLocation;
 
 		int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;
-		this.powerUnits -= powerUnitsToDeduct;
+		this.currentPowerUnits -= powerUnitsToDeduct;
 
-		this.log("Power Units (post move): %s.", this.powerUnits);
+		this.log("Power Units (post move): %s.", this.currentPowerUnits);
 	}
 
 	/**
@@ -139,7 +140,7 @@ public class Robot extends Entity implements Actor {
 
 		double estimatedCostWithLeeway = estimatePowerUnitCostForJob(storageShelf, packingStation);
 
-		if (estimatedCostWithLeeway > this.powerUnits)
+		if (estimatedCostWithLeeway > this.currentPowerUnits)
 			return false;
 
 		this.storageShelf = storageShelf;
@@ -175,9 +176,9 @@ public class Robot extends Entity implements Actor {
 	/**
 	 * Determines the robot's status based on its current state.
 	 */
-	public RobotStatus calculateStatus(Warehouse warehouse) {
+	public RobotStatus getStatus() {
 		boolean isAtChargingPod = this.location.equals(this.chargingPod.getLocation());
-		boolean isBatteryBelowHalfCharge = this.powerUnits < (warehouse.getMaxChargeCapacity() * 0.5);
+		boolean isBatteryBelowHalfCharge = this.currentPowerUnits < (this.maxPowerUnits * 0.5);
 
 		if (isBatteryBelowHalfCharge && isAtChargingPod) {// Running low of powerUnits
 			return RobotStatus.Charging;
@@ -193,15 +194,6 @@ public class Robot extends Entity implements Actor {
 	}
 
 	/**
-	 * Returns the robot's current status
-	 * 
-	 * @return Status
-	 */
-	public RobotStatus getStatus() {
-		return status;
-	}
-
-	/**
 	 * Checks to see if the robot is carrying an item
 	 * 
 	 * @return boolean
@@ -214,7 +206,7 @@ public class Robot extends Entity implements Actor {
 	 * Get the power units
 	 */
 	public int getPowerUnits() {
-		return powerUnits;
+		return currentPowerUnits;
 	}
 
 	public Location getPreviousLocation() {
@@ -230,23 +222,19 @@ public class Robot extends Entity implements Actor {
 			return MessageFormat.format(
 					"Robot:" + " {0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: {3}"
 							+ "- Packing Station: {4}" + " {5}",
-					this.uid, this.status, this.powerUnits, this.storageShelf.getUID(),
+					this.uid, this.status, this.currentPowerUnits, this.storageShelf.getUID(),
 					this.packingStation.getUID(), this.location);
 		} else if (this.packingStation != null) {
 			return MessageFormat.format(
 					"Robot:" + "{0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: {3}"
 							+ " Packing Station: null" + " {4} ",
-					this.uid, this.status, this.powerUnits, this.storageShelf, this.location);
+					this.uid, this.status, this.currentPowerUnits, this.storageShelf, this.location);
 		} else {
 			return MessageFormat.format(
 					"Robot:" + "{0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: null"
 							+ "- Packing Station: {3}" + " {4} ",
-					this.uid, this.status, this.powerUnits, this.packingStation, this.location);
+					this.uid, this.status, this.currentPowerUnits, this.packingStation, this.location);
 		}
-	}
-
-	public void setPowerUnits(int units) {
-		powerUnits = units;
 	}
 
 }
