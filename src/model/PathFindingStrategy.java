@@ -95,7 +95,7 @@ public class PathFindingStrategy {
 		searchForPath(targetLocation);
 
 		// No path was found
-		if (targetNode.getParent() == null)
+		if (targetNode.getPreviousNodeInPath() == null)
 			return false;
 
 		// Populate the path with calculated route.
@@ -145,10 +145,10 @@ public class PathFindingStrategy {
 			Node currentNode = this.unexploredNodes.get(0);
 
 			// Found target, breaking out to stop search
-			if (currentNode.toLocation().equals(targetLocation))
+			if (currentNode.equals(targetLocation))
 				break;
 
-			int nextStepCost = currentNode.getCost() + 1;
+			int nextStepCost = currentNode.getNumberOfStepsFromStart() + 1;
 
 			this.checkNodeForExplorationInDirection(nextStepCost, currentNode, targetNode, +0, -1); // ABOVE
 			this.checkNodeForExplorationInDirection(nextStepCost, currentNode, targetNode, +1, +0); // RIGHT
@@ -174,7 +174,7 @@ public class PathFindingStrategy {
 	 */
 	private void checkNodeForExplorationInDirection(int nextStepCost, Node previous, Node target, int columnChange,
 			int rowChange) {
-		Node current = this.getNodeAtLocation(previous.getX() + columnChange, previous.getY() + rowChange);
+		Node current = this.getNodeAtLocation(previous.getColumn() + columnChange, previous.getRow() + rowChange);
 		if (current != null)
 			this.checkNodeForExploration(current, nextStepCost, previous, target);
 	}
@@ -190,14 +190,14 @@ public class PathFindingStrategy {
 	 */
 	private void checkNodeForExploration(Node current, int nextStepCost, Node previous, Node target) {
 		// Check location validity
-		if (!this.floor.locationIsValid(current.toLocation()))
+		if (!this.floor.locationIsValid(current))
 			return;
-		if (this.avoidCollisions && !this.floor.locationIsEmpty(current.toLocation()))
+		if (this.avoidCollisions && !this.floor.locationIsEmpty(current))
 			return;
 
 		// If the node's current cost is greater than the nextStepCost, remove from
 		// lists as a more efficient path has been found.
-		if (nextStepCost < current.getCost()) {
+		if (nextStepCost < current.getNumberOfStepsFromStart()) {
 			this.exploredNodes.remove(current);
 			this.unexploredNodes.remove(current);
 		}
@@ -206,9 +206,9 @@ public class PathFindingStrategy {
 		if (this.unexploredNodes.contains(current) || this.exploredNodes.contains(current))
 			return;
 
-		current.setCost(nextStepCost);
-		current.setHeuristic(PathFindingStrategy.calculateHeuristic(current, target));
-		current.setParent(previous);
+		current.setNumberOfStepsFromStart(nextStepCost);
+		current.setDirectDistanceToTarget(PathFindingStrategy.calculateHeuristic(current, target));
+		current.setPreviousNodeInPath(previous);
 		this.unexploredNodes.add(current);
 	}
 
@@ -225,8 +225,8 @@ public class PathFindingStrategy {
 		Node currentNode = end;
 
 		while (!currentNode.equals(start)) {
-			path.addFirst(currentNode.toLocation());
-			currentNode = currentNode.getParent();
+			path.addFirst(currentNode);
+			currentNode = currentNode.getPreviousNodeInPath();
 		}
 
 		return path;
@@ -244,8 +244,8 @@ public class PathFindingStrategy {
 	 * @return the direct distance between them.
 	 */
 	private static double calculateHeuristic(Node n1, Node n2) {
-		int differenceInColumns = Math.abs(n1.getX() - n2.getX());
-		int differenceInRows = Math.abs(n1.getY() - n2.getY());
+		int differenceInColumns = Math.abs(n1.getColumn() - n2.getColumn());
+		int differenceInRows = Math.abs(n1.getRow() - n2.getRow());
 
 		return Math.sqrt(differenceInRows ^ 2 + differenceInColumns ^ 2);
 	}

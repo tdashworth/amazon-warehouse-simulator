@@ -17,7 +17,6 @@ public class Location {
 	 * Represents a point on a grid (row and column) 
 	 * @param row
 	 * @param column
-	 * @throws Exception 
 	 */
 	public Location(int column, int row) {		
 		this.row = row;
@@ -43,7 +42,7 @@ public class Location {
 	 */
 	@Override
 	public String toString() {
-		return MessageFormat.format("Location: {0}, {1}", this.row, this.column);
+		return MessageFormat.format("Location: {0}, {1} [column, row]", this.column, this.row);
 	}
 	
 	/**
