@@ -39,24 +39,24 @@ public class Robot extends Entity implements Actor {
 	}
 
 	@Override
-	public void tick(Floor floor) throws Exception {
+	public void tick(Warehouse warehouse) throws Exception {
 		this.status = this.getStatus();
 		this.log("Ticking with status: %s.", status);
 
 		switch (status) {
 		case CollectingItem:
-			this.collectItemFromStorageShelf(floor);
+			this.collectItemFromStorageShelf(warehouse.getFloor());
 			break;
 
 		case ReturningItem:
-			this.returnItemToPackingStation(floor);
+			this.returnItemToPackingStation(warehouse.getFloor());
 			break;
 
 		case Charging:
 			break;
 
 		case GoingToCharge:
-			this.move(floor, this.chargingPod.getLocation());
+			this.move(warehouse.getFloor(), this.chargingPod.getLocation());
 			break;
 		}
 	}
