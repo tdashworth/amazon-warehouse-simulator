@@ -41,7 +41,7 @@ public class RobotTest {
 		assertEquals(8, r.getPowerUnits());
 		assertEquals(false, r.hasItem());
 		assertEquals(null, r.getPreviousLocation());
-		assertEquals("STRING", r.toString());
+		assertEquals("Robot:2- Status: Charging- Power: 8- StorageShelf: null- Packing Station: null Location: 2, 2 ", r.toString());
 	}
 	
 	@Test
