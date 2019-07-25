@@ -1,9 +1,13 @@
 package View;
 
+import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -18,6 +22,7 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -26,6 +31,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -39,6 +45,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.Actor;
+import model.Entity;
 import model.Floor;
 import model.Location;
 import model.LocationNotValidException;
@@ -89,6 +96,7 @@ public class WarehouseController {
 	private Label lblFile;
 	private int rows;
 	private int columns;
+	@FXML private Button btnLoad;
 
 	/**
 	 * initialize the simulation, add listeners to the sliders and text areas, buttons
@@ -124,14 +132,13 @@ public class WarehouseController {
 				r.setPowerUnits(newValue.intValue());
 			}
 			sim.setMaxChargeCapacity(newValue.intValue());
-
 		});
 
 		sldCharge.valueProperty().addListener((observable, oldValue, newValue) -> {
 			lblCharge.setText("Charge speed:" + Integer.toString(newValue.intValue()));
 			sim.setChargeSpeed(newValue.intValue());
 		});
-		
+
 	}
 
 	public void upload() {
@@ -148,6 +155,11 @@ public class WarehouseController {
 	@FXML
 	public void reset() {
 
+		robotsList.getItems().clear();
+		unassignedOrders.getItems().clear();
+		assignedOrders.getItems().clear();
+		dispatchedOrders.getItems().clear();
+
 		for (int i = sim.getFloor().getNumberOfRows() - 1; i >= 0; i--) {
 			grdWarehouse.getRowConstraints().remove(i);
 		}
@@ -155,15 +167,14 @@ public class WarehouseController {
 			grdWarehouse.getColumnConstraints().remove(i);
 		}
 		grdWarehouse.getChildren().clear();
-		sim.resetSimulator();
 
+		btnLoad.setDisable(false);
 	}
 
 	/**
 	 * 
-	 * Run simulation which is triggered by pressing the run button, this sets up
-	 * the simulation and starts the run method in simulation. Creates a hash map of
-	 * cells mapped by their coordinates
+	 * Run one tick of the simulation triggered by pressing the run one tick button, it calls the tick method from simulation
+	 * and also moves the robots around the warehouse. 
 	 * 
 	 * @throws Exception
 	 */
@@ -189,8 +200,6 @@ public class WarehouseController {
 		unassignedOrders.setItems(sim.unassignedOrdersProperty());
 		assignedOrders.setItems(sim.assignedOrdersProperty());
 		dispatchedOrders.setItems(sim.dispatchedOrdersProperty());
-
-
 	}
 
 	private void runOneTickSaftely() {
@@ -212,14 +221,15 @@ public class WarehouseController {
 	 */
 	public void loadSimulation() throws IOException, SimFileFormatException, LocationNotValidException {
 
-		System.out.println("Loading Simulation");
+		btnLoad.setDisable(true);
 
-		if(lblFile.getText() != null) {
+		if(!lblFile.getText().contentEquals("Selected file: ")) {
 
 			sim = Simulator.createFromFile(Paths.get(lblFile.getText()));
 
 			// sets the grid size to be the same as the floor in the file
 			Floor f = sim.getFloor();
+
 			for (int i = 0; i < f.getNumberOfRows(); i++) {
 				RowConstraints rowConst = new RowConstraints();
 				rowConst.setMinHeight(40);
@@ -285,11 +295,13 @@ public class WarehouseController {
 			}
 		}
 
-		else {
+		else {						
 			//needs to create a simulator from user configurations
 			Floor floor = new Floor(rows, columns);
+			HashMap<String, Entity> entities = new HashMap<String, Entity>();
+			Deque<Order> orders = new LinkedList<Order>();
 
-			//sim = new Simulator(floor );
+			sim = new Simulator(floor, 0, 0, entities, orders);
 			for (int i = 0; i < rows; i++) {
 				RowConstraints rowConst = new RowConstraints();
 				rowConst.setMinHeight(40);
@@ -301,13 +313,40 @@ public class WarehouseController {
 				column.setMinWidth(40);
 				grdWarehouse.getColumnConstraints().add(column);
 			}
+			
+			for(int i = 0; i < columns; i++) {
+				for(int j = 0; j <rows; j++) {
+					StackPane stk = new StackPane();
+					GridPane.setConstraints(stk, i, j);
+					grdWarehouse.getChildren().add(stk);
+				}
+			}
+			
+			for(Node node : grdWarehouse.getChildren()) {
+				node.setOnMouseClicked(new EventHandler<MouseEvent>() {
+					public void handle(MouseEvent event) {
+						if (event.getClickCount() == 1) {
+							int row = grdWarehouse.getRowIndex(node);
+							int col = grdWarehouse.getColumnIndex(node);
+							Circle r = new Circle();
+							r.setRadius(15);
+							r.setFill(Color.RED);
+							GridPane.setConstraints(r, col, row);
+							grdWarehouse.getChildren().add(r);							
+						}
+					}
+				});
 		}
-
+		}
 		robotsList.setItems(sim.robotsProperty());
 		unassignedOrders.setItems(sim.unassignedOrdersProperty());
-
-		
+		grdWarehouse.setGridLinesVisible(true);
 	}
+
+	/**
+	 * returns a Simulator object
+	 * @return a Simulator
+	 */
 
 	public Simulator getSimulation() {
 		return sim;
@@ -360,6 +399,11 @@ public class WarehouseController {
 		listView.fireEvent(event);
 	}
 
+
+	/**
+	 * Checks when any properties of a robot has changed so it can update the observable list
+	 */
+
 	public void robotListChanges() {
 		new Thread(() -> {
 			IntStream.range(0, sim.robotsProperty().size()).forEach(i -> {
@@ -376,5 +420,5 @@ public class WarehouseController {
 			});
 		}).start();
 	}
-	
+
 }

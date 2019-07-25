@@ -13,6 +13,9 @@ public class WarehouseView extends Application {
 
 	private static Stage primaryStage;
 
+	/**
+	 * starts the application, sets the title, stage and scene 
+	 */
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -34,8 +37,7 @@ public class WarehouseView extends Application {
 		return WarehouseView.primaryStage;
 	}
 
-
-
+	
 	public static void main (String[] args) {
 		launch(args);
 	}

@@ -85,23 +85,26 @@ public class Simulator {
 		this.floor = floor;
 		this.totalTickCount = 0;
 		this.warehouse = new Warehouse(floor, entities, orders, this);
+		this.chargeSpeed = chargeSpeed;
+		this.maxChargeCapacity = capacity;
+		if(entities != null) {
 		this.actors = entities.values()
 				.stream()
 				.sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
 				.filter(entity -> entity instanceof Actor)
 				.map(entity -> (Actor) entity)
 				.collect(Collectors.toList());
-		this.chargeSpeed = chargeSpeed;
-		this.maxChargeCapacity = capacity;
 		for (Entity entity : entities.values()) {
 			if (entity instanceof Robot) {
 				robots.add((Robot) entity);
 				floor.loadEntity(entity);
 			}
 		}
-		
+		}
 		setRobots(FXCollections.observableArrayList(robots));
+		if(orders != null) {
 		setUnassignedOrders(FXCollections.observableArrayList(orders));
+	}
 	}
 
 	/**
@@ -122,7 +125,6 @@ public class Simulator {
 	public boolean isComplete() {
 		return this.warehouse.areAllOrdersDispatched();
 	}
-
 
 	/**
 	 * Tick method which gets all of the actors to tick simultaneously.
