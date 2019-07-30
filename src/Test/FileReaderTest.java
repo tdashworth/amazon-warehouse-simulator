@@ -49,5 +49,10 @@ public class FileReaderTest {
 		assertEquals(3, s.getFloor().getNumberOfRows());
 		assertEquals("Floor: - Size: 3 rows by 3 columns.", s.getFloor().toString());	
 	}
+	
+	@Test
+	public void readInvalidConfigFileTest() {
+		fail("Not yet implemented");
+	}
 
 }
