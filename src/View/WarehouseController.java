@@ -45,6 +45,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.Actor;
+import model.ChargingPod;
 import model.Entity;
 import model.Floor;
 import model.Location;
@@ -313,7 +314,7 @@ public class WarehouseController {
 				column.setMinWidth(40);
 				grdWarehouse.getColumnConstraints().add(column);
 			}
-			
+
 			for(int i = 0; i < columns; i++) {
 				for(int j = 0; j <rows; j++) {
 					StackPane stk = new StackPane();
@@ -321,10 +322,12 @@ public class WarehouseController {
 					grdWarehouse.getChildren().add(stk);
 				}
 			}
-			
+
 			for(Node node : grdWarehouse.getChildren()) {
+
 				node.setOnMouseClicked(new EventHandler<MouseEvent>() {
 					public void handle(MouseEvent event) {
+						int uid = 1;
 						if (event.getClickCount() == 1) {
 							int row = grdWarehouse.getRowIndex(node);
 							int col = grdWarehouse.getColumnIndex(node);
@@ -332,11 +335,15 @@ public class WarehouseController {
 							r.setRadius(15);
 							r.setFill(Color.RED);
 							GridPane.setConstraints(r, col, row);
-							grdWarehouse.getChildren().add(r);							
+							grdWarehouse.getChildren().add(r);	
+							Location l = new Location(col, row);
+							ChargingPod c = new ChargingPod("cp"+ uid, l);
+							Robot robo = new Robot("rb"+ uid, l, c, sim.getMaxChargeCapacity());
 						}
+						uid++;
 					}
-				});
-		}
+				});	
+			}
 		}
 		robotsList.setItems(sim.robotsProperty());
 		unassignedOrders.setItems(sim.unassignedOrdersProperty());

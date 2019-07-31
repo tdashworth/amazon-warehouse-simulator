@@ -2,11 +2,16 @@ package Test;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+
 import org.junit.Test;
 
 import model.Location;
+import model.LocationNotValidException;
+import model.Order;
 import model.PackingStation;
 import model.StorageShelf;
+import model.Warehouse;
 
 public class PackingStationTest {
 
@@ -28,7 +33,10 @@ public class PackingStationTest {
 
 	@Test
 	public void pickOrderTest() {
-		fail("Not yet implemented");
+		Location l = new Location(2, 2);
+		PackingStation ps = new PackingStation("1", l);
+		//not yet implemented
+		
 	}
 
 	@Test
@@ -38,7 +46,11 @@ public class PackingStationTest {
 
 	@Test
 	public void packOrderTest() {	
-		fail("Not yet implemented");
+		Location l = new Location(2, 2);
+		PackingStation ps = new PackingStation("1", l);
+		ps.setRemainingPackingTicks(10);
+		ps.packOrder();
+		assertEquals(9, ps.getRemainingPackingTicks());
 	}
 	
 	@Test
