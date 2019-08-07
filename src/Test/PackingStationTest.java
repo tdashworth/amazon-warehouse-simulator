@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import model.Location;
 import model.PackingStation;
-import model.StorageShelf;
 
 public class PackingStationTest {
 
@@ -28,7 +27,10 @@ public class PackingStationTest {
 
 	@Test
 	public void pickOrderTest() {
-		fail("Not yet implemented");
+		Location l = new Location(2, 2);
+		PackingStation ps = new PackingStation("1", l);
+		//not yet implemented
+		
 	}
 
 	@Test
@@ -38,7 +40,11 @@ public class PackingStationTest {
 
 	@Test
 	public void packOrderTest() {	
-		fail("Not yet implemented");
+		Location l = new Location(2, 2);
+		PackingStation ps = new PackingStation("1", l);
+		ps.setRemainingPackingTicks(10);
+		ps.packOrder();
+		assertEquals(9, ps.getRemainingPackingTicks());
 	}
 	
 	@Test

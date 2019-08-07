@@ -2,8 +2,6 @@ package Test;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
@@ -11,7 +9,6 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
-import model.Actor;
 import model.ChargingPod;
 import model.Entity;
 import model.Floor;
@@ -20,10 +17,8 @@ import model.LocationNotValidException;
 import model.Order;
 import model.PackingStation;
 import model.Robot;
-import model.Robot.RobotStatus;
 import model.StorageShelf;
 import model.Warehouse;
-import simulation.SimFileFormatException;
 import simulation.Simulator;
 
 public class RobotTest {

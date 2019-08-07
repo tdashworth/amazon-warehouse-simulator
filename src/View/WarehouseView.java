@@ -13,6 +13,9 @@ public class WarehouseView extends Application {
 
 	private static Stage primaryStage;
 
+	/**
+	 * starts the application, sets the title, stage and scene 
+	 */
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -20,7 +23,7 @@ public class WarehouseView extends Application {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource("Warehouse.fxml"));
 		BorderPane mainContainer = (BorderPane) loader.load();
-		Scene mainScene = new Scene(mainContainer, 1800, 900);
+		Scene mainScene = new Scene(mainContainer, 1800, 1000);
 		primaryStage.setScene(mainScene);
 		primaryStage.setTitle("Amazon Warehouse Simulator");
 		primaryStage.show();
@@ -34,8 +37,7 @@ public class WarehouseView extends Application {
 		return WarehouseView.primaryStage;
 	}
 
-
-
+	
 	public static void main (String[] args) {
 		launch(args);
 	}

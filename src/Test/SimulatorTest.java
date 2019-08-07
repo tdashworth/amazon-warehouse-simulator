@@ -246,5 +246,24 @@ public class SimulatorTest {
 		assertEquals(2, s.getFloor().getNumberOfRows());
 		assertEquals("Floor: - Size: 2 rows by 2 columns.", s.getFloor().toString());
 	}
+	
+	@Test
+	public void neverAcceptJobTest() {
+		fail("Not yet implemented.");
+		// Should set up a sim where the robot will never have enough battery and ensure failure is notified and exits.
+	}
+	
+	@Test
+	public void robotsCollideTest() {
+		fail("Not yet implemented.");
+		// This should never occur. Do wee need to test for it?
+	}
+	
+	@Test
+	public void robotRunsOutOfBatteryTest() {
+		fail("Not yet implemented.");
+		// Set up a scenario where a robot accepts a job, but then other things get in the way
+		// so it runs out of battery. Test to ensure program handles correctly. 
+	}
 
 }

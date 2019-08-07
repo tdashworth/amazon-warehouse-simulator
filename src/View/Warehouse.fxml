@@ -8,11 +8,11 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.WarehouseController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.WarehouseController">
 	<left>
-		<VBox alignment="CENTER" maxWidth="250.0" spacing="5.0" style="-fx-background-color: #62656b;" BorderPane.alignment="TOP_CENTER">
+		<VBox alignment="CENTER" fillWidth="false" maxWidth="250.0" spacing="5.0" style="-fx-background-color: #FFF;" BorderPane.alignment="TOP_CENTER">
 			<children>
-				<Label text="Warehouse" textAlignment="CENTER" textFill="#ebe5e5" VBox.vgrow="NEVER">
+				<Label text="Warehouse" textAlignment="CENTER" textFill="#6b6969" VBox.vgrow="NEVER">
 					<font>
 						<Font name="System Bold" size="20.0" />
 					</font>
@@ -34,7 +34,7 @@
                   <RowConstraints maxHeight="59.0" minHeight="33.0" prefHeight="48.0" />
 					</rowConstraints>
 					<children>
-						<Label fx:id="lblRows" text="Rows" textFill="#d7d3d3">
+						<Label fx:id="lblRows" text="Rows" textFill="#8a8585">
 							<GridPane.margin>
 								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 							</GridPane.margin>
@@ -42,7 +42,7 @@
                         <Font size="12.0" />
                      </font>
 						</Label>
-						<Label fx:id="lblCol" text="Columns" textFill="#f5eaea" GridPane.columnIndex="1">
+						<Label fx:id="lblCol" text="Columns" textFill="#8a8585" GridPane.columnIndex="1">
 							<GridPane.margin>
 								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 							</GridPane.margin>
@@ -50,7 +50,7 @@
                         <Font size="12.0" />
                      </font>
 						</Label>
-      						<TextArea fx:id="txtCol" prefHeight="30.0" prefWidth="40.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+      						<TextArea fx:id="txtCol" prefHeight="30.0" prefWidth="40.0" promptText="0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font size="12.0" />
                      </font>
@@ -58,7 +58,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
       						</TextArea>
-      						<TextArea fx:id="txtRows" prefHeight="30.0" prefWidth="50.0" text="0" GridPane.rowIndex="2">
+      						<TextArea fx:id="txtRows" prefHeight="30.0" prefWidth="50.0" promptText="0" GridPane.rowIndex="2">
                      <font>
                         <Font size="12.0" />
                      </font>
@@ -68,12 +68,12 @@
       						</TextArea>
 					</children>
 				</GridPane>
-				<Label text="Robots" textFill="#f8e7e7">
+				<Label text="Robots" textFill="#8a8585">
 					<font>
 						<Font name="System Bold" size="20.0" />
 					</font>
 				</Label>
-				<Label fx:id="lblCapacity" text="Battery Capacity: 10" textFill="#ebe1e1">
+				<Label fx:id="lblCapacity" text="Battery Capacity: 10" textFill="WHITE">
 					<font>
 						<Font size="14.0" />
 					</font>
@@ -81,7 +81,7 @@
 						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
 					</padding>
 				</Label>
-				<Slider fx:id="sldCapacity" blockIncrement="1.0" majorTickUnit="1.0" max="100.0" min="10.0" minorTickCount="1" prefHeight="20.0" prefWidth="100.0" showTickLabels="true" snapToTicks="true" value="10.0">
+				<Slider fx:id="sldCapacity" blockIncrement="1.0" majorTickUnit="1.0" max="100.0" min="10.0" minorTickCount="1" prefHeight="20.0" prefWidth="200.0" showTickLabels="true" snapToTicks="true" style="-fx-tick-label-fill: #fff;" value="10.0" VBox.vgrow="ALWAYS">
 					<padding>
 						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
 					</padding>
@@ -89,7 +89,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
 				</Slider>
-				<Label fx:id="lblCharge" text="Charge speed: 1" textFill="#e8e3e3">
+				<Label fx:id="lblCharge" text="Charge speed: 1" textFill="#8a8585">
 					<font>
 						<Font size="14.0" />
 					</font>
@@ -97,7 +97,7 @@
 						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
 					</padding>
 				</Label>
-				<Slider fx:id="sldCharge" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="1" prefHeight="25.0" prefWidth="80.0" showTickLabels="true" value="1.0">
+				<Slider fx:id="sldCharge" majorTickUnit="1.0" max="10.0" min="1.0" minorTickCount="1" prefHeight="25.0" prefWidth="200.0" showTickLabels="true" value="1.0" VBox.vgrow="ALWAYS">
 					<padding>
 						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
 					</padding>
@@ -170,7 +170,7 @@
       						</Button>
 					</children>
 				</GridPane>
-            <Label fx:id="lblFile" text="Selected file: " textFill="#ebe3e3" wrapText="true" VBox.vgrow="NEVER">
+            <Label fx:id="lblFile" text="Selected file: " textFill="#8a8585" wrapText="true" VBox.vgrow="NEVER">
                <font>
                   <Font size="12.0" />
                </font>
@@ -179,40 +179,21 @@
                </VBox.margin>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding></Label>
+               </padding>
+            </Label>
+            <Button mnemonicParsing="false" text="Generate Orders" onAction="#generateOrders">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Button>
 			</children>
 			<padding>
 				<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
 			</padding>
 		</VBox>
 	</left>
-	<top>
-		<HBox prefHeight="50.0" prefWidth="200.0" spacing="5.0" BorderPane.alignment="CENTER">
-			<children>
-				<MenuBar prefWidth="1401.0" HBox.hgrow="ALWAYS">
-					<menus>
-						<Menu mnemonicParsing="false" text="File">
-							<items>
-								<MenuItem mnemonicParsing="false" text="Close" />
-							</items>
-						</Menu>
-						<Menu mnemonicParsing="false" text="Edit">
-							<items>
-								<MenuItem mnemonicParsing="false" text="Delete" />
-							</items>
-						</Menu>
-						<Menu mnemonicParsing="false" text="Help">
-							<items>
-								<MenuItem mnemonicParsing="false" text="About" />
-							</items>
-						</Menu>
-					</menus>
-				</MenuBar>
-			</children>
-		</HBox>
-	</top>
 	<right>
-		<VBox minWidth="200.0" BorderPane.alignment="CENTER">
+		<VBox BorderPane.alignment="CENTER">
 			<children>
             <Label text="Robots">
                <font>
@@ -231,7 +212,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
             </Label>
-				<ListView fx:id="unassignedOrders" editable="true" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+				<ListView fx:id="unassignedOrders" editable="true" VBox.vgrow="ALWAYS" />
             <Label text="Assigned Orders">
                <font>
                   <Font size="14.0" />
@@ -254,18 +235,19 @@
 		</VBox>
 	</right>
 	<bottom>
-		<HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+		<HBox BorderPane.alignment="CENTER">
 			<children>
-				<GridPane prefHeight="55.0" prefWidth="404.0" style="-fx-background-color: white;" HBox.hgrow="ALWAYS">
+				<GridPane prefHeight="143.0" prefWidth="1910.0" style="-fx-background-color: white;" HBox.hgrow="ALWAYS">
 					<columnConstraints>
-						<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="400.0" />
-						<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="400.0" />
+                  <ColumnConstraints maxWidth="977.0" minWidth="254.0" prefWidth="254.0" />
+						<ColumnConstraints hgrow="SOMETIMES" maxWidth="1436.0" minWidth="713.0" prefWidth="1436.0" />
+                  <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
 					</columnConstraints>
 					<rowConstraints>
 						<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 					</rowConstraints>
 					<children>
-						<Label fx:id="lblCount" text="Total tick count: 0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.valignment="CENTER">
+						<Label fx:id="lblCount" text="Total tick count: 0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
 							<font>
 								<Font size="15.0" />
 							</font>
@@ -276,7 +258,7 @@
 								<Insets bottom="7.5" left="7.5" right="7.5" top="7.5" />
 							</padding>
 						</Label>
-						<Label contentDisplay="CENTER" text="Team 3 Simulation" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+						<Label contentDisplay="TOP" text="Team 3 Simulation" GridPane.hgrow="ALWAYS" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
 							<font>
 								<Font size="15.0" />
 							</font>
@@ -287,9 +269,37 @@
 								<Insets bottom="7.5" left="7.5" right="7.5" top="7.5" />
 							</padding>
 						</Label>
+                  <HBox GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="btnPack" alignment="CENTER" mnemonicParsing="false" onAction="#btnPackClicked" text="Packing Station">
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="btnShelf" minWidth="75.0" mnemonicParsing="false" onAction="#btnShelfClicked" text="Shelf">
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="btnRobot" minWidth="75.0" mnemonicParsing="false" onAction="#btnRobotClicked" text="Robot">
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
 					</children>
 					<padding>
-						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+						<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 					</padding>
                <HBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

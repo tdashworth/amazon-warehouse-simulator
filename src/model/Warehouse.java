@@ -2,7 +2,6 @@ package model;
 import java.util.*;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import simulation.Simulator;
 
 public class Warehouse {

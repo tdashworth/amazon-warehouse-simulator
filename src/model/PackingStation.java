@@ -95,9 +95,8 @@ public class PackingStation extends Entity implements Actor {
 	/**
 	 * Pack an order, decrements the number of packing ticks remaining.
 	 */
-	private void packOrder() {
+	public void packOrder() {
 		this.remainingPackingTicks--;
-		this.log("Packing order %s. %s ticks remaining.", this.currentOrder.hashCode(), this.remainingPackingTicks);
 	}
 
 	/**
@@ -163,6 +162,14 @@ public class PackingStation extends Entity implements Actor {
 		} else {
 			return defaultOutput + orderOutput;
 		}
+	}
+	
+	public void setRemainingPackingTicks(int ticks) {
+		remainingPackingTicks = ticks;
+	}
+	
+	public int getRemainingPackingTicks() {
+		return remainingPackingTicks;
 	}
 
 }

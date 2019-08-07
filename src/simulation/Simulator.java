@@ -62,7 +62,6 @@ public class Simulator {
 
 		if (lines.size() == 0)
 			throw new SimFileFormatException("", "File is empty or of wrong format.");
-
 		switch (lines.get(0)) {
 		case "format 1":
 			simulatorFileReader = new SimulatorFileReader_V1();
@@ -85,23 +84,26 @@ public class Simulator {
 		this.floor = floor;
 		this.totalTickCount = 0;
 		this.warehouse = new Warehouse(floor, entities, orders, this);
+		this.chargeSpeed = chargeSpeed;
+		this.maxChargeCapacity = capacity;
+		if(entities != null) {
 		this.actors = entities.values()
 				.stream()
 				.sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
 				.filter(entity -> entity instanceof Actor)
 				.map(entity -> (Actor) entity)
 				.collect(Collectors.toList());
-		this.chargeSpeed = chargeSpeed;
-		this.maxChargeCapacity = capacity;
 		for (Entity entity : entities.values()) {
 			if (entity instanceof Robot) {
 				robots.add((Robot) entity);
 				floor.loadEntity(entity);
 			}
 		}
-		
+		}
 		setRobots(FXCollections.observableArrayList(robots));
+		if(orders != null) {
 		setUnassignedOrders(FXCollections.observableArrayList(orders));
+	}
 	}
 
 	/**
@@ -122,7 +124,6 @@ public class Simulator {
 	public boolean isComplete() {
 		return this.warehouse.areAllOrdersDispatched();
 	}
-
 
 	/**
 	 * Tick method which gets all of the actors to tick simultaneously.
@@ -233,6 +234,15 @@ public class Simulator {
 	
 	public Warehouse getWarehouse() {
 		return warehouse;
+	}
+	
+	public void addRobot(Robot r) {
+		robots.add(r);
+		setRobots(FXCollections.observableArrayList(robots));
+	}
+	
+	public void addActor(Actor a) {
+		actors.add(a);
 	}
 
 }
