@@ -22,7 +22,7 @@ public class OrderTest {
 		//Ensure that the order was created successfully
 		assertEquals(10, o.getNumberOfTicksToPack());
 		assertEquals(SSUids, o.getStorageShelfUIDs());
-		assertEquals("Order:  Storage Shelf: 1, 2, 3, 4 Number of ticks to pack: 10", o.toString());
+		assertEquals("Order("+o.hashCode()+"): Storage Shelfs: [1, 2, 3, 4], Ticks to pack: 10", o.toString());
 	}
 	
 	@Test
@@ -40,21 +40,21 @@ public class OrderTest {
 		assertEquals(10, o.getNumberOfTicksToPack());
 		assertEquals(SSUids, o.getStorageShelfUIDs());
 		assertEquals(0, o.getTotalNumberOfTicksToPack());
-		assertEquals("Order:  Storage Shelf: 1, 2, 3, 4 Number of ticks to pack: 10", o.toString());
+		assertEquals("Order("+o.hashCode()+"): Storage Shelfs: [1, 2, 3, 4], Ticks to pack: 10", o.toString());
 		
 		//Update the number of ticks to pack and ensure everything is still correct
 		o.setTotalNumberOfTicksToPack(5);
 		assertEquals(10, o.getNumberOfTicksToPack());
 		assertEquals(SSUids, o.getStorageShelfUIDs());
 		assertEquals(5, o.getTotalNumberOfTicksToPack());
-		assertEquals("Order:  Storage Shelf: 1, 2, 3, 4 Number of ticks to pack: 10 Total number of ticks used: 5.", o.toString());
+		assertEquals("Order("+o.hashCode()+"): Storage Shelfs: [1, 2, 3, 4], Ticks to pack: 10, Total ticks to pack: 5", o.toString());
 		
 		//Update the number of ticks to pack again and ensure everything is still correct
 		o.setTotalNumberOfTicksToPack(7);
 		assertEquals(10, o.getNumberOfTicksToPack());
 		assertEquals(SSUids, o.getStorageShelfUIDs());
 		assertEquals(7, o.getTotalNumberOfTicksToPack());
-		assertEquals("Order:  Storage Shelf: 1, 2, 3, 4 Number of ticks to pack: 10 Total number of ticks used: 7.", o.toString());
+		assertEquals("Order("+o.hashCode()+"): Storage Shelfs: [1, 2, 3, 4], Ticks to pack: 10, Total ticks to pack: 7", o.toString());
 	}
 
 }

@@ -109,8 +109,12 @@ public class WarehouseController {
 				}
 
 				rows = Integer.parseInt(txtRows.getText());
-				for (int i = 0; i < rows; i++) {
+				int rowsToAdd = rows - grdWarehouse.getRowConstraints().size();
+				for (int i = 0; i < rowsToAdd; i++) {
 					grdWarehouse.getRowConstraints().add(new RowConstraints(40, 40, 40));
+				}
+				for (int i = 0; i < (-1 * rowsToAdd); i++) {
+					grdWarehouse.getRowConstraints().remove(0);
 				}
 			});
 
@@ -121,7 +125,11 @@ public class WarehouseController {
 				}
 				
 				columns = Integer.parseInt(txtCol.getText());
-				for (int i = 0; i < columns; i++) {
+				int columnsToAdd = columns - grdWarehouse.getColumnConstraints().size();
+				for (int i = 0; i < columnsToAdd; i++) {
+					grdWarehouse.getColumnConstraints().add(new ColumnConstraints(40, 40, 40));
+				}
+				for (int i = 0; i < (-1 * columnsToAdd); i++) {
 					grdWarehouse.getColumnConstraints().add(new ColumnConstraints(40, 40, 40));
 				}
 			});
@@ -239,11 +247,7 @@ public class WarehouseController {
 		btnUploadFile.setDisable(true);
 
 		if (fileName != null) {
-			try {
-				sim = Simulator.createFromFile(Paths.get(fileName));
-			} catch (Exception error) {
-				alertErrorOccured(error);
-			}
+			sim = Simulator.createFromFile(Paths.get(fileName));
 			Floor f = sim.getFloor();
 
 			sldCapacity.valueProperty().setValue(sim.getMaxChargeCapacity());
