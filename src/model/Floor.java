@@ -64,6 +64,23 @@ public class Floor {
 		grid[location.getColumn()][location.getRow()] = entity;
 	}
 	
+	
+	/**
+	 * Validates whether the location passed is valid on the floor and is empty.
+	 * @param location
+	 * @throws LocationNotValidException
+	 */
+	public void validateLocation(Location location) throws LocationNotValidException {
+		// Check location is on the grid.
+		if (!this.locationIsValid(location))
+			throw new LocationNotValidException(location.getColumn(), location.getRow(),
+					"The location is outside of the floor");
+
+		// Checks location is empty.
+		if (!this.locationIsEmpty(location))
+			throw new LocationNotValidException(location.getColumn(), location.getRow(), "That location is not empty");
+	}
+	
 	/**
 	 * Returns whether a location is on the grid or not
 	 * @param location

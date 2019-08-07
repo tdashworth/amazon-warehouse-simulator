@@ -190,16 +190,16 @@ public class WarehouseController {
 		assignedOrders.setItems(sim.assignedOrdersProperty());
 		dispatchedOrders.setItems(sim.dispatchedOrdersProperty());
 
-
+		if (sim.isComplete()) {
+			alertSimulationComplete();
+		}
 	}
 
 	private void runOneTickSaftely() {
 		try {
 			runOneTick();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(2);
+			alertErrorOccured(e);
 		}
 	}
 
@@ -216,7 +216,12 @@ public class WarehouseController {
 
 		if(lblFile.getText() != null) {
 
-			sim = Simulator.createFromFile(Paths.get(lblFile.getText()));
+			try {
+				sim = Simulator.createFromFile(Paths.get(lblFile.getText()));				
+			} catch (Exception error) {
+				alertErrorOccured(error);
+				lblFile.setText("");
+			}
 
 			// sets the grid size to be the same as the floor in the file
 			Floor f = sim.getFloor();
@@ -335,15 +340,26 @@ public class WarehouseController {
 			runOneTickSaftely();
 			if (sim.isComplete()) {
 				timeline.stop();
-				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setTitle("Information Dialog");
-				alert.setHeaderText("Congratulations, the simulation is complete!");
-				alert.setContentText("Total tick count: "+ sim.getTotalTickCount());
-				alert.show();
 			}
 		}));
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.play();
+	}
+	
+	public void alertSimulationComplete() {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Simulation Complete");
+		alert.setHeaderText("Congratulations, the simulation is complete!");
+		alert.setContentText("Total tick count: "+ sim.getTotalTickCount());
+		alert.show();
+	}
+	
+	public void alertErrorOccured(Exception error) {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Fatal Error Occured");
+		alert.setHeaderText("An error has occur thats stopped the simulation from continuing.");
+		alert.setContentText(error.toString());
+		alert.show();
 	}
 
 
@@ -366,7 +382,7 @@ public class WarehouseController {
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					alertErrorOccured(e);
 				}
 				System.out.println(sim.robotsProperty().get(i));
 				Platform.runLater(() -> {
