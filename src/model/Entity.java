@@ -34,13 +34,22 @@ public abstract class Entity {
 	}
 	
 	protected void log(String message) {
-		String classType = this.getClass().getName();
+		String classType = this.getClass().getSimpleName();
 
-		System.out.println(String.format("%s %s: %s", classType, this.uid, message));
+		System.out.println(String.format("%s(%s): %s", classType, this.uid, message));
 	}
 	
 	protected void log(String format, Object... args) {
 		this.log(String.format(format, args));
 	}
+	
+	
+	/**
+	 *	@return A string representation of a charging pod.
+	 */
+	public String toString() {
+		String className = this.getClass().getSimpleName();
+		return String.format("%s(%s) - %s", className, this.uid, this.location);
+	} 
 	
 }

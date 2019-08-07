@@ -3,8 +3,6 @@
  */
 package model;
 
-import java.text.MessageFormat;
-
 /** 
  *	A representation of a point on a grid in row and column format.
  */
@@ -42,7 +40,7 @@ public class Location {
 	 */
 	@Override
 	public String toString() {
-		return MessageFormat.format("Location: {0}, {1}", this.column, this.row);
+		return String.format("Location: [%s, %s]", this.column, this.row);
 	}
 	
 	/**

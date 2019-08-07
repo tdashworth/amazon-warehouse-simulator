@@ -127,7 +127,7 @@ public class Warehouse {
 	}
 	
 	protected void log(String message) {
-		String classType = this.getClass().getName();
+		String classType = this.getClass().getSimpleName();
 
 		System.out.println(String.format("%s: %s", classType, message));
 	}

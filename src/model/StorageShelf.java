@@ -3,7 +3,6 @@
  */
 package model;
 
-import java.text.MessageFormat;
 
 /**
  *
@@ -22,11 +21,7 @@ public class StorageShelf extends Entity implements Actor {
 	 *	@return A string representation of the storage shelf.
 	 */
 	public String toString() {
-		return MessageFormat.format("Storage Shelf:"
-				+ " - UID: {0}"
-				+ " - {1}.", 
-				this.uid, 
-				this.location);
+		return super.toString();
 	}
 	
 	public void tick(Warehouse warehouse) {

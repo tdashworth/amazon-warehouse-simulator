@@ -1,7 +1,5 @@
 package model;
 
-import java.text.MessageFormat;
-
 public class Robot extends Entity implements Actor {
 	private int powerUnits;
 	private StorageShelf storageShelf;
@@ -250,26 +248,13 @@ public class Robot extends Entity implements Actor {
 	 * @return A string representation of a robot.
 	 */
 	public String toString() {
-
-		if(this.packingStation != null && this.storageShelf != null ) {
-			return MessageFormat.format(
-					"Robot:" + " {0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: {3}"
-							+ "- Packing Station: {4}" + " {5}" ,
-							this.uid, this.robotStatus, this.powerUnits, this.storageShelf.getUID(), this.packingStation.getUID(), this.location 
-							);
-		}
-		else if(this.packingStation != null ){
-			return MessageFormat.format(
-				"Robot:" + "{0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: {3}"
-						+ " Packing Station: null" + " {4} ",
-						this.uid, this.robotStatus, this.powerUnits, this.storageShelf, this.location);
-		}
-		else {
-			return MessageFormat.format(
-				"Robot:" + "{0}" + "- Status: {1}" + "- Power: {2}" + "- StorageShelf: null"
-						+ "- Packing Station: {3}" + " {4} ",
-						this.uid, this.robotStatus, this.powerUnits, this.packingStation, this.location);
-		}
+		String result = super.toString();
+		result += ", " + "Status: " + this.getStatus();
+		result += ", " + "Power: " + this.getPowerUnits();
+		if (this.storageShelf != null) result += ", " + "Storage Shelf: " + this.storageShelf.getUID();
+		if (this.packingStation != null) result += ", " + "Packing Station: " + this.packingStation.getUID();
+		
+		return result;
 	}
 
 	public void setPowerUnits(int units) {

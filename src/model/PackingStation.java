@@ -3,7 +3,6 @@
  */
 package model;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -141,27 +140,16 @@ public class PackingStation extends Entity implements Actor {
 	 * @return A string representation of a packing station.
 	 */
 	public String toString() {
-		String defaultOutput = MessageFormat.format("Packing Station:"
-				+ " - UID: {0}"
-				+ " - {1}",
-				this.uid, 
-				this.location);
+		String result = super.toString();
 		
-		String orderOutput = MessageFormat.format(
-				  " - Current order: {0}"
-				+ " - Tick count when order assigned: {1}"
-				+ " - Remaining packing ticks: {2}"
-				+ " - Storage shelves visited: {3}.",
-				this.currentOrder, 
-				this.tickCountWhenOrderAssigned, 
-				this.remainingPackingTicks,
-				this.storageShelvesVisited.stream().map(shelf -> shelf.getUID()).collect(Collectors.joining(",")));
-
-		if (currentOrder != null) {
-			return defaultOutput;
-		} else {
-			return defaultOutput + orderOutput;
+		if (this.currentOrder != null) {
+			result += ", " + "Current Order: " + this.currentOrder;
+			result += ", " + "Tick count when assigned: " + this.tickCountWhenOrderAssigned;
+			result += ", " + "Remaining packing ticks: " + this.remainingPackingTicks;
+			result += ", " + "Visited Shelves: " + this.storageShelvesVisited.stream().map(shelf -> shelf.getUID()).collect(Collectors.joining(","));
 		}
+		
+		return result;
 	}
 	
 	public void setRemainingPackingTicks(int ticks) {

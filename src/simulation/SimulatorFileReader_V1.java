@@ -132,7 +132,7 @@ public class SimulatorFileReader_V1 implements SimulatorFileReader {
 	}
 
 	private void log(String message) {
-		String classType = this.getClass().getName();
+		String classType = this.getClass().getSimpleName();
 		System.out.println(String.format("%s: %s", classType, message));
 	}
 
