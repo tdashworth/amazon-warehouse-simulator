@@ -6,7 +6,7 @@ package model;
 import java.text.MessageFormat;
 
 /**
- *
+ *A class to represent a charging pod.
  */
 public class ChargingPod extends Entity {
 

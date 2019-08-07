@@ -98,9 +98,13 @@ public class WarehouseController {
 	private int rows;
 	private int columns;
 	@FXML private Button btnLoad;
+	@FXML private Button btnPack;
+	@FXML private Button btnRobot;
+	@FXML private Button btnShelf;
+
 
 	/**
-	 * initialize the simulation, add listeners to the sliders and text areas, buttons
+	 * initialize the simulation, add listeners to the sliders, text areas and buttons
 	 */
 	@FXML
 	public void initialize() {
@@ -114,6 +118,11 @@ public class WarehouseController {
 					txtRows.setText("5");
 				}
 				rows = Integer.parseInt(txtRows.getText());
+				for (int i = 0; i < rows; i++) {
+					RowConstraints rowConst = new RowConstraints();
+					rowConst.setMinHeight(40);
+					grdWarehouse.getRowConstraints().add(rowConst);
+				}
 			}
 		});
 
@@ -123,309 +132,386 @@ public class WarehouseController {
 				if (!newValue.matches("\\d*")) {
 					txtCol.setText("5");
 				}
-				columns = Integer.parseInt(txtCol.getText());
+				columns = Integer.parseInt(txtCol.getText());			
+				for (int i = 0; i < columns; i++) {
+					ColumnConstraints column = new ColumnConstraints();
+					column.setMinWidth(40);
+					grdWarehouse.getColumnConstraints().add(column);
+				}
+				for(int ind = 0; ind < columns; ind++) {
+					for(int j = 0; j <rows; j++) {
+						StackPane stk = new StackPane();
+						GridPane.setConstraints(stk, ind, j);
+						grdWarehouse.getChildren().add(stk);
+					}
+				}
 			}
-		});
+			});
+
 
 		sldCapacity.valueProperty().addListener((observable, oldValue, newValue) -> {
 			lblCapacity.setText("Battery Capacity: " + Integer.toString(newValue.intValue()));
+			if(robots.size() > 0) {
 			for (Robot r : robots) {
 				r.setPowerUnits(newValue.intValue());
-			}
+			}}
+			if(sim != null) {
 			sim.setMaxChargeCapacity(newValue.intValue());
+			}
 		});
 
 		sldCharge.valueProperty().addListener((observable, oldValue, newValue) -> {
 			lblCharge.setText("Charge speed:" + Integer.toString(newValue.intValue()));
+			if(sim != null) {
 			sim.setChargeSpeed(newValue.intValue());
+			}
 		});
-
-	}
-
-	public void upload() {
-		FileChooser fil_chooser = new FileChooser();
-		File file = fil_chooser.showOpenDialog(WarehouseView.getPrimaryStage());
-		if (file != null) {
-			lblFile.setText(file.getAbsolutePath());
+		
 		}
-	}
+		/**
+		 * Create a file chooser so the user can upload a file, must be sim file or warning is shown
+		 */
 
-	/**
-	 * Resets the simulation back to it's default settings
-	 */
-	@FXML
-	public void reset() {
-
-		robotsList.getItems().clear();
-		unassignedOrders.getItems().clear();
-		assignedOrders.getItems().clear();
-		dispatchedOrders.getItems().clear();
-
-		for (int i = sim.getFloor().getNumberOfRows() - 1; i >= 0; i--) {
-			grdWarehouse.getRowConstraints().remove(i);
-		}
-		for (int i = sim.getFloor().getNumberOfColumns() - 1; i >= 0; i--) {
-			grdWarehouse.getColumnConstraints().remove(i);
-		}
-		grdWarehouse.getChildren().clear();
-
-		btnLoad.setDisable(false);
-	}
-
-	/**
-	 * 
-	 * Run one tick of the simulation triggered by pressing the run one tick button, it calls the tick method from simulation
-	 * and also moves the robots around the warehouse. 
-	 * 
-	 * @throws Exception
-	 */
-
-	@FXML
-	public void runOneTick() throws Exception {
-		sim.tick();
-
-		grdWarehouse.getChildren().removeIf(n -> n instanceof Circle);
-		lblCount.setText("Total tick count: " + sim.getTotalTickCount());
-
-		for (Robot robo : robots) {
-			Location l = robo.getLocation();
-			Circle r = new Circle();
-			r.setRadius(15);
-			r.setFill(Color.RED);
-			GridPane.setConstraints(r, l.getColumn(), l.getRow());
-			grdWarehouse.getChildren().add(r);
-		}
-
-		robotListChanges();
-
-		unassignedOrders.setItems(sim.unassignedOrdersProperty());
-		assignedOrders.setItems(sim.assignedOrdersProperty());
-		dispatchedOrders.setItems(sim.dispatchedOrdersProperty());
-	}
-
-	private void runOneTickSaftely() {
-		try {
-			runOneTick();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(2);
-		}
-	}
-
-	/**
-	 * Loads up the simulation using either a file or user configurations
-	 * 
-	 * @throws IOException
-	 * @throws SimFileFormatException
-	 * @throws LocationNotValidException
-	 */
-	public void loadSimulation() throws IOException, SimFileFormatException, LocationNotValidException {
-
-		btnLoad.setDisable(true);
-
-		if(!lblFile.getText().contentEquals("Selected file: ")) {
-
-			sim = Simulator.createFromFile(Paths.get(lblFile.getText()));
-
-			// sets the grid size to be the same as the floor in the file
-			Floor f = sim.getFloor();
-
-			for (int i = 0; i < f.getNumberOfRows(); i++) {
-				RowConstraints rowConst = new RowConstraints();
-				rowConst.setMinHeight(40);
-				grdWarehouse.getRowConstraints().add(rowConst);
-			}
-
-			for (int i = 0; i < f.getNumberOfColumns(); i++) {
-				ColumnConstraints column = new ColumnConstraints();
-				column.setMinWidth(40);
-				grdWarehouse.getColumnConstraints().add(column);
-			}
-
-			sldCapacity.valueProperty().setValue(sim.getMaxChargeCapacity());
-			sldCharge.valueProperty().setValue(sim.getChargeSpeed());
-
-			txtRows.setText(Integer.toString(f.getNumberOfRows()));
-			txtCol.setText(Integer.toString(f.getNumberOfColumns()));
-
-
-			List<Actor> actors = sim.getActors();
-
-			for (Actor a : actors) {
-
-
-				if (a instanceof Robot) {
-					robots.add((Robot) a);
-					Location l = ((Robot) a).getLocation();
-					StackPane stk = new StackPane();
-					GridPane.setConstraints(stk, l.getColumn(), l.getRow());
-					grdWarehouse.getChildren().add(stk);
-					Circle cp1 = new Circle();
-					cp1.setFill(Color.MEDIUMORCHID);
-					cp1.setRadius(20);
-					stk.getChildren().add(cp1);
-					Circle rb1 = new Circle();
-					rb1.setFill(Color.RED);
-					rb1.setRadius(15);
-					stk.getChildren().add(rb1);
-
+		public void upload() {
+			FileChooser fil_chooser = new FileChooser();
+			File file = fil_chooser.showOpenDialog(WarehouseView.getPrimaryStage());
+			if (file != null) {
+				if(file.getAbsolutePath().endsWith(".sim")) {
+					lblFile.setText(file.getAbsolutePath());
 				}
-				if (a instanceof PackingStation) {
-					Location l = ((PackingStation) a).getLocation();
-					StackPane stk = new StackPane();
-					GridPane.setConstraints(stk, l.getColumn(), l.getRow());
-					grdWarehouse.getChildren().add(stk);
-					Rectangle ps1 = new Rectangle();
-					ps1.setFill(Color.AQUAMARINE);
-					ps1.setHeight(35);
-					ps1.setWidth(35);
-					stk.getChildren().add(ps1);
-				}
-				if (a instanceof StorageShelf) {
-					Location l = ((StorageShelf) a).getLocation();
-					StackPane stk = new StackPane();
-					GridPane.setConstraints(stk, l.getColumn(), l.getRow());
-					grdWarehouse.getChildren().add(stk);
-					Rectangle ss1 = new Rectangle();
-					ss1.setFill(Color.DARKSALMON);
-					ss1.setHeight(35);
-					ss1.setWidth(35);
-					stk.getChildren().add(ss1);
+				else {
+					Alert a = new Alert(AlertType.WARNING);
+					a.setContentText("Invalid File Format");
+					a.show();
 				}
 			}
 		}
 
-		else {						
-			//needs to create a simulator from user configurations
-			Floor floor = new Floor(rows, columns);
-			HashMap<String, Entity> entities = new HashMap<String, Entity>();
-			Deque<Order> orders = new LinkedList<Order>();
+		/**
+		 * Resets the simulation back to it's default settings
+		 */
+		@FXML
+		public void reset() {
 
-			sim = new Simulator(floor, 0, 0, entities, orders);
-			for (int i = 0; i < rows; i++) {
-				RowConstraints rowConst = new RowConstraints();
-				rowConst.setMinHeight(40);
-				grdWarehouse.getRowConstraints().add(rowConst);
+			robotsList.getItems().clear();
+			unassignedOrders.getItems().clear();
+			assignedOrders.getItems().clear();
+			dispatchedOrders.getItems().clear();
+
+			for (int i = sim.getFloor().getNumberOfRows() - 1; i >= 0; i--) {
+				grdWarehouse.getRowConstraints().remove(i);
+			}
+			for (int i = sim.getFloor().getNumberOfColumns() - 1; i >= 0; i--) {
+				grdWarehouse.getColumnConstraints().remove(i);
+			}
+			grdWarehouse.getChildren().clear();
+
+			btnLoad.setDisable(false);
+		}
+
+		/**
+		 * 
+		 * Run one tick of the simulation triggered by pressing the run one tick button, it calls the tick method from simulation
+		 * and also moves the robots around the warehouse. 
+		 * 
+		 * @throws Exception
+		 */
+
+		@FXML
+		public void runOneTick() throws Exception {
+			sim.tick();
+
+			grdWarehouse.getChildren().removeIf(n -> n instanceof Circle);
+			lblCount.setText("Total tick count: " + sim.getTotalTickCount());
+
+			for (Robot robo : robots) {
+				Location l = robo.getLocation();
+				Circle r = new Circle();
+				r.setRadius(15);
+				r.setFill(Color.RED);
+				GridPane.setConstraints(r, l.getColumn(), l.getRow());
+				grdWarehouse.getChildren().add(r);
 			}
 
-			for (int i = 0; i < columns; i++) {
-				ColumnConstraints column = new ColumnConstraints();
-				column.setMinWidth(40);
-				grdWarehouse.getColumnConstraints().add(column);
+			robotListChanges();
+
+			unassignedOrders.setItems(sim.unassignedOrdersProperty());
+			assignedOrders.setItems(sim.assignedOrdersProperty());
+			dispatchedOrders.setItems(sim.dispatchedOrdersProperty());
+		}
+
+		private void runOneTickSaftely() {
+			try {
+				runOneTick();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				System.exit(2);
 			}
+		}
 
-			for(int i = 0; i < columns; i++) {
-				for(int j = 0; j <rows; j++) {
-					StackPane stk = new StackPane();
-					GridPane.setConstraints(stk, i, j);
-					grdWarehouse.getChildren().add(stk);
-				}
-			}
+		/**
+		 * Loads up the simulation using either a file or user configurations
+		 * 
+		 * @throws IOException
+		 * @throws SimFileFormatException
+		 * @throws LocationNotValidException
+		 */
+		public void loadSimulation() throws IOException, SimFileFormatException, LocationNotValidException {
 
-			for(Node node : grdWarehouse.getChildren()) {
+			btnLoad.setDisable(true);
 
-				node.setOnMouseClicked(new EventHandler<MouseEvent>() {
-					public void handle(MouseEvent event) {
-						int uid = 1;
-						if (event.getClickCount() == 1) {
-							int row = grdWarehouse.getRowIndex(node);
-							int col = grdWarehouse.getColumnIndex(node);
-							Circle r = new Circle();
-							r.setRadius(15);
-							r.setFill(Color.RED);
-							GridPane.setConstraints(r, col, row);
-							grdWarehouse.getChildren().add(r);	
-							Location l = new Location(col, row);
-							ChargingPod c = new ChargingPod("cp"+ uid, l);
-							Robot robo = new Robot("rb"+ uid, l, c, sim.getMaxChargeCapacity());
-						}
-						uid++;
+			if(!lblFile.getText().contentEquals("Selected file: ")) {
+
+				sim = Simulator.createFromFile(Paths.get(lblFile.getText()));
+
+				Floor f = sim.getFloor();
+
+				sldCapacity.valueProperty().setValue(sim.getMaxChargeCapacity());
+				sldCharge.valueProperty().setValue(sim.getChargeSpeed());
+
+				txtRows.setText(Integer.toString(f.getNumberOfRows()));
+				txtCol.setText(Integer.toString(f.getNumberOfColumns()));
+
+
+				List<Actor> actors = sim.getActors();
+
+				for (Actor a : actors) {
+
+
+					if (a instanceof Robot) {
+						robots.add((Robot) a);
+						Location l = ((Robot) a).getLocation();
+						Rectangle charge = new Rectangle();
+						charge.setHeight(35);
+						charge.setWidth(35);
+						charge.setFill(Color.GOLD);
+						Circle r = new Circle();
+						r.setRadius(15);
+						r.setFill(Color.RED);
+						GridPane.setConstraints(charge, l.getColumn(), l.getRow());
+						GridPane.setConstraints(r, l.getColumn(), l.getRow());
+						grdWarehouse.getChildren().add(charge);	
+						grdWarehouse.getChildren().add(r);	
+
 					}
-				});	
-			}
-		}
-		robotsList.setItems(sim.robotsProperty());
-		unassignedOrders.setItems(sim.unassignedOrdersProperty());
-		grdWarehouse.setGridLinesVisible(true);
-	}
-
-	/**
-	 * returns a Simulator object
-	 * @return a Simulator
-	 */
-
-	public Simulator getSimulation() {
-		return sim;
-	}
-
-	/**
-	 * Runs the simulation for ten ticks
-	 * @throws Exception
-	 */
-
-	@FXML
-	public void runTenTicks() throws Exception {
-		Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), ea -> runOneTickSaftely()));
-		timeline.setCycleCount(10);
-		timeline.play();
-	}
-	/**
-	 * Runs the simulation to the end, pops up a new window with stats
-	 * @throws Exception
-	 */
-	@FXML
-	public void runToEnd() throws Exception {
-		Timeline timeline = new Timeline();
-		timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0.25), ea -> {
-			runOneTickSaftely();
-			if (sim.isComplete()) {
-				timeline.stop();
-				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setTitle("Information Dialog");
-				alert.setHeaderText("Congratulations, the simulation is complete!");
-				alert.setContentText("Total tick count: "+ sim.getTotalTickCount());
-				alert.show();
-			}
-		}));
-		timeline.setCycleCount(Timeline.INDEFINITE);
-		timeline.play();
-	}
-
-
-	/**
-	 * Informs the ListView that one of its items has been modified.
-	 *
-	 * @param listView The ListView to trigger.
-	 * @param newValue The new value of the list item that changed.
-	 * @param i The index of the list item that changed.
-	 */
-	public static <T> void triggerUpdate(ListView<T> listView, T newValue, int i) {
-		EventType<? extends ListView.EditEvent<T>> type = ListView.editCommitEvent();
-		Event event = new ListView.EditEvent<>(listView, type, newValue, i);
-		listView.fireEvent(event);
-	}
-
-
-	/**
-	 * Checks when any properties of a robot has changed so it can update the observable list
-	 */
-
-	public void robotListChanges() {
-		new Thread(() -> {
-			IntStream.range(0, sim.robotsProperty().size()).forEach(i -> {
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+					if (a instanceof PackingStation) {
+						Location l = ((PackingStation) a).getLocation();
+						StackPane stk = new StackPane();
+						GridPane.setConstraints(stk, l.getColumn(), l.getRow());
+						grdWarehouse.getChildren().add(stk);
+						Rectangle ps1 = new Rectangle();
+						ps1.setFill(Color.AQUAMARINE);
+						ps1.setHeight(35);
+						ps1.setWidth(35);
+						stk.getChildren().add(ps1);
+					}
+					if (a instanceof StorageShelf) {
+						Location l = ((StorageShelf) a).getLocation();
+						StackPane stk = new StackPane();
+						GridPane.setConstraints(stk, l.getColumn(), l.getRow());
+						grdWarehouse.getChildren().add(stk);
+						Rectangle ss1 = new Rectangle();
+						ss1.setFill(Color.DARKSALMON);
+						ss1.setHeight(35);
+						ss1.setWidth(35);
+						stk.getChildren().add(ss1);
+					}
 				}
-				System.out.println(sim.robotsProperty().get(i));
-				Platform.runLater(() -> {
-					sim.robotsProperty().get(i);
-					triggerUpdate(robotsList, sim.robotsProperty().get(i), i);
-				});            
-			});
-		}).start();
-	}
+			}
 
-}
+			else {						
+				//needs to create a simulator from user configurations
+				Floor floor = new Floor(rows, columns);
+				HashMap<String, Entity> entities = new HashMap<String, Entity>();
+				Deque<Order> orders = new LinkedList<Order>();
+
+				sim = new Simulator(floor, 0, 0, entities, orders);
+				
+				for(Node node : grdWarehouse.getChildren()) {
+
+					node.setOnMouseClicked(new EventHandler<MouseEvent>() {
+						public void handle(MouseEvent event) {
+							int uid = 1;
+							if (event.getClickCount() == 1) {
+								int row = grdWarehouse.getRowIndex(node);
+								int col = grdWarehouse.getColumnIndex(node);
+
+								if(btnRobot.isDisabled()) {
+									Rectangle charge = new Rectangle();
+									charge.setHeight(35);
+									charge.setWidth(35);
+									charge.setFill(Color.GOLD);
+									Circle r = new Circle();
+									r.setRadius(15);
+									r.setFill(Color.RED);
+									GridPane.setConstraints(charge, col, row);
+									GridPane.setConstraints(r, col, row);
+									grdWarehouse.getChildren().add(charge);	
+									grdWarehouse.getChildren().add(r);	
+									Location l = new Location(col, row);
+									ChargingPod c = new ChargingPod("cp"+ uid, l);
+									Robot robo = new Robot("rb"+ uid, l, c, sim.getMaxChargeCapacity());
+									sim.addRobot(robo);
+									try {
+										floor.loadEntity(robo);
+									} catch (LocationNotValidException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									robotsList.setItems(sim.robotsProperty());
+								}
+								if(btnShelf.isDisabled()) {
+									Rectangle shelf = new Rectangle();
+									shelf.setFill(Color.DARKSALMON);
+									shelf.setHeight(35);
+									shelf.setWidth(35);
+									GridPane.setConstraints(shelf, col, row);
+									grdWarehouse.getChildren().add(shelf);	
+									Location l = new Location(col, row);
+									StorageShelf s = new StorageShelf("ss"+ uid, l);
+									sim.addActor(s);
+									try {
+										floor.loadEntity(s);
+									} catch (LocationNotValidException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+								if(btnPack.isDisabled()) {
+									Rectangle ps1 = new Rectangle();
+									ps1.setFill(Color.AQUAMARINE);
+									ps1.setHeight(35);
+									ps1.setWidth(35);
+									GridPane.setConstraints(ps1, col, row);
+									grdWarehouse.getChildren().add(ps1);	
+									Location l = new Location(col, row);
+									PackingStation ps = new PackingStation("ps"+ uid, l);
+									try {
+										floor.loadEntity(ps);
+									} catch (LocationNotValidException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+								uid++;
+							}}
+					});	
+				}
+			}
+			robotsList.setItems(sim.robotsProperty());
+			unassignedOrders.setItems(sim.unassignedOrdersProperty());
+			grdWarehouse.setGridLinesVisible(true);
+		}
+
+		/**
+		 * returns a Simulator object
+		 * @return a Simulator
+		 */
+
+		public Simulator getSimulation() {
+			return sim;
+		}
+
+		/**
+		 * Runs the simulation for ten ticks
+		 * @throws Exception
+		 */
+
+		@FXML
+		public void runTenTicks() throws Exception {
+			Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), ea -> runOneTickSaftely()));
+			timeline.setCycleCount(10);
+			timeline.play();
+		}
+		/**
+		 * Runs the simulation to the end, pops up a new window with stats
+		 * @throws Exception
+		 */
+		@FXML
+		public void runToEnd() throws Exception {
+			Timeline timeline = new Timeline();
+			timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(0.25), ea -> {
+				runOneTickSaftely();
+				if (sim.isComplete()) {
+					timeline.stop();
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Information Dialog");
+					alert.setHeaderText("Congratulations, the simulation is complete!");
+					alert.setContentText("Total tick count: "+ sim.getTotalTickCount() + "   Total orders dispatched: " + sim.getWarehouse().getDispatchedOrders().size());
+					alert.show();
+				}
+			}));
+			timeline.setCycleCount(Timeline.INDEFINITE);
+			timeline.play();
+		}
+
+
+		/**
+		 * Informs the ListView that one of its items has been modified.
+		 *
+		 * @param listView The ListView to trigger.
+		 * @param newValue The new value of the list item that changed.
+		 * @param i The index of the list item that changed.
+		 */
+		public static <T> void triggerUpdate(ListView<T> listView, T newValue, int i) {
+			EventType<? extends ListView.EditEvent<T>> type = ListView.editCommitEvent();
+			Event event = new ListView.EditEvent<>(listView, type, newValue, i);
+			listView.fireEvent(event);
+		}
+
+
+		/**
+		 * Checks when any properties of a robot has changed so it can update the observable list
+		 */
+
+		public void robotListChanges() {
+			new Thread(() -> {
+				IntStream.range(0, sim.robotsProperty().size()).forEach(i -> {
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					System.out.println(sim.robotsProperty().get(i));
+					Platform.runLater(() -> {
+						sim.robotsProperty().get(i);
+						triggerUpdate(robotsList, sim.robotsProperty().get(i), i);
+					});            
+				});
+			}).start();
+		}
+
+		@FXML
+		public void btnPackClicked() {
+			btnPack.setDisable(true);
+			btnRobot.setDisable(false);
+			btnShelf.setDisable(false);
+		}
+		@FXML
+		public void btnRobotClicked() {
+			btnPack.setDisable(false);
+			btnRobot.setDisable(true);
+			btnShelf.setDisable(false);
+		}
+		@FXML
+		public void btnShelfClicked() {
+			btnPack.setDisable(false);
+			btnRobot.setDisable(false);
+			btnShelf.setDisable(true);
+		}
+		
+		@FXML
+		public void generateOrders() {
+			
+			int i = 0;			
+			while (!(sim.getActors().get(i) instanceof StorageShelf)) {
+				i++;
+			}
+			StorageShelf s = (StorageShelf) sim.getActors().get(i);
+			List<String> shelves = new ArrayList<String>();
+			shelves.add(s.getUID());
+			Order o1 = new Order(shelves, 4);
+		}
+
+	}

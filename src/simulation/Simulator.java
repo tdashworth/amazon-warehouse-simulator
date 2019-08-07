@@ -62,7 +62,6 @@ public class Simulator {
 
 		if (lines.size() == 0)
 			throw new SimFileFormatException("", "File is empty or of wrong format.");
-
 		switch (lines.get(0)) {
 		case "format 1":
 			simulatorFileReader = new SimulatorFileReader_V1();
@@ -235,6 +234,15 @@ public class Simulator {
 	
 	public Warehouse getWarehouse() {
 		return warehouse;
+	}
+	
+	public void addRobot(Robot r) {
+		robots.add(r);
+		setRobots(FXCollections.observableArrayList(robots));
+	}
+	
+	public void addActor(Actor a) {
+		actors.add(a);
 	}
 
 }
