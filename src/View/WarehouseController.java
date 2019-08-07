@@ -86,12 +86,8 @@ public class WarehouseController {
 	private ArrayList<Robot> robots;
 	@FXML
 	private Button btnUploadFile;
-	@FXML
-	private Label lblFile;
 	private int rows;
 	private int columns;
-	@FXML
-	private Button btnLoad;
 	@FXML
 	private Button btnPack;
 	@FXML
@@ -99,9 +95,9 @@ public class WarehouseController {
 	@FXML
 	private Button btnShelf;
 
-
 	/**
-	 * initialize the simulation, add listeners to the sliders, text areas and buttons
+	 * initialize the simulation, add listeners to the sliders, text areas and
+	 * buttons
 	 */
 	@FXML
 	public void initialize() {
@@ -110,8 +106,7 @@ public class WarehouseController {
 
 		txtRows.textProperty().addListener(new ChangeListener<String>() {
 			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue,
-					String newValue) {
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				if (!newValue.matches("\\d*")) {
 					txtRows.setText("5");
 				}
@@ -126,8 +121,7 @@ public class WarehouseController {
 
 		txtCol.textProperty().addListener(new ChangeListener<String>() {
 			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue,
-					String newValue) {
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				if (!newValue.matches("\\d*")) {
 					txtCol.setText("5");
 				}
@@ -146,7 +140,6 @@ public class WarehouseController {
 				}
 			}
 		});
-
 
 		sldCapacity.valueProperty().addListener((observable, oldValue, newValue) -> {
 			lblCapacity.setText("Battery Capacity: " + Integer.toString(newValue.intValue()));
@@ -170,20 +163,21 @@ public class WarehouseController {
 	}
 
 	/**
-	 * Create a file chooser so the user can upload a file, must be sim file or warning is shown
+	 * Create a file chooser so the user can upload a file, must be sim file or
+	 * warning is shown
 	 */
 
 	public void upload() {
-		FileChooser fil_chooser = new FileChooser();
-		File file = fil_chooser.showOpenDialog(WarehouseView.getPrimaryStage());
-		if (file != null) {
-			if (file.getAbsolutePath().endsWith(".sim")) {
-				lblFile.setText(file.getAbsolutePath());
-			} else {
-				Alert a = new Alert(AlertType.WARNING);
-				a.setContentText("Invalid File Format");
-				a.show();
-			}
+		FileChooser fileChooser = new FileChooser();
+		File file = fileChooser.showOpenDialog(WarehouseView.getPrimaryStage());
+		try {
+			this.loadSimulation(file.getAbsolutePath());
+		} catch (Exception e) {
+			e.printStackTrace();
+			Alert a = new Alert(AlertType.WARNING);
+			a.setTitle("Invalid File");
+			a.setContentText(e.toString());
+			a.show();
 		}
 	}
 
@@ -205,13 +199,14 @@ public class WarehouseController {
 		}
 		grdWarehouse.getChildren().clear();
 
-		btnLoad.setDisable(false);
+		btnUploadFile.setDisable(false);
 	}
 
 	/**
 	 * 
-	 * Run one tick of the simulation triggered by pressing the run one tick button, it calls the tick
-	 * method from simulation and also moves the robots around the warehouse.
+	 * Run one tick of the simulation triggered by pressing the run one tick button,
+	 * it calls the tick method from simulation and also moves the robots around the
+	 * warehouse.
 	 * 
 	 * @throws Exception
 	 */
@@ -222,7 +217,7 @@ public class WarehouseController {
 
 		grdWarehouse.getChildren().removeIf(n -> n instanceof Circle);
 		lblCount.setText("Total tick count: " + sim.getTotalTickCount());
-
+		
 		for (Robot robo : robots) {
 			Location l = robo.getLocation();
 			Circle r = new Circle();
@@ -258,18 +253,15 @@ public class WarehouseController {
 	 * @throws SimFileFormatException
 	 * @throws LocationNotValidException
 	 */
-	public void loadSimulation()
-			throws IOException, SimFileFormatException, LocationNotValidException {
+	public void loadSimulation(String fileName) throws IOException, SimFileFormatException, LocationNotValidException {
 
-		btnLoad.setDisable(true);
+		btnUploadFile.setDisable(true);
 
-		if (!lblFile.getText().contentEquals("Selected file: ")) {
-
+		if (fileName != null) {
 			try {
-				sim = Simulator.createFromFile(Paths.get(lblFile.getText()));
+				sim = Simulator.createFromFile(Paths.get(fileName));
 			} catch (Exception error) {
 				alertErrorOccured(error);
-				lblFile.setText("");
 			}
 			Floor f = sim.getFloor();
 
@@ -279,11 +271,9 @@ public class WarehouseController {
 			txtRows.setText(Integer.toString(f.getNumberOfRows()));
 			txtCol.setText(Integer.toString(f.getNumberOfColumns()));
 
-
 			List<Actor> actors = sim.getActors();
 
 			for (Actor a : actors) {
-
 
 				if (a instanceof Robot) {
 					robots.add((Robot) a);
@@ -429,8 +419,7 @@ public class WarehouseController {
 
 	@FXML
 	public void runTenTicks() throws Exception {
-		Timeline timeline =
-				new Timeline(new KeyFrame(Duration.seconds(0.5), ea -> runOneTickSaftely()));
+		Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5), ea -> runOneTickSaftely()));
 		timeline.setCycleCount(10);
 		timeline.play();
 	}
@@ -458,6 +447,7 @@ public class WarehouseController {
 		alert.setTitle("Simulation Complete");
 		alert.setHeaderText("Congratulations, the simulation is complete!");
 		alert.setContentText("Total tick count: " + sim.getTotalTickCount());
+		alert.setOnCloseRequest((event) -> System.exit(0));
 		alert.show();
 	}
 
@@ -466,9 +456,9 @@ public class WarehouseController {
 		alert.setTitle("Fatal Error Occured");
 		alert.setHeaderText("An error has occur thats stopped the simulation from continuing.");
 		alert.setContentText(error.toString());
+		alert.setOnCloseRequest((event) -> System.exit(0));
 		alert.show();
 	}
-
 
 	/**
 	 * Informs the ListView that one of its items has been modified.
@@ -484,7 +474,8 @@ public class WarehouseController {
 	}
 
 	/**
-	 * Checks when any properties of a robot has changed so it can update the observable list
+	 * Checks when any properties of a robot has changed so it can update the
+	 * observable list
 	 */
 
 	public void robotListChanges() {
@@ -494,6 +485,7 @@ public class WarehouseController {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					alertErrorOccured(e);
+					e.printStackTrace();
 				}
 				System.out.println(sim.robotsProperty().get(i));
 				Platform.runLater(() -> {

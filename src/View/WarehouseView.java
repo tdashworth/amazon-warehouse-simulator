@@ -4,7 +4,7 @@ package View;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
 
 
@@ -22,7 +22,7 @@ public class WarehouseView extends Application {
 		setPrimaryStage(primaryStage);
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource("Warehouse.fxml"));
-		BorderPane mainContainer = (BorderPane) loader.load();
+		SplitPane mainContainer = (SplitPane) loader.load();
 		Scene mainScene = new Scene(mainContainer, 1800, 1000);
 		primaryStage.setScene(mainScene);
 		primaryStage.setTitle("Amazon Warehouse Simulator");
