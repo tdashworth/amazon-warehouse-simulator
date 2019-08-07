@@ -68,22 +68,6 @@
                         <Insets bottom="10.0" top="10.0" />
                      </GridPane.margin>
                   </Slider>
-                  <TextArea fx:id="txtRows" prefHeight="30.0" prefWidth="50.0" promptText="0" GridPane.columnIndex="3" GridPane.rowIndex="2">
-                     <font>
-                        <Font size="12.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </GridPane.margin>
-                  </TextArea>
-                  <TextArea fx:id="txtCol" prefHeight="30.0" prefWidth="40.0" promptText="0" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                     <font>
-                        <Font size="12.0" />
-                     </font>
-                     <GridPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </GridPane.margin>
-                  </TextArea>
                   <Label fx:id="lblCol" text="Columns" textFill="#8a8585" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <font>
                         <Font size="12.0" />
@@ -101,6 +85,16 @@
                      </GridPane.margin>
                   </Label>
                   <Label fx:id="lblCount" text="Ticks: " GridPane.columnIndex="2" />
+                  <TextField fx:id="txtCol" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </TextField>
+                  <TextField fx:id="txtRows" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </TextField>
                </children>
             </GridPane>
             <Pane fx:id="paneWarehouse" nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #000000;" VBox.vgrow="ALWAYS">

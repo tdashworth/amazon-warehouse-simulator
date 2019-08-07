@@ -12,8 +12,6 @@ import java.util.stream.IntStream;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -25,7 +23,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -53,9 +51,9 @@ import simulation.Simulator;
 public class WarehouseController {
 
 	@FXML
-	private TextArea txtRows;
+	private TextField txtRows;
 	@FXML
-	private TextArea txtCol;
+	private TextField txtCol;
 	@FXML
 	private Pane paneWarehouse;
 	@FXML
@@ -100,46 +98,33 @@ public class WarehouseController {
 	 * buttons
 	 */
 	@FXML
-	public void initialize() {
+	public void initialize() { 
 
 		robots = new ArrayList<Robot>();
 
-		txtRows.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+		txtRows.textProperty().addListener((observable, oldValue, newValue) -> {
 				if (!newValue.matches("\\d*")) {
-					txtRows.setText("5");
+					txtRows.setText(oldValue);
+					return;
 				}
+
 				rows = Integer.parseInt(txtRows.getText());
 				for (int i = 0; i < rows; i++) {
-					RowConstraints rowConst = new RowConstraints();
-					rowConst.setMinHeight(40);
-					grdWarehouse.getRowConstraints().add(rowConst);
+					grdWarehouse.getRowConstraints().add(new RowConstraints(40, 40, 40));
 				}
-			}
-		});
+			});
 
-		txtCol.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+		txtCol.textProperty().addListener((observable, oldValue, newValue) -> {
 				if (!newValue.matches("\\d*")) {
-					txtCol.setText("5");
+					txtCol.setText(oldValue);
+					return;
 				}
+				
 				columns = Integer.parseInt(txtCol.getText());
 				for (int i = 0; i < columns; i++) {
-					ColumnConstraints column = new ColumnConstraints();
-					column.setMinWidth(40);
-					grdWarehouse.getColumnConstraints().add(column);
+					grdWarehouse.getColumnConstraints().add(new ColumnConstraints(40, 40, 40));
 				}
-				for (int ind = 0; ind < columns; ind++) {
-					for (int j = 0; j < rows; j++) {
-						StackPane stk = new StackPane();
-						GridPane.setConstraints(stk, ind, j);
-						grdWarehouse.getChildren().add(stk);
-					}
-				}
-			}
-		});
+			});
 
 		sldCapacity.valueProperty().addListener((observable, oldValue, newValue) -> {
 			lblCapacity.setText("Battery Capacity: " + Integer.toString(newValue.intValue()));
@@ -173,11 +158,7 @@ public class WarehouseController {
 		try {
 			this.loadSimulation(file.getAbsolutePath());
 		} catch (Exception e) {
-			e.printStackTrace();
-			Alert a = new Alert(AlertType.WARNING);
-			a.setTitle("Invalid File");
-			a.setContentText(e.toString());
-			a.show();
+			alertErrorOccured(e);
 		}
 	}
 
