@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+
 /**
  *	A simple representation of a packing station within the warehouse.
  */
@@ -23,7 +26,7 @@ public class PackingStation extends Entity implements Actor {
 	 * @param location
 	 */
 	public PackingStation(String uid, Location location) {
-		super(uid, location);
+		super(uid, location, new Rectangle(35, 35, Color.AQUAMARINE));
 	}
 
 	@Override
@@ -159,5 +162,4 @@ public class PackingStation extends Entity implements Actor {
 	public int getRemainingPackingTicks() {
 		return remainingPackingTicks;
 	}
-
 }

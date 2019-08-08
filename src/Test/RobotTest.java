@@ -98,25 +98,22 @@ public class RobotTest {
 		}
 		
 		//Get the storage shelf and packing station for the robot to assess
-		PackingStation packingStation = (PackingStation) s.getActors().get(0);
-		Robot robot = (Robot) s.getActors().get(1);
-		StorageShelf storageShelf = (StorageShelf) s.getActors().get(2);
 		Warehouse warehouse = s.getWarehouse();
 		
 		//Test to ensure that the acceptJob method is working successfully
 		boolean test = true;
 		try {
-			test = robot.acceptJob(storageShelf, packingStation, warehouse);
+			test = r.acceptJob(ss, ps, warehouse);
 		} catch (LocationNotValidException e) {
 			e.printStackTrace();
 		}
 		assertFalse(test);
 		
 		//Ensure the robot has just enough charge to accept the job, and test the accept method again
-		((Robot) s.getActors().get(1)).charge(4, 20);
+		r.charge(4, 20);
 		test = true;
 		try {
-			test = robot.acceptJob(storageShelf, packingStation, warehouse);
+			test = r.acceptJob(ss, ps, warehouse);
 		} catch (LocationNotValidException e) {
 			e.printStackTrace();
 		}
@@ -125,7 +122,7 @@ public class RobotTest {
 		//Ensure that acceptJob fails, as the robot already has a storage shelf
 		test = true;
 		try {
-			test = robot.acceptJob(storageShelf, packingStation, warehouse);
+			test = r.acceptJob(ss, ps, warehouse);
 		} catch (LocationNotValidException e) {
 			e.printStackTrace();
 		}

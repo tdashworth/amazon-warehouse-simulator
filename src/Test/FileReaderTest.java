@@ -38,7 +38,7 @@ public class FileReaderTest {
 		assertEquals(1, s.getChargeSpeed());
 		assertEquals(20, s.getMaxChargeCapacity());
 		assertEquals(false, s.isComplete());
-		assertEquals(3, s.getActors().size());
+		assertEquals(4, s.getWarehouse().getEntities().size());
 		//Robot tests
 		assertEquals(1, s.getRobots().size());
 		assertTrue(new Location(2, 0).equals(s.getRobots().get(0).getLocation()));
