@@ -1,7 +1,6 @@
 package model;
 import java.util.*;
 
-import javafx.collections.FXCollections;
 import simulation.Simulator;
 
 public class Warehouse {
@@ -44,7 +43,6 @@ public class Warehouse {
 		if (this.unassignedOrders.isEmpty()) return null;
 		
 		Order order = this.unassignedOrders.pop();
-		simulator.setUnassignedOrders(FXCollections.observableArrayList(unassignedOrders));
 		this.assignedOrders.add(order);
 		
 		this.log("Order %s assigned. %s remaining to assign.", order.hashCode(), this.unassignedOrders.size());
@@ -136,12 +134,19 @@ public class Warehouse {
 		this.log(String.format(format, args));
 	}
 	
-	public Set<Order> getAssignedOrders(){
-		return assignedOrders;
+	public Collection<Entity> getEntities() {
+		return Collections.unmodifiableCollection(this.entities.values());
+	}
+	
+	public Collection<Order> getUnassignedOrders() {
+		return Collections.unmodifiableCollection(this.unassignedOrders);
+	}
+	
+	public Collection<Order> getAssignedOrders(){
+		return Collections.unmodifiableCollection(assignedOrders);
 	}
 
-	
-	public Deque<Order> getDispatchedOrders(){
-		return dispatchedOrders;
+	public Collection<Order> getDispatchedOrders(){
+		return Collections.unmodifiableCollection(dispatchedOrders);
 	}
 }

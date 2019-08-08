@@ -1,5 +1,7 @@
 package model;
 
+import javafx.scene.shape.Shape;
+
 /**
  *	A model a something that physically exists on the warehouse floor.
  */
@@ -8,15 +10,18 @@ public abstract class Entity {
 	protected String uid;
 	// Stores the current location of the entity on the warehouse floor.
 	protected Location location;
+	// The UI element.
+	private final Shape sprite; 
 	
 	/**
 	 * A model a something that physically exists on the warehouse floor.
 	 * @param uid
 	 * @param location
 	 */
-	public Entity(String uid, Location location) {
+	public Entity(String uid, Location location, Shape sprite) {
 		this.uid = uid;
 		this.location = location;
+		this.sprite = sprite;
 	}
 	
 	/**
@@ -43,6 +48,10 @@ public abstract class Entity {
 		this.log(String.format(format, args));
 	}
 	
+	public Shape getSprite() {
+		if (this.sprite == null) throw new IllegalStateException("'sprite' has not been defined.");
+		return sprite;
+	}
 	
 	/**
 	 *	@return A string representation of a charging pod.

@@ -40,8 +40,6 @@ public class PathFindingStrategy {
 		this.floor = floor;
 		this.avoidCollisions = avoidCollisions;
 		this.path = new LinkedList<Location>();
-		this.floorNodes = PathFindingStrategy.buildFloorWithNodes(this.floor.getNumberOfColumns(),
-				this.floor.getNumberOfRows());
 	}
 
 	/**
@@ -75,13 +73,14 @@ public class PathFindingStrategy {
 	 * @throws LocationNotValidException
 	 */
 	public boolean calculatePath(Location beginningLocation, Location targetLocation) {
+		this.floorNodes = PathFindingStrategy.buildFloorWithNodes(this.floor.getNumberOfColumns(),
+				this.floor.getNumberOfRows());
 
 		// If both locations are the same, return true (with a path count of 0)
 		if (beginningLocation.equals(targetLocation))
 			return false;
 
 		// Create lists for storing nodes to explore and those explored
-		// TODO add flag to node class?
 		this.unexploredNodes = new ArrayList<Node>(this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
 		this.exploredNodes = new ArrayList<Node>(this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
 
@@ -192,7 +191,7 @@ public class PathFindingStrategy {
 		// Check location validity
 		if (!this.floor.locationIsValid(current))
 			return;
-		if (this.avoidCollisions && !this.floor.locationIsEmpty(current))
+		if (this.avoidCollisions && current.getPreviousNodeInPath() == null && !this.floor.locationIsEmpty(current))
 			return;
 
 		// If the node's current cost is greater than the nextStepCost, remove from

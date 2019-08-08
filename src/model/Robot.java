@@ -1,5 +1,8 @@
 package model;
 
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+
 public class Robot extends Entity implements Actor {
 	private int powerUnits;
 	private StorageShelf storageShelf;
@@ -22,39 +25,35 @@ public class Robot extends Entity implements Actor {
 	 * @param location
 	 */
 	public Robot(String uid, Location location, ChargingPod chargingPod, int powerUnits) {
-		super(uid, location);
+		super(uid, location, new Circle(15, Color.RED));
 		this.chargingPod = chargingPod;
 		this.powerUnits = powerUnits;
 		this.robotStatus = RobotStatus.Charging;
 	}
 
 	@Override
-	public void tick(Warehouse warehouse) {
-		try {
-			RobotStatus status = this.calculateStatus(warehouse);
-			this.log("Ticking with status: %s.", status);
+	public void tick(Warehouse warehouse) throws Exception {
+		RobotStatus status = this.calculateStatus(warehouse);
+		this.log("Ticking with status: %s.", status);
+		this.previousLocation = this.location;
 
-			switch (status) {
-			case CollectingItem:
-				this.collectItemFromStorageShelf(warehouse);
-				break;
+		switch (status) {
+		case CollectingItem:
+			this.collectItemFromStorageShelf(warehouse);
+			break;
 
-			case ReturningItem:
-				this.returnItemToPackingStation(warehouse);
-				break;
+		case ReturningItem:
+			this.returnItemToPackingStation(warehouse);
+			break;
 
-			case Charging:
-				charge(warehouse.getChargeSpeed(), warehouse.getMaxChargeCapacity());
-				break;
+		case Charging:
+			charge(warehouse.getChargeSpeed(), warehouse.getMaxChargeCapacity());
+			break;
 
-			case GoingToCharge:
-				this.move(warehouse, this.chargingPod.getLocation());
-				break;
+		case GoingToCharge:
+			this.move(warehouse, this.chargingPod.getLocation());
+			break;
 
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
@@ -107,7 +106,7 @@ public class Robot extends Entity implements Actor {
 		boolean pathFound = this.pathFinder.calculatePath(this.location, targetLocation);
 
 		if (!pathFound)
-			return; // TODO handle better!
+			return;
 
 		// this.log("Path: " + this.pathFinder.getPath());
 
@@ -115,9 +114,8 @@ public class Robot extends Entity implements Actor {
 
 		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
 		if (!successfulMove)
-			return; // TODO handle this better!
+			return;
 
-		this.previousLocation = this.location;
 		this.location = newLocation;
 
 		int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;
@@ -197,33 +195,30 @@ public class Robot extends Entity implements Actor {
 		if (isBatteryBelowHalfCharge && isAtChargingPod) {// Running low of powerUnits
 			robotStatus = RobotStatus.Charging;
 			return RobotStatus.Charging;
-		}
-		else if (this.storageShelf != null) {// Storage Shelf Assigned
+		} else if (this.storageShelf != null) {// Storage Shelf Assigned
 			robotStatus = RobotStatus.CollectingItem;
 			return RobotStatus.CollectingItem;
-		}
-		else if (this.hasItem()) {
-			robotStatus = RobotStatus.ReturningItem;		
+		} else if (this.hasItem()) {
+			robotStatus = RobotStatus.ReturningItem;
 			return RobotStatus.ReturningItem; // Item collected
-		}	
-		else if (isAtChargingPod) {
-			robotStatus = RobotStatus.Charging;		
+		} else if (isAtChargingPod) {
+			robotStatus = RobotStatus.Charging;
 			return RobotStatus.Charging; // Nothing to do and already at Charging Pod
-		}
-		else {
+		} else {
 			robotStatus = RobotStatus.GoingToCharge;
 			return RobotStatus.GoingToCharge; // Nothing to do so go charge
-		}		
+		}
 	}
-	
+
 	/**
-	 *Returns the robot's current status 
+	 * Returns the robot's current status
+	 * 
 	 * @return Status
 	 */
 	public RobotStatus getStatus() {
 		return robotStatus;
 	}
-	
+
 	/**
 	 * Checks to see if the robot is carrying an item
 	 * 
@@ -251,9 +246,11 @@ public class Robot extends Entity implements Actor {
 		String result = super.toString();
 		result += ", " + "Status: " + this.getStatus();
 		result += ", " + "Power: " + this.getPowerUnits();
-		if (this.storageShelf != null) result += ", " + "Storage Shelf: " + this.storageShelf.getUID();
-		if (this.packingStation != null) result += ", " + "Packing Station: " + this.packingStation.getUID();
-		
+		if (this.storageShelf != null)
+			result += ", " + "Storage Shelf: " + this.storageShelf.getUID();
+		if (this.packingStation != null)
+			result += ", " + "Packing Station: " + this.packingStation.getUID();
+
 		return result;
 	}
 
