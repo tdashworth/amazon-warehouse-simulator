@@ -1,6 +1,6 @@
 package model;
-import java.util.*;
 
+import java.util.*;
 import simulation.Simulator;
 
 public class Warehouse {
@@ -14,11 +14,13 @@ public class Warehouse {
 
 	/**
 	 * A representation of a warehouse
+	 * 
 	 * @param floor
 	 * @param entities
 	 * @param orders
 	 */
-	public Warehouse(Floor floor, Map<String, Entity> entities, Deque<Order> orders, Simulator simulator) {
+	public Warehouse(Floor floor, Map<String, Entity> entities, Deque<Order> orders,
+			Simulator simulator) {
 		this.floor = floor;
 		this.entities = entities;
 		this.unassignedOrders = orders;
@@ -26,7 +28,7 @@ public class Warehouse {
 		this.dispatchedOrders = new LinkedList<Order>();
 		this.simulator = simulator;
 	}
-	
+
 	/**
 	 * @param uid
 	 * @return The entity with the given UID.
@@ -34,53 +36,60 @@ public class Warehouse {
 	public Entity getEntityByUID(String uid) {
 		return this.entities.get(uid);
 	}
-	
+
 	/**
 	 * Picks the next unassigned order and moves it to the assigned orders set.
-	 * @return A new order. 
+	 * 
+	 * @return A new order.
 	 */
 	public Order getUnassignedOrder() {
-		if (this.unassignedOrders.isEmpty()) return null;
-		
+		if (this.unassignedOrders.isEmpty())
+			return null;
+
 		Order order = this.unassignedOrders.pop();
 		this.assignedOrders.add(order);
-		
-		this.log("Order %s assigned. %s remaining to assign.", order.hashCode(), this.unassignedOrders.size());
+
+		this.log("Order %s assigned. %s remaining to assign.", order.hashCode(),
+				this.unassignedOrders.size());
 		return order;
 	}
-	
+
 	/**
 	 * Moves the order given from the assigned set to dispatched queue.
+	 * 
 	 * @param order
 	 * @throws Exception
 	 */
 	public void dispatchOrder(Order order) throws Exception {
-		if(!this.assignedOrders.contains(order))
+		if (!this.assignedOrders.contains(order))
 			throw new Exception("Order was not found in Assigned Orders.");
-		
+
 		this.assignedOrders.remove(order);
 		this.dispatchedOrders.add(order);
-		this.log("Order %s dispatched. %s remaining to dispatch.", order.hashCode(), this.assignedOrders.size());
+		this.log("Order %s dispatched. %s remaining to dispatch.", order.hashCode(),
+				this.assignedOrders.size());
 	}
-	
+
 	/**
 	 * Searches for a robot that will accept the job and assign to it.
+	 * 
 	 * @param storageShelf
 	 * @param packingStation
-	 * @throws LocationNotValidException 
+	 * @throws LocationNotValidException
 	 */
-	public boolean assignJobToRobot(StorageShelf storageShelf, PackingStation packingStation) throws LocationNotValidException {
+	public boolean assignJobToRobot(StorageShelf storageShelf, PackingStation packingStation)
+			throws LocationNotValidException {
 		for (Entity entity : this.entities.values()) {
 			// If entity is a robot and the robot accepts the job, return true, otherwise keep going.
 			if (entity instanceof Robot && ((Robot) entity).acceptJob(storageShelf, packingStation, this))
 				return true;
 		}
-		// No robot accepted the job. 
+		// No robot accepted the job.
 		return false;
 	}
-	
+
 	/**
-	 * @return The warehouse floor. 
+	 * @return The warehouse floor.
 	 */
 	public Floor getFloor() {
 		return this.floor;
@@ -92,47 +101,45 @@ public class Warehouse {
 	public boolean areAllOrdersDispatched() {
 		return this.assignedOrders.isEmpty() && this.unassignedOrders.isEmpty();
 	}
-	
+
 	/**
 	 * @return the totalTickCounts
 	 */
 	public int getTotalTickCount() {
 		return this.simulator.getTotalTickCount();
 	}
-	
+
 	/**
 	 * @return A string representation of the warehouse.
 	 */
 	public String toString() {
-		return"Warehouse:"
-				+ "unassignedOrders: " + unassignedOrders.size()
-				+ "assignedOrders: " + assignedOrders.size()
-				+ "dispatchedOrders: " + dispatchedOrders.size();
+		return "Warehouse:" + "unassignedOrders: " + unassignedOrders.size() + "assignedOrders: "
+				+ assignedOrders.size() + "dispatchedOrders: " + dispatchedOrders.size();
 	}
-	
+
 	protected void log(String message) {
 		String classType = this.getClass().getSimpleName();
 
 		System.out.println(String.format("%s: %s", classType, message));
 	}
-	
+
 	protected void log(String format, Object... args) {
 		this.log(String.format(format, args));
 	}
-	
+
 	public Collection<Entity> getEntities() {
 		return Collections.unmodifiableCollection(this.entities.values());
 	}
-	
+
 	public Collection<Order> getUnassignedOrders() {
 		return Collections.unmodifiableCollection(this.unassignedOrders);
 	}
-	
-	public Collection<Order> getAssignedOrders(){
+
+	public Collection<Order> getAssignedOrders() {
 		return Collections.unmodifiableCollection(assignedOrders);
 	}
 
-	public Collection<Order> getDispatchedOrders(){
+	public Collection<Order> getDispatchedOrders() {
 		return Collections.unmodifiableCollection(dispatchedOrders);
 	}
 }

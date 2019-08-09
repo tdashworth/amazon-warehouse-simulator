@@ -1,17 +1,15 @@
 package utils;
 
 import java.util.*;
-
 import model.Floor;
 import model.Location;
 import model.LocationNotValidException;
 
 /**
- * A strategy to finding an optimal path between two location on a floor. This
- * strategy explores nodes in a recursive fashion choosing the "most efficient"
- * node to explore next. The most efficient node is determined by a combination
- * of heuristic (closest direct distance) and cost (number of steps it took to
- * travel to the node).
+ * A strategy to finding an optimal path between two location on a floor. This strategy explores
+ * nodes in a recursive fashion choosing the "most efficient" node to explore next. The most
+ * efficient node is determined by a combination of heuristic (closest direct distance) and cost
+ * (number of steps it took to travel to the node).
  */
 public class PathFindingStrategy {
 	private boolean avoidCollisions;
@@ -23,8 +21,7 @@ public class PathFindingStrategy {
 	List<PathFindingNode> exploredNodes;
 
 	/**
-	 * Constructs a strategy for path finding with a default value to avoid
-	 * collisions.
+	 * Constructs a strategy for path finding with a default value to avoid collisions.
 	 * 
 	 * @param floor the floor determining the size and location of other robots.
 	 */
@@ -35,10 +32,8 @@ public class PathFindingStrategy {
 	/**
 	 * Constructs a strategy for path finding.
 	 * 
-	 * @param floor           the floor determining the size and location of other
-	 *                        robots.
-	 * @param avoidCollisions a flag allowing the search to avoid location of
-	 *                        current robots.
+	 * @param floor           the floor determining the size and location of other robots.
+	 * @param avoidCollisions a flag allowing the search to avoid location of current robots.
 	 */
 	public PathFindingStrategy(Floor floor, boolean avoidCollisions) {
 		this.floor = floor;
@@ -47,8 +42,8 @@ public class PathFindingStrategy {
 	}
 
 	/**
-	 * Given a number of columns and rows (typically for the Floor), this recreates
-	 * it with Nodes used by the searching.
+	 * Given a number of columns and rows (typically for the Floor), this recreates it with Nodes used
+	 * by the searching.
 	 * 
 	 * This is a static method as it does not use or modify anything locally.
 	 * 
@@ -82,11 +77,13 @@ public class PathFindingStrategy {
 
 		// If both locations are the same, return true (with a path count of 0)
 		if (beginningLocation.equals(targetLocation))
-			return false;
+			return false; // TODO Consider throwing an error.
 
 		// Create lists for storing nodes to explore and those explored
-		this.unexploredNodes = new ArrayList<PathFindingNode>(this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
-		this.exploredNodes = new ArrayList<PathFindingNode>(this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
+		this.unexploredNodes = new ArrayList<PathFindingNode>(
+				this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
+		this.exploredNodes = new ArrayList<PathFindingNode>(
+				this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
 
 		// Convert Locations to Nodes
 		PathFindingNode beginningNode = this.getNodeAtLocation(beginningLocation);
@@ -99,7 +96,7 @@ public class PathFindingStrategy {
 
 		// No path was found
 		if (targetNode.getPreviousNodeInPath() == null)
-			return false;
+			return false; // TODO Consider throwing an error.
 
 		// Populate the path with calculated route.
 		this.path = PathFindingStrategy.convertLinkedNodesToPath(beginningNode, targetNode);
@@ -109,8 +106,8 @@ public class PathFindingStrategy {
 	}
 
 	/**
-	 * Returns a node at a given x, y coordinates. Returns null if the given
-	 * coordinates are Out Of Bounds
+	 * Returns a node at a given x, y coordinates. Returns null if the given coordinates are Out Of
+	 * Bounds
 	 * 
 	 * @param column
 	 * @param row
@@ -125,8 +122,7 @@ public class PathFindingStrategy {
 	}
 
 	/**
-	 * Returns a node at a given Location. Returns null if the given Location is Out
-	 * Of Bounds
+	 * Returns a node at a given Location. Returns null if the given Location is Out Of Bounds
 	 * 
 	 * @param location
 	 * @return
@@ -166,8 +162,8 @@ public class PathFindingStrategy {
 	}
 
 	/**
-	 * A wrapper around checkNodeForExploration(...) defining the current node as
-	 * the relative position change from the previous node.
+	 * A wrapper around checkNodeForExploration(...) defining the current node as the relative
+	 * position change from the previous node.
 	 * 
 	 * @param nextStepCost the cost taken to travel to this node.
 	 * @param previous     the previous node to the one being explored.
@@ -175,28 +171,30 @@ public class PathFindingStrategy {
 	 * @param columnChange the relative change in column.
 	 * @param rowChange    the relative change in row.
 	 */
-	private void checkNodeForExplorationInDirection(int nextStepCost, PathFindingNode previous, PathFindingNode target, int columnChange,
-			int rowChange) {
-		PathFindingNode current = this.getNodeAtLocation(previous.getColumn() + columnChange, previous.getRow() + rowChange);
+	private void checkNodeForExplorationInDirection(int nextStepCost, PathFindingNode previous,
+			PathFindingNode target, int columnChange, int rowChange) {
+		PathFindingNode current =
+				this.getNodeAtLocation(previous.getColumn() + columnChange, previous.getRow() + rowChange);
 		if (current != null)
 			this.checkNodeForExploration(current, nextStepCost, previous, target);
 	}
 
 	/**
-	 * Adding a node to explore checking the location is valid, it hasn't been
-	 * explored already.
+	 * Adding a node to explore checking the location is valid, it hasn't been explored already.
 	 * 
 	 * @param current      the current node to explore.
 	 * @param nextStepCost the cost taken to travel to this node.
 	 * @param previous     the previous node to the one being explored.
 	 * @param target       the target node used to determine heuristic later.
 	 */
-	private void checkNodeForExploration(PathFindingNode current, int nextStepCost, PathFindingNode previous, PathFindingNode target) {
+	private void checkNodeForExploration(PathFindingNode current, int nextStepCost,
+			PathFindingNode previous, PathFindingNode target) {
 		// Check location validity
 		if (!this.floor.locationIsValid(current))
-			return;
-		if (this.avoidCollisions && previous.getNumberOfStepsFromStart() == 0 && !this.floor.locationIsEmpty(current))
-			return;
+			return; // TODO Consider throwing an error.
+		if (this.avoidCollisions && previous.getNumberOfStepsFromStart() == 0
+				&& !this.floor.locationIsEmpty(current))
+			return; // TODO Consider throwing an error.
 
 		// If the node's current cost is greater than the nextStepCost, remove from
 		// lists as a more efficient path has been found.
@@ -207,7 +205,7 @@ public class PathFindingStrategy {
 
 		// This node has already been handled.
 		if (this.unexploredNodes.contains(current) || this.exploredNodes.contains(current))
-			return;
+			return; // TODO Consider throwing an error.
 
 		current.setNumberOfStepsFromStart(nextStepCost);
 		current.setDirectDistanceToTarget(PathFindingStrategy.calculateHeuristic(current, target));
@@ -223,7 +221,8 @@ public class PathFindingStrategy {
 	 * @param start the beginning node of the path (used as a stopping condition)
 	 * @param end   the target node of the path (used as the initial point)
 	 */
-	private static Deque<Location> convertLinkedNodesToPath(PathFindingNode start, PathFindingNode end) {
+	private static Deque<Location> convertLinkedNodesToPath(PathFindingNode start,
+			PathFindingNode end) {
 		Deque<Location> path = new LinkedList<Location>();
 		PathFindingNode currentNode = end;
 
@@ -236,9 +235,8 @@ public class PathFindingStrategy {
 	}
 
 	/**
-	 * Calculates the heuristic between the two given nodes. The heuristic is simply
-	 * the direct distance between the two nodes calculated using Pythagoras
-	 * Theorem.
+	 * Calculates the heuristic between the two given nodes. The heuristic is simply the direct
+	 * distance between the two nodes calculated using Pythagoras Theorem.
 	 * 
 	 * This is static because it doesn't use or modify anything locally.
 	 * 

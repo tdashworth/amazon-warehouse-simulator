@@ -3,7 +3,7 @@ package model;
 import java.util.List;
 
 /**
- *
+ * TODO JavaDoc description.
  */
 public class Order {
 	private final List<String> storageShelfUIDs;
@@ -57,7 +57,8 @@ public class Order {
 		String result = "Order(" + this.hashCode() + "): ";
 		result += "Storage Shelfs: [" + String.join(", ", this.storageShelfUIDs) + "]";
 		result += ", " + "Ticks to pack: " + this.numberOfTicksToPack;
-		if (this.totalNumberOfTicksToPack > 0) result += ", " + "Total ticks to pack: " + this.totalNumberOfTicksToPack;
+		if (this.totalNumberOfTicksToPack > 0)
+			result += ", " + "Total ticks to pack: " + this.totalNumberOfTicksToPack;
 
 		return result;
 	}

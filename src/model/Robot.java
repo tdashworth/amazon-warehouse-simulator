@@ -24,7 +24,8 @@ public class Robot extends Mover {
 	 * @param uid
 	 * @param location
 	 */
-	public Robot(String uid, Location location, ChargingPod chargingPod, int powerUnitsCapacity, int powerUnitsChargeSpeed) {
+	public Robot(String uid, Location location, ChargingPod chargingPod, int powerUnitsCapacity,
+			int powerUnitsChargeSpeed) {
 		super(uid, location, new Circle(15, Color.RED));
 		this.chargingPod = chargingPod;
 		this.powerUnits = powerUnitsCapacity;
@@ -39,21 +40,21 @@ public class Robot extends Mover {
 		this.previousLocation = this.location;
 
 		switch (status) {
-		case CollectingItem:
-			this.collectItemFromStorageShelf(warehouse);
-			break;
+			case CollectingItem:
+				this.collectItemFromStorageShelf(warehouse);
+				break;
 
-		case ReturningItem:
-			this.returnItemToPackingStation(warehouse);
-			break;
+			case ReturningItem:
+				this.returnItemToPackingStation(warehouse);
+				break;
 
-		case Charging:
-			this.charge();
-			break;
+			case Charging:
+				this.charge();
+				break;
 
-		case GoingToCharge:
-			this.move(warehouse.getFloor(), this.chargingPod.getLocation());
-			break;
+			case GoingToCharge:
+				this.move(warehouse.getFloor(), this.chargingPod.getLocation());
+				break;
 
 		}
 	}
@@ -110,13 +111,14 @@ public class Robot extends Mover {
 	 * @return
 	 * @throws LocationNotValidException
 	 */
-	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation, Warehouse warehouse)
-			throws LocationNotValidException {
+	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation,
+			Warehouse warehouse) throws LocationNotValidException {
 
 		if (this.storageShelf != null || this.hasItem())
 			return false;
 
-		double estimatedCostWithLeeway = estimatePowerUnitCostForJob(storageShelf, packingStation, warehouse);
+		double estimatedCostWithLeeway =
+				estimatePowerUnitCostForJob(storageShelf, packingStation, warehouse);
 
 		if (estimatedCostWithLeeway > this.powerUnits)
 			return false;
@@ -125,27 +127,24 @@ public class Robot extends Mover {
 		this.packingStation = packingStation;
 		this.pathFinder = new PathFindingStrategy(warehouse.getFloor());
 
-		this.log("Accepted Job to %s then %s.", storageShelf.getLocation(), packingStation.getLocation());
+		this.log("Accepted Job to %s then %s.", storageShelf.getLocation(),
+				packingStation.getLocation());
 
 		return true;
 	}
 
-	/*
-	 * Given a storage shelf and packing station this will calculate the number of
-	 * power units to make the trip back to its charging pod with a leeway of 20%.
+	/**
+	 * Given a storage shelf and packing station this will calculate the number of power units to make
+	 * the trip back to its charging pod with a leeway of 20%.
 	 * 
 	 * @param storageShelf
-	 * 
 	 * @param packingStation
-	 * 
 	 * @param warehouse
-	 * 
 	 * @return
-	 * 
 	 * @throws LocationNotValidException
 	 */
-	private double estimatePowerUnitCostForJob(StorageShelf storageShelf, PackingStation packingStation,
-			Warehouse warehouse) throws LocationNotValidException {
+	private double estimatePowerUnitCostForJob(StorageShelf storageShelf,
+			PackingStation packingStation, Warehouse warehouse) throws LocationNotValidException {
 		PathFindingStrategy tempPathFinder = new PathFindingStrategy(warehouse.getFloor(), false);
 
 		tempPathFinder.calculatePath(this.getLocation(), storageShelf.getLocation());
@@ -157,7 +156,8 @@ public class Robot extends Mover {
 		tempPathFinder.calculatePath(packingStation.getLocation(), this.chargingPod.getLocation());
 		int numberOfMovesToChargingStation = tempPathFinder.getNumberOfRemainingSteps();
 
-		double unlaidenedCost = (numberOfMovesToStorageShelf + numberOfMovesToChargingStation) * POWER_UNITS_EMPTY;
+		double unlaidenedCost =
+				(numberOfMovesToStorageShelf + numberOfMovesToChargingStation) * POWER_UNITS_EMPTY;
 		double carryingCost = (numberOfMovesToPackingStation) * POWER_UNITS_CARRYING;
 
 		double estimatedCostWithLeeway = (unlaidenedCost + carryingCost) * 1.2;
@@ -189,7 +189,7 @@ public class Robot extends Mover {
 	 * 
 	 * @return boolean
 	 */
-	public boolean hasItem() {
+	private boolean hasItem() {
 		return this.holdingItem != null;
 	}
 
@@ -198,10 +198,6 @@ public class Robot extends Mover {
 	 */
 	public int getPowerUnits() {
 		return powerUnits;
-	}
-
-	public Location getPreviousLocation() {
-		return previousLocation;
 	}
 
 	/**
@@ -218,9 +214,4 @@ public class Robot extends Mover {
 
 		return result;
 	}
-
-	public void setPowerUnits(int units) {
-		powerUnits = units;
-	}
-
 }

@@ -35,7 +35,8 @@ public class Controller {
 	@FXML
 	private Label labelTickCount, labelFileName;
 	@FXML
-	private Button buttonLoadFile, buttonOneTick, buttonTenTicks, buttonIndefiniteTicks, buttonPause, buttonStop;
+	private Button buttonLoadFile, buttonOneTick, buttonTenTicks, buttonIndefiniteTicks, buttonPause,
+			buttonStop;
 	@FXML
 	private ListView<Robot> robotsList;
 	@FXML
@@ -53,12 +54,13 @@ public class Controller {
 		try {
 			// Ask user to select a file.
 			FileChooser fileChooser = new FileChooser();
-			FileChooser.ExtensionFilter simFilter = new FileChooser.ExtensionFilter("Simulation files (*.sim)", "*.sim");
+			FileChooser.ExtensionFilter simFilter =
+					new FileChooser.ExtensionFilter("Simulation files (*.sim)", "*.sim");
 			fileChooser.getExtensionFilters().add(simFilter);
 			File file = fileChooser.showOpenDialog(View.getPrimaryStage());
 
 			if (file == null)
-				return; // Catch no file selected.
+				return; // TODO Consider throwing an error. // Catch no file selected.
 
 			this.labelFileName.setText(file.getName());
 			this.loadSimulation(file.getAbsolutePath());
@@ -97,12 +99,12 @@ public class Controller {
 		this.timeline.stop();
 		this.setButtonsDisablement(false);
 	}
-	
+
 	@FXML
 	public void stopSimulation() {
 		this.timeline.stop();
 		this.simulation = null;
-		
+
 		// Disable run/pause/stop buttons and enable load button.
 		this.setButtonsDisablement(true);
 		buttonPause.setDisable(true);
@@ -162,7 +164,7 @@ public class Controller {
 		for (int row = 0; row < rows; row++) {
 			this.grdWarehouse.getRowConstraints().add(new RowConstraints(TILE_DIMENTION));
 		}
-		
+
 		// Add StackPane to each cell.
 		this.grdWarehouse.getChildren().removeIf(node -> node instanceof StackPane);
 		System.out.println(this.grdWarehouse.getChildren());
@@ -179,7 +181,8 @@ public class Controller {
 
 	private void drawInitialEntities() {
 		for (Entity entity : this.simulation.getWarehouse().getEntities()) {
-			StackPane stackPane = this.floor[entity.getLocation().getColumn()][entity.getLocation().getRow()];
+			StackPane stackPane =
+					this.floor[entity.getLocation().getColumn()][entity.getLocation().getRow()];
 			stackPane.getChildren().add(entity.getSprite());
 		}
 	}

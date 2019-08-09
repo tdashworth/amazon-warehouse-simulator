@@ -11,10 +11,12 @@ public abstract class Actor extends Entity {
 		super(uid, location, sprite);
 	}
 
-  /**
-	 * This is to execute on every tick/step of the simulation allowing each Actor to make their "turn".
+	/**
+	 * This is to execute on every tick/step of the simulation allowing each Actor to make their
+	 * "turn".
+	 * 
 	 * @param warehouse
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public abstract void tick(Warehouse warehouse) throws Exception;
 }

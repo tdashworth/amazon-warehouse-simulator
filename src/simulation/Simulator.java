@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import model.*;
 
 public class Simulator {
@@ -36,8 +35,8 @@ public class Simulator {
 	}
 
 	/**
-	 * Returns a Simulator configured from the file given. Based off the first line
-	 * of the file, the correct reader will be chosen to parse the file.
+	 * Returns a Simulator configured from the file given. Based off the first line of the file, the
+	 * correct reader will be chosen to parse the file.
 	 * 
 	 * @param fileLocation
 	 * @return a configured simulation.
@@ -54,11 +53,11 @@ public class Simulator {
 			throw new SimFileFormatException("", "File is empty or of wrong format.");
 
 		switch (lines.get(0)) {
-		case "format 1":
-			simulatorFileReader = new SimulatorFileReader_V1();
-			break;
-		default:
-			throw new SimFileFormatException(lines.get(0), "File is empty or of wrong format.");
+			case "format 1":
+				simulatorFileReader = new SimulatorFileReader_V1();
+				break;
+			default:
+				throw new SimFileFormatException(lines.get(0), "File is empty or of wrong format.");
 		}
 
 		Simulator simulator = simulatorFileReader.read(fileLocation);
@@ -76,9 +75,10 @@ public class Simulator {
 		this.warehouse = new Warehouse(floor, entities, orders, this);
 
 		if (entities != null) {
-			this.actors = entities.values().stream().sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
-					.filter(entity -> entity instanceof Actor).map(entity -> (Actor) entity)
-					.collect(Collectors.toList());
+			this.actors =
+					entities.values().stream().sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
+							.filter(entity -> entity instanceof Actor).map(entity -> (Actor) entity)
+							.collect(Collectors.toList());
 			for (Entity entity : entities.values()) {
 				if (entity instanceof Robot) {
 					floor.loadEntity(entity);
@@ -88,8 +88,7 @@ public class Simulator {
 	}
 
 	/**
-	 * Simulator run method, keeps the simulation until all orders have been
-	 * dispatched.
+	 * Simulator run method, keeps the simulation until all orders have been dispatched.
 	 * 
 	 * @throws Exception
 	 */
@@ -97,7 +96,8 @@ public class Simulator {
 		while (!this.isComplete())
 			tick();
 
-		System.out.println(String.format("All orders have been dispatched. It took %s ticks.", this.totalTickCount));
+		System.out.println(
+				String.format("All orders have been dispatched. It took %s ticks.", this.totalTickCount));
 	}
 
 	/**

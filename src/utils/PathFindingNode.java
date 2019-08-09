@@ -18,9 +18,8 @@ public class PathFindingNode extends Location implements Comparable<PathFindingN
 	}
 
 	/**
-	 * Compares this Node to another using the numberOfStepsFromStart and
-	 * directDistanceToTarget returning +ve if this is more cost effective or -ve
-	 * otherwise.
+	 * Compares this Node to another using the numberOfStepsFromStart and directDistanceToTarget
+	 * returning +ve if this is more cost effective or -ve otherwise.
 	 */
 	public int compareTo(PathFindingNode other) {
 		double thisCost = this.directDistanceToTarget + this.numberOfStepsFromStart;
@@ -50,8 +49,7 @@ public class PathFindingNode extends Location implements Comparable<PathFindingN
 	}
 
 	/**
-	 * @param directDistanceToTarget The direct distance from this to the target
-	 *                               Node.
+	 * @param directDistanceToTarget The direct distance from this to the target Node.
 	 */
 	public void setDirectDistanceToTarget(double directDistanceToTarget) {
 		this.directDistanceToTarget = directDistanceToTarget;
@@ -65,8 +63,8 @@ public class PathFindingNode extends Location implements Comparable<PathFindingN
 	}
 
 	/**
-	 * @param previousNode The previous Node to this to determine the path it has
-	 *                     taken to get to this Node.
+	 * @param previousNode The previous Node to this to determine the path it has taken to get to this
+	 *                     Node.
 	 */
 	public void setPreviousNodeInPath(PathFindingNode previousNode) {
 		this.previousNodeInPath = previousNode;

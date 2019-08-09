@@ -31,7 +31,8 @@ public class SimulatorFileReader_V1 implements SimulatorFileReader {
 	 * @throws LocationNotValidException
 	 */
 	@Override
-	public Simulator read(Path fileLocation) throws SimFileFormatException, IOException, LocationNotValidException {
+	public Simulator read(Path fileLocation)
+			throws SimFileFormatException, IOException, LocationNotValidException {
 		this.log("Reading file: %s", fileLocation.toAbsolutePath());
 		List<String> lines = Files.readAllLines(fileLocation);
 		if (lines.size() == 0)
@@ -47,7 +48,7 @@ public class SimulatorFileReader_V1 implements SimulatorFileReader {
 				throw new SimFileFormatException(line, e.toString());
 			}
 		}
-		
+
 		this.log("File read. Creating Simulation...");
 		Floor floor = new Floor(this.width, this.height);
 		Simulator simulator = new Simulator(floor, entities, orders);
@@ -69,58 +70,62 @@ public class SimulatorFileReader_V1 implements SimulatorFileReader {
 			; // Empty line.
 
 		switch (words.get(0)) {
-		case "width":
-			this.width = Integer.parseInt(words.get(1));
-			this.log("Width set to %s", this.width);
-			break;
+			case "width":
+				this.width = Integer.parseInt(words.get(1));
+				this.log("Width set to %s", this.width);
+				break;
 
-		case "height":
-			this.height = Integer.parseInt(words.get(1));
-			this.log("Heigth set to %s", this.height);
-			break;
+			case "height":
+				this.height = Integer.parseInt(words.get(1));
+				this.log("Heigth set to %s", this.height);
+				break;
 
-		case "capacity":
-			this.capacity = Integer.parseInt(words.get(1));
-			this.log("Robot's charge capacity set to %s", this.capacity);
-			break;
+			case "capacity":
+				this.capacity = Integer.parseInt(words.get(1));
+				this.log("Robot's charge capacity set to %s", this.capacity);
+				break;
 
-		case "chargeSpeed":
-			this.chargeSpeed = Integer.parseInt(words.get(1));
-			this.log("Robot's charge speed set to %s", this.chargeSpeed);
-			break;
+			case "chargeSpeed":
+				this.chargeSpeed = Integer.parseInt(words.get(1));
+				this.log("Robot's charge speed set to %s", this.chargeSpeed);
+				break;
 
-		case "podRobot":
-			location = this.createAndValidateLocation(Integer.parseInt(words.get(3)), Integer.parseInt(words.get(4)));
-			ChargingPod chargingPod = new ChargingPod(words.get(1), location);
-			Robot robot = new Robot(words.get(2), location, chargingPod, this.capacity, this.chargeSpeed);
-			this.entities.put(words.get(1), chargingPod);
-			this.log("Charging Pod %s created at %s", chargingPod.getUID(), location);
-			this.entities.put(words.get(2), robot);
-			this.log("Robot %s created at %s", robot.getUID(), location);
-			break;
+			case "podRobot":
+				location = this.createAndValidateLocation(Integer.parseInt(words.get(3)),
+						Integer.parseInt(words.get(4)));
+				ChargingPod chargingPod = new ChargingPod(words.get(1), location);
+				Robot robot =
+						new Robot(words.get(2), location, chargingPod, this.capacity, this.chargeSpeed);
+				this.entities.put(words.get(1), chargingPod);
+				this.log("Charging Pod %s created at %s", chargingPod.getUID(), location);
+				this.entities.put(words.get(2), robot);
+				this.log("Robot %s created at %s", robot.getUID(), location);
+				break;
 
-		case "shelf":
-			location = this.createAndValidateLocation(Integer.parseInt(words.get(2)), Integer.parseInt(words.get(3)));
-			StorageShelf storageShelf = new StorageShelf(words.get(1), location);
-			this.entities.put(words.get(1), storageShelf);
-			this.log("Storage Shelf %s created at %s", storageShelf.getUID(), location);
-			break;
+			case "shelf":
+				location = this.createAndValidateLocation(Integer.parseInt(words.get(2)),
+						Integer.parseInt(words.get(3)));
+				StorageShelf storageShelf = new StorageShelf(words.get(1), location);
+				this.entities.put(words.get(1), storageShelf);
+				this.log("Storage Shelf %s created at %s", storageShelf.getUID(), location);
+				break;
 
-		case "station":
-			location = this.createAndValidateLocation(Integer.parseInt(words.get(2)), Integer.parseInt(words.get(3)));
-			PackingStation packingStation = new PackingStation(words.get(1), location);
-			this.entities.put(words.get(1), packingStation);
-			this.log("Packing Station %s created at %s", packingStation.getUID(), location);
-			break;
+			case "station":
+				location = this.createAndValidateLocation(Integer.parseInt(words.get(2)),
+						Integer.parseInt(words.get(3)));
+				PackingStation packingStation = new PackingStation(words.get(1), location);
+				this.entities.put(words.get(1), packingStation);
+				this.log("Packing Station %s created at %s", packingStation.getUID(), location);
+				break;
 
-		case "order":
-			Order order = new Order(words.subList(2, words.size()), Integer.parseInt(words.get(1)));
-			orders.add(order);
-			this.log("Order %s created.", order.hashCode());
-			break;
+			case "order":
+				Order order = new Order(words.subList(2, words.size()), Integer.parseInt(words.get(1)));
+				orders.add(order);
+				this.log("Order %s created.", order.hashCode());
+				break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 	}
 

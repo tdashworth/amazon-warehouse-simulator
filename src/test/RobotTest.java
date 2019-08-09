@@ -34,7 +34,6 @@ public class RobotTest {
 		assertEquals(l, r.getLocation());
 		assertEquals("2", r.getUID());
 		assertEquals(8, r.getPowerUnits());
-		assertEquals(false, r.hasItem());
 		assertEquals(null, r.getPreviousLocation());
 		assertEquals("Robot(2) - Location: [2, 2], Status: Charging, Power: 8", r.toString());
 	}
@@ -54,7 +53,7 @@ public class RobotTest {
 		// assertEquals(10, r.getPowerUnits());
 		
 		//Test that the robots full charge works
-		r.setPowerUnits(20);
+		// r.setPowerUnits(20);
 		r.charge();
 		assertEquals(20, r.getPowerUnits());
 		r.charge();

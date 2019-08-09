@@ -7,21 +7,19 @@ import utils.PathFindingStrategy;
  * A model of something that moves during the simulation.
  */
 public abstract class Mover extends Actor {
-  protected PathFindingStrategy pathFinder;
+	protected PathFindingStrategy pathFinder;
 	protected Location previousLocation;
 
 	public Mover(String uid, Location location, Node sprite) {
 		super(uid, location, sprite);
 	}
 
-  public abstract void tick(Warehouse warehouse) throws Exception;
-  
-  /**
-	 * Moves the robot to another location depending on whether it needs to charge
-	 * to deliver an item
+	public abstract void tick(Warehouse warehouse) throws Exception;
+
+	/**
+	 * Moves to another locationon the floor.
 	 * 
 	 * @throws Exception
-	 * 
 	 */
 	protected void move(Floor floor, Location targetLocation) throws Exception {
 		this.log("Moving from %s to %s.", this.location, targetLocation);
@@ -30,7 +28,7 @@ public abstract class Mover extends Actor {
 
 		if (!pathFound) {
 			this.log("No path found.");
-			return;
+			return; // TODO Consider throwing an error.
 		}
 
 		// this.log("Path: " + this.pathFinder.getPath());
@@ -45,5 +43,9 @@ public abstract class Mover extends Actor {
 
 		this.previousLocation = this.location;
 		this.location = newLocation;
+	}
+
+	public Location getPreviousLocation() {
+		return previousLocation;
 	}
 }
