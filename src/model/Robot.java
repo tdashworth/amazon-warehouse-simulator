@@ -4,15 +4,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import utils.PathFindingStrategy;
 
-public class Robot extends Actor {
+public class Robot extends Mover {
 	private int powerUnits;
 	private StorageShelf storageShelf;
 	private StorageShelf holdingItem;
 	private PackingStation packingStation;
 	private ChargingPod chargingPod;
 
-	private PathFindingStrategy pathFinder;
-	private Location previousLocation;
 	private RobotStatus robotStatus;
 	private static int POWER_UNITS_EMPTY = 1;
 	private static int POWER_UNITS_CARRYING = 2;
@@ -52,7 +50,7 @@ public class Robot extends Actor {
 			break;
 
 		case GoingToCharge:
-			this.move(warehouse, this.chargingPod.getLocation());
+			this.move(warehouse.getFloor(), this.chargingPod.getLocation());
 			break;
 
 		}
@@ -72,7 +70,7 @@ public class Robot extends Actor {
 	}
 
 	private void collectItemFromStorageShelf(Warehouse warehouse) throws Exception {
-		this.move(warehouse, this.storageShelf.getLocation());
+		this.move(warehouse.getFloor(), this.storageShelf.getLocation());
 		this.log("Moved closer to assigned Storage Shelf.");
 
 		if (this.location.equals(this.storageShelf.getLocation())) {
@@ -83,7 +81,7 @@ public class Robot extends Actor {
 	}
 
 	private void returnItemToPackingStation(Warehouse warehouse) throws Exception {
-		this.move(warehouse, this.packingStation.getLocation());
+		this.move(warehouse.getFloor(), this.packingStation.getLocation());
 		this.log("Moved closer to assigned Packing Station.");
 
 		if (this.location.equals(this.packingStation.getLocation())) {
@@ -94,34 +92,8 @@ public class Robot extends Actor {
 		}
 	}
 
-	/**
-	 * Moves the robot to another location depending on whether it needs to charge
-	 * to deliver an item
-	 * 
-	 * @throws Exception
-	 * 
-	 */
-	private void move(Warehouse warehouse, Location targetLocation) throws Exception {
-		this.log("Moving from %s to %s.", this.location, targetLocation);
-
-		boolean pathFound = this.pathFinder.calculatePath(this.location, targetLocation);
-
-		if (!pathFound) {
-			this.log("No path found.");
-			return;
-		}
-
-		// this.log("Path: " + this.pathFinder.getPath());
-
-		Location newLocation = this.pathFinder.getNextLocation();
-
-		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
-		if (!successfulMove) {
-			this.log("Unable to make move to ", newLocation.toString());
-			return;
-		}
-
-		this.location = newLocation;
+	protected void move(Floor floor, Location targetLocation) throws Exception {
+		super.move(floor, targetLocation);
 
 		int powerUnitsToDeduct = this.hasItem() ? POWER_UNITS_CARRYING : POWER_UNITS_EMPTY;
 		this.powerUnits -= powerUnitsToDeduct;
