@@ -136,7 +136,7 @@
                         <Font name="Roboto" size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="buttonStop" alignment="CENTER" disable="true" minWidth="75.0" mnemonicParsing="false" onAction="#stopSimualtion" text="Stop" textAlignment="CENTER">
+                  <Button fx:id="buttonStop" alignment="CENTER" disable="true" minWidth="75.0" mnemonicParsing="false" onAction="#stopSimulation" text="Stop" textAlignment="CENTER">
                      <font>
                         <Font name="Roboto" size="14.0" />
                      </font>

@@ -98,7 +98,7 @@ public class WarehouseController {
 	}
 	
 	@FXML
-	public void stopSimualtion() {
+	public void stopSimulation() {
 		this.timeline.stop();
 		this.simulation = null;
 		
@@ -230,7 +230,7 @@ public class WarehouseController {
 		alert.setTitle("Simulation Complete");
 		alert.setHeaderText("Congratulations, the simulation is complete!");
 		alert.setContentText("Total tick count: " + simulation.getTotalTickCount());
-		alert.setOnCloseRequest((event) -> this.stopSimualtion());
+		alert.setOnCloseRequest((event) -> this.stopSimulation());
 		alert.show();
 	}
 
@@ -239,7 +239,7 @@ public class WarehouseController {
 		alert.setTitle("Fatal Error Occured");
 		alert.setHeaderText("An error has occur thats stopped the simulation from continuing.");
 		alert.setContentText(error.toString());
-		alert.setOnCloseRequest((event) -> this.stopSimualtion());
+		alert.setOnCloseRequest((event) -> this.stopSimulation());
 		alert.show();
 	}
 
