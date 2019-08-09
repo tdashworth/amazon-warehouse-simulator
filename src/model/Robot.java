@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import utils.PathFindingStrategy;
 
-public class Robot extends Entity implements Actor {
+public class Robot extends Actor {
 	private int powerUnits;
 	private StorageShelf storageShelf;
 	private StorageShelf holdingItem;

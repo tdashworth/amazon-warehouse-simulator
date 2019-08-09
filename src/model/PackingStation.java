@@ -13,7 +13,7 @@ import javafx.scene.shape.Rectangle;
 /**
  *	A simple representation of a packing station within the warehouse.
  */
-public class PackingStation extends Entity implements Actor {
+public class PackingStation extends Actor {
 	private Order currentOrder;
 	private int tickCountWhenOrderAssigned;
 	private int remainingPackingTicks;
