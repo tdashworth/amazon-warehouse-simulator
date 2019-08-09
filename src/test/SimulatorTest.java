@@ -25,21 +25,17 @@ public class SimulatorTest {
 		Floor floor = new Floor(2, 2);
 		HashMap<String, Entity> entities = new HashMap<String, Entity>();
 		Deque<Order> orders = new LinkedList<Order>();
-		int chargeSpeed = 1;
-		int capacity = 1;
 
 		// Create the new simulator, based on the above variables
 		Simulator s = null;
 		try {
-			s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
+			s = new Simulator(floor, entities, orders);
 		} catch (LocationNotValidException e) {
 			e.printStackTrace();
 		}
 
 		// Test to ensure that the simulator was set up correctly
 		assertEquals(0, s.getTotalTickCount());
-		assertEquals(1, s.getChargeSpeed());
-		assertEquals(1, s.getMaxChargeCapacity());
 		assertEquals(true, s.isComplete());
 		assertEquals(0, s.getWarehouse().getEntities().size());
 		assertEquals(0, s.getRobots().size());
@@ -47,33 +43,28 @@ public class SimulatorTest {
 		assertEquals(2, s.getWarehouse().getFloor().getNumberOfRows());
 		assertEquals("Floor: - Size: 2 rows by 2 columns.", s.getWarehouse().getFloor().toString());
 
-		// Modify the capacity variable, and add an order, robot and charging pod.
-		capacity = 20;
-
 		ArrayList<String> sids = new ArrayList<String>();
 		sids.add("ss0");
 		orders.add(new Order(sids, 10));
 
-		Robot r = new Robot("r0", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), 2);
+		Robot r = new Robot("r0", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), 10,  2);
 		entities.put(r.getUID(), r);
 
 		// Create a new simulator with the updated variables
 		try {
-			s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
+			s = new Simulator(floor, entities, orders);
 		} catch (LocationNotValidException e) {
 			e.printStackTrace();
 		}
 
 		// Ensure that the new simulator was set up correctly
 		assertEquals(0, s.getTotalTickCount());
-		assertEquals(1, s.getChargeSpeed());
-		assertEquals(20, s.getMaxChargeCapacity());
 		assertEquals(false, s.isComplete());
 		assertEquals(1, s.getWarehouse().getEntities().size());
 		// Robot tests
 		assertEquals(1, s.getRobots().size());
 		assertTrue(new Location(0, 0).equals(s.getRobots().get(0).getLocation()));
-		assertEquals(2, s.getRobots().get(0).getPowerUnits());
+		assertEquals(10, s.getRobots().get(0).getPowerUnits());
 		assertEquals("r0", s.getRobots().get(0).getUID());
 		// Floor tests
 		assertEquals(2, s.getWarehouse().getFloor().getNumberOfColumns());
@@ -88,17 +79,13 @@ public class SimulatorTest {
 		HashMap<String, Entity> entities = new HashMap<String, Entity>();
 		Deque<Order> orders = new LinkedList<Order>();
 
-		// Set up the basic simulator variables
-		int chargeSpeed = 1;
-		int capacity = 20;
-
 		// Create an order for the simulation
 		ArrayList<String> sids = new ArrayList<String>();
 		sids.add("ss0");
 		orders.add(new Order(sids, 10));
 
 		// Add one of each entity to the entities list
-		Robot r = new Robot("r0", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), 2);
+		Robot r = new Robot("r0", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), 10, 2);
 		entities.put(r.getUID(), r);
 
 		StorageShelf ss = new StorageShelf("ss0", new Location(1, 0));
@@ -110,7 +97,7 @@ public class SimulatorTest {
 		// Create the simulator
 		Simulator s = null;
 		try {
-			s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
+			s = new Simulator(floor, entities, orders);
 		} catch (LocationNotValidException e) {
 			e.printStackTrace();
 		}
@@ -135,17 +122,13 @@ public class SimulatorTest {
 		HashMap<String, Entity> entities = new HashMap<String, Entity>();
 		Deque<Order> orders = new LinkedList<Order>();
 
-		// Set up the basic simulator variables
-		int chargeSpeed = 1;
-		int capacity = 20;
-
 		// Create an order for the simulation
 		ArrayList<String> sids = new ArrayList<String>();
 		sids.add("ss0");
 		orders.add(new Order(sids, 10));
 
 		// Add one of each entity to the entities list
-		Robot r = new Robot("r0", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), 2);
+		Robot r = new Robot("r0", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), 10, 2);
 		entities.put(r.getUID(), r);
 
 		StorageShelf ss = new StorageShelf("ss0", new Location(1, 0));
@@ -157,7 +140,7 @@ public class SimulatorTest {
 		// Create the simulator
 		Simulator s = null;
 		try {
-			s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
+			s = new Simulator(floor, entities, orders);
 		} catch (LocationNotValidException e) {
 			e.printStackTrace();
 		}
@@ -171,7 +154,7 @@ public class SimulatorTest {
 		}
 
 		// Tests for first tick
-		assertEquals(3, s.getRobots().get(0).getPowerUnits());
+		assertEquals(9, s.getRobots().get(0).getPowerUnits());
 		assertEquals(1, s.getTotalTickCount());
 		assertNotNull(ps.getCurrentOrder()); // Packing station
 		assertNull(s.getWarehouse().getUnassignedOrder());
@@ -185,7 +168,7 @@ public class SimulatorTest {
 		}
 
 		// Tests for 10th tick
-		assertEquals(7, s.getRobots().get(0).getPowerUnits());
+		assertEquals(10, s.getRobots().get(0).getPowerUnits());
 		assertEquals(10, s.getTotalTickCount());
 		assertEquals("ss0", ps.getStorageShelvesVisited().get(0).getUID()); // Packing
 																													// station

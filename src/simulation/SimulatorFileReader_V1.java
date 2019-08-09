@@ -50,7 +50,7 @@ public class SimulatorFileReader_V1 implements SimulatorFileReader {
 		
 		this.log("File read. Creating Simulation...");
 		Floor floor = new Floor(this.width, this.height);
-		Simulator simulator = new Simulator(floor, capacity, chargeSpeed, entities, orders);
+		Simulator simulator = new Simulator(floor, entities, orders);
 		return simulator;
 	}
 
@@ -92,7 +92,7 @@ public class SimulatorFileReader_V1 implements SimulatorFileReader {
 		case "podRobot":
 			location = this.createAndValidateLocation(Integer.parseInt(words.get(3)), Integer.parseInt(words.get(4)));
 			ChargingPod chargingPod = new ChargingPod(words.get(1), location);
-			Robot robot = new Robot(words.get(2), location, chargingPod, this.capacity);
+			Robot robot = new Robot(words.get(2), location, chargingPod, this.capacity, this.chargeSpeed);
 			this.entities.put(words.get(1), chargingPod);
 			this.log("Charging Pod %s created at %s", chargingPod.getUID(), location);
 			this.entities.put(words.get(2), robot);

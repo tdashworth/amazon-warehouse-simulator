@@ -33,7 +33,7 @@ public class Controller {
 	@FXML
 	private GridPane grdWarehouse;
 	@FXML
-	private Label labelChargeCapacity, labelChargeSpeed, labelTickCount, labelFileName;
+	private Label labelTickCount, labelFileName;
 	@FXML
 	private Button buttonLoadFile, buttonOneTick, buttonTenTicks, buttonIndefiniteTicks, buttonPause, buttonStop;
 	@FXML
@@ -146,8 +146,6 @@ public class Controller {
 		this.createFloor(floor.getNumberOfColumns(), floor.getNumberOfRows());
 		this.drawInitialEntities();
 		this.refreshListViews();
-		this.labelChargeCapacity.setText(String.valueOf(this.simulation.getMaxChargeCapacity()));
-		this.labelChargeSpeed.setText(String.valueOf(this.simulation.getChargeSpeed()));
 	}
 
 	private void createFloor(int columns, int rows) {

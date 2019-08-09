@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import model.*;
 
 public class Simulator {
-	private int chargeSpeed;
-	private int maxChargeCapacity;
 	private int totalTickCount;
 	private List<Actor> actors;
 	private Warehouse warehouse;
@@ -72,12 +70,11 @@ public class Simulator {
 	 * 
 	 * @throws LocationNotValidException
 	 */
-	public Simulator(Floor floor, int capacity, int chargeSpeed, HashMap<String, Entity> entities, Deque<Order> orders)
+	public Simulator(Floor floor, HashMap<String, Entity> entities, Deque<Order> orders)
 			throws LocationNotValidException {
 		this.totalTickCount = 0;
 		this.warehouse = new Warehouse(floor, entities, orders, this);
-		this.chargeSpeed = chargeSpeed;
-		this.maxChargeCapacity = capacity;
+
 		if (entities != null) {
 			this.actors = entities.values().stream().sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
 					.filter(entity -> entity instanceof Actor).map(entity -> (Actor) entity)
@@ -129,25 +126,6 @@ public class Simulator {
 	 */
 	public int getTotalTickCount() {
 		return totalTickCount;
-	}
-
-	public int getChargeSpeed() {
-		return chargeSpeed;
-	}
-
-	public void setChargeSpeed(int speed) {
-		chargeSpeed = speed;
-	}
-
-	/**
-	 * @return the maxChargeCapacity
-	 */
-	public int getMaxChargeCapacity() {
-		return maxChargeCapacity;
-	}
-
-	public void setMaxChargeCapacity(int capacity) {
-		maxChargeCapacity = capacity;
 	}
 
 	public List<Robot> getRobots() {

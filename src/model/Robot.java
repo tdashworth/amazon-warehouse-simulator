@@ -11,9 +11,10 @@ public class Robot extends Mover {
 	private PackingStation packingStation;
 	private ChargingPod chargingPod;
 
-	private RobotStatus robotStatus;
-	private static int POWER_UNITS_EMPTY = 1;
-	private static int POWER_UNITS_CARRYING = 2;
+	private final int powerUnitsCapacity;
+	private final int powerUnitsChargeSpeed;
+	private final static int POWER_UNITS_EMPTY = 1;
+	private final static int POWER_UNITS_CARRYING = 2;
 
 	public static enum RobotStatus {
 		GoingToCharge, Charging, CollectingItem, ReturningItem
@@ -23,16 +24,17 @@ public class Robot extends Mover {
 	 * @param uid
 	 * @param location
 	 */
-	public Robot(String uid, Location location, ChargingPod chargingPod, int powerUnits) {
+	public Robot(String uid, Location location, ChargingPod chargingPod, int powerUnitsCapacity, int powerUnitsChargeSpeed) {
 		super(uid, location, new Circle(15, Color.RED));
 		this.chargingPod = chargingPod;
-		this.powerUnits = powerUnits;
-		this.robotStatus = RobotStatus.Charging;
+		this.powerUnits = powerUnitsCapacity;
+		this.powerUnitsCapacity = powerUnitsCapacity;
+		this.powerUnitsChargeSpeed = powerUnitsChargeSpeed;
 	}
 
 	@Override
 	public void tick(Warehouse warehouse) throws Exception {
-		RobotStatus status = this.calculateStatus(warehouse);
+		RobotStatus status = this.getStatus();
 		this.log("Ticking with status: %s.", status);
 		this.previousLocation = this.location;
 
@@ -46,7 +48,7 @@ public class Robot extends Mover {
 			break;
 
 		case Charging:
-			charge(warehouse.getChargeSpeed(), warehouse.getMaxChargeCapacity());
+			this.charge();
 			break;
 
 		case GoingToCharge:
@@ -59,12 +61,12 @@ public class Robot extends Mover {
 	/**
 	 * Increases the robots power units
 	 */
-	public void charge(int chargeSpeed, int maxCharge) {
-		if (this.powerUnits + chargeSpeed >= maxCharge) {
-			this.powerUnits = maxCharge;
+	public void charge() {
+		if (this.powerUnits + powerUnitsChargeSpeed >= powerUnitsCapacity) {
+			this.powerUnits = powerUnitsCapacity;
 			this.log("Fully charged to %s", this.powerUnits);
 		} else {
-			this.powerUnits += chargeSpeed;
+			this.powerUnits += powerUnitsChargeSpeed;
 			this.log("Charge increased to %s.", this.powerUnits);
 		}
 	}
@@ -165,35 +167,21 @@ public class Robot extends Mover {
 	/**
 	 * Determines the robot's status based on its current state.
 	 */
-	public RobotStatus calculateStatus(Warehouse warehouse) {
+	public RobotStatus getStatus() {
 		boolean isAtChargingPod = this.location.equals(this.chargingPod.getLocation());
-		boolean isBatteryBelowHalfCharge = this.powerUnits < (warehouse.getMaxChargeCapacity() * 0.5);
+		boolean isBatteryBelowHalfCharge = this.powerUnits < (powerUnitsCapacity * 0.5);
 
 		if (isBatteryBelowHalfCharge && isAtChargingPod) {// Running low of powerUnits
-			robotStatus = RobotStatus.Charging;
 			return RobotStatus.Charging;
 		} else if (this.storageShelf != null) {// Storage Shelf Assigned
-			robotStatus = RobotStatus.CollectingItem;
 			return RobotStatus.CollectingItem;
 		} else if (this.hasItem()) {
-			robotStatus = RobotStatus.ReturningItem;
 			return RobotStatus.ReturningItem; // Item collected
 		} else if (isAtChargingPod) {
-			robotStatus = RobotStatus.Charging;
 			return RobotStatus.Charging; // Nothing to do and already at Charging Pod
 		} else {
-			robotStatus = RobotStatus.GoingToCharge;
 			return RobotStatus.GoingToCharge; // Nothing to do so go charge
 		}
-	}
-
-	/**
-	 * Returns the robot's current status
-	 * 
-	 * @return Status
-	 */
-	public RobotStatus getStatus() {
-		return robotStatus;
 	}
 
 	/**

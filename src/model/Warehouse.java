@@ -99,20 +99,6 @@ public class Warehouse {
 	public int getTotalTickCount() {
 		return this.simulator.getTotalTickCount();
 	}
-
-	/**
-	 * @return the chargeSpeed
-	 */
-	public int getChargeSpeed() {
-		return this.simulator.getChargeSpeed();
-	}
-
-	/**
-	 * @return the maxChargeCapacity
-	 */
-	public int getMaxChargeCapacity() {
-		return this.simulator.getMaxChargeCapacity();
-	}
 	
 	/**
 	 * @return A string representation of the warehouse.

@@ -24,12 +24,10 @@ public class WarehouseTest {
 		Floor floor = new Floor(2, 2);
 		HashMap<String, Entity> entities = new HashMap<String, Entity>();
 		Deque<Order> orders = new LinkedList<Order>();
-		int chargeSpeed = 1;
-		int capacity = 1;
 
 		Simulator s = null;
 		try {
-			s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
+			s = new Simulator(floor, entities, orders);
 		} catch (LocationNotValidException e) {
 			e.printStackTrace();
 		}	
@@ -55,12 +53,10 @@ public class WarehouseTest {
 		shelf.add("ss1");
 		Order o = new Order(shelf, 2);
 		orders.add(o);
-		int chargeSpeed = 1;
-		int capacity = 1;
 
 		Simulator s = null;
 		try {
-			s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
+			s = new Simulator(floor, entities, orders);
 		} catch (LocationNotValidException e) {
 			e.printStackTrace();
 		}	
@@ -83,12 +79,10 @@ public class WarehouseTest {
 		shelf.add("ss1");
 		Order o = new Order(shelf, 2);
 		orders.add(o);
-		int chargeSpeed = 1;
-		int capacity = 1;
 
 		Simulator s = null;
 		try {
-			s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
+			s = new Simulator(floor, entities, orders);
 		} catch (LocationNotValidException e) {
 			e.printStackTrace();
 		}	
@@ -122,12 +116,10 @@ public class WarehouseTest {
 				shelf.add("ss1");
 				Order o = new Order(shelf, 2);
 				orders.add(o);
-				int chargeSpeed = 1;
-				int capacity = 1;
 
 				Simulator s = null;
 				try {
-					s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
+					s = new Simulator(floor, entities, orders);
 				} catch (LocationNotValidException e) {
 					e.printStackTrace();
 				}	

@@ -35,8 +35,6 @@ public class FileReaderTest {
 		
 		//Ensure that the result simulation matches the file that was read in
 		assertEquals(0, s.getTotalTickCount());
-		assertEquals(1, s.getChargeSpeed());
-		assertEquals(20, s.getMaxChargeCapacity());
 		assertEquals(false, s.isComplete());
 		assertEquals(4, s.getWarehouse().getEntities().size());
 		//Robot tests
