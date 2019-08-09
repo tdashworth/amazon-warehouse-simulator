@@ -191,7 +191,7 @@ public class PathFindingStrategy {
 		// Check location validity
 		if (!this.floor.locationIsValid(current))
 			return;
-		if (this.avoidCollisions && current.getPreviousNodeInPath() == null && !this.floor.locationIsEmpty(current))
+		if (this.avoidCollisions && previous.getNumberOfStepsFromStart() == 0 && !this.floor.locationIsEmpty(current))
 			return;
 
 		// If the node's current cost is greater than the nextStepCost, remove from
