@@ -1,17 +1,19 @@
-package model;
+package utils;
+
+import model.Location;
 
 /**
  * A single Node in the search graph
  */
-public class Node extends Location implements Comparable<Node> {
+public class PathFindingNode extends Location implements Comparable<PathFindingNode> {
 	private int numberOfStepsFromStart;
-	private Node previousNodeInPath;
+	private PathFindingNode previousNodeInPath;
 	private double directDistanceToTarget;
 
 	/**
 	 * A single Node in the search graph
 	 */
-	public Node(int column, int row) {
+	public PathFindingNode(int column, int row) {
 		super(column, row);
 	}
 
@@ -20,7 +22,7 @@ public class Node extends Location implements Comparable<Node> {
 	 * directDistanceToTarget returning +ve if this is more cost effective or -ve
 	 * otherwise.
 	 */
-	public int compareTo(Node other) {
+	public int compareTo(PathFindingNode other) {
 		double thisCost = this.directDistanceToTarget + this.numberOfStepsFromStart;
 		double otherCost = other.directDistanceToTarget + other.numberOfStepsFromStart;
 
@@ -58,7 +60,7 @@ public class Node extends Location implements Comparable<Node> {
 	/**
 	 * @return The previous Node to this in the path to get here.
 	 */
-	public Node getPreviousNodeInPath() {
+	public PathFindingNode getPreviousNodeInPath() {
 		return previousNodeInPath;
 	}
 
@@ -66,7 +68,7 @@ public class Node extends Location implements Comparable<Node> {
 	 * @param previousNode The previous Node to this to determine the path it has
 	 *                     taken to get to this Node.
 	 */
-	public void setPreviousNodeInPath(Node previousNode) {
+	public void setPreviousNodeInPath(PathFindingNode previousNode) {
 		this.previousNodeInPath = previousNode;
 	}
 }

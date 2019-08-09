@@ -5,7 +5,6 @@ import java.util.*;
 import model.Floor;
 import model.Location;
 import model.LocationNotValidException;
-import model.Node;
 
 /**
  * A strategy to finding an optimal path between two location on a floor. This
@@ -18,10 +17,10 @@ public class PathFindingStrategy {
 	private boolean avoidCollisions;
 	private Floor floor;
 	private Deque<Location> path;
-	private Node[][] floorNodes;
+	private PathFindingNode[][] floorNodes;
 
-	List<Node> unexploredNodes;
-	List<Node> exploredNodes;
+	List<PathFindingNode> unexploredNodes;
+	List<PathFindingNode> exploredNodes;
 
 	/**
 	 * Constructs a strategy for path finding with a default value to avoid
@@ -57,12 +56,12 @@ public class PathFindingStrategy {
 	 * @param rows    the number of rows in the floor.
 	 * @return a two dimensional array storing the nodes in their grid format.
 	 */
-	private static Node[][] buildFloorWithNodes(int columns, int rows) {
-		Node[][] nodes = new Node[columns][rows];
+	private static PathFindingNode[][] buildFloorWithNodes(int columns, int rows) {
+		PathFindingNode[][] nodes = new PathFindingNode[columns][rows];
 
 		for (int column = 0; column < columns; column++) {
 			for (int row = 0; row < rows; row++) {
-				nodes[column][row] = new Node(column, row);
+				nodes[column][row] = new PathFindingNode(column, row);
 			}
 		}
 
@@ -86,12 +85,12 @@ public class PathFindingStrategy {
 			return false;
 
 		// Create lists for storing nodes to explore and those explored
-		this.unexploredNodes = new ArrayList<Node>(this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
-		this.exploredNodes = new ArrayList<Node>(this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
+		this.unexploredNodes = new ArrayList<PathFindingNode>(this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
+		this.exploredNodes = new ArrayList<PathFindingNode>(this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
 
 		// Convert Locations to Nodes
-		Node beginningNode = this.getNodeAtLocation(beginningLocation);
-		Node targetNode = this.getNodeAtLocation(targetLocation);
+		PathFindingNode beginningNode = this.getNodeAtLocation(beginningLocation);
+		PathFindingNode targetNode = this.getNodeAtLocation(targetLocation);
 
 		// Add current location to begin search
 		this.unexploredNodes.add(beginningNode);
@@ -117,7 +116,7 @@ public class PathFindingStrategy {
 	 * @param row
 	 * @return
 	 */
-	private Node getNodeAtLocation(int column, int row) {
+	private PathFindingNode getNodeAtLocation(int column, int row) {
 		try {
 			return this.floorNodes[column][row];
 		} catch (ArrayIndexOutOfBoundsException execption) {
@@ -132,7 +131,7 @@ public class PathFindingStrategy {
 	 * @param location
 	 * @return
 	 */
-	private Node getNodeAtLocation(Location location) {
+	private PathFindingNode getNodeAtLocation(Location location) {
 		return this.getNodeAtLocation(location.getColumn(), location.getRow());
 	}
 
@@ -142,11 +141,11 @@ public class PathFindingStrategy {
 	 * @param targetLocation the location used to determine success.
 	 */
 	private void searchForPath(Location targetLocation) {
-		Node targetNode = this.getNodeAtLocation(targetLocation);
+		PathFindingNode targetNode = this.getNodeAtLocation(targetLocation);
 		do {
 			Collections.sort(this.unexploredNodes);
 
-			Node currentNode = this.unexploredNodes.get(0);
+			PathFindingNode currentNode = this.unexploredNodes.get(0);
 
 			// Found target, breaking out to stop search
 			if (currentNode.equals(targetLocation))
@@ -176,9 +175,9 @@ public class PathFindingStrategy {
 	 * @param columnChange the relative change in column.
 	 * @param rowChange    the relative change in row.
 	 */
-	private void checkNodeForExplorationInDirection(int nextStepCost, Node previous, Node target, int columnChange,
+	private void checkNodeForExplorationInDirection(int nextStepCost, PathFindingNode previous, PathFindingNode target, int columnChange,
 			int rowChange) {
-		Node current = this.getNodeAtLocation(previous.getColumn() + columnChange, previous.getRow() + rowChange);
+		PathFindingNode current = this.getNodeAtLocation(previous.getColumn() + columnChange, previous.getRow() + rowChange);
 		if (current != null)
 			this.checkNodeForExploration(current, nextStepCost, previous, target);
 	}
@@ -192,7 +191,7 @@ public class PathFindingStrategy {
 	 * @param previous     the previous node to the one being explored.
 	 * @param target       the target node used to determine heuristic later.
 	 */
-	private void checkNodeForExploration(Node current, int nextStepCost, Node previous, Node target) {
+	private void checkNodeForExploration(PathFindingNode current, int nextStepCost, PathFindingNode previous, PathFindingNode target) {
 		// Check location validity
 		if (!this.floor.locationIsValid(current))
 			return;
@@ -224,9 +223,9 @@ public class PathFindingStrategy {
 	 * @param start the beginning node of the path (used as a stopping condition)
 	 * @param end   the target node of the path (used as the initial point)
 	 */
-	private static Deque<Location> convertLinkedNodesToPath(Node start, Node end) {
+	private static Deque<Location> convertLinkedNodesToPath(PathFindingNode start, PathFindingNode end) {
 		Deque<Location> path = new LinkedList<Location>();
-		Node currentNode = end;
+		PathFindingNode currentNode = end;
 
 		while (!currentNode.equals(start)) {
 			path.addFirst(currentNode);
@@ -247,7 +246,7 @@ public class PathFindingStrategy {
 	 * @param n2 the second Node.
 	 * @return the direct distance between them.
 	 */
-	private static double calculateHeuristic(Node n1, Node n2) {
+	private static double calculateHeuristic(PathFindingNode n1, PathFindingNode n2) {
 		int differenceInColumns = Math.abs(n1.getColumn() - n2.getColumn());
 		int differenceInRows = Math.abs(n1.getRow() - n2.getRow());
 
