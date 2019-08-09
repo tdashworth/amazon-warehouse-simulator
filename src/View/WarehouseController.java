@@ -55,7 +55,8 @@ public class WarehouseController {
 		try {
 			// Ask user to select a file.
 			FileChooser fileChooser = new FileChooser();
-			fileChooser.setSelectedExtensionFilter(new ExtensionFilter("Simulation files.", "sim"));
+			ExtensionFilter simFilter = new ExtensionFilter("Simulation files (*.sim)", "*.sim");
+			fileChooser.getExtensionFilters().add(simFilter);
 			File file = fileChooser.showOpenDialog(WarehouseView.getPrimaryStage());
 
 			if (file == null)
