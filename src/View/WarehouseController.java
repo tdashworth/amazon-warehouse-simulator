@@ -16,6 +16,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import model.Entity;
+import model.Floor;
 import model.Location;
 import model.Order;
 import model.Robot;
@@ -141,7 +142,8 @@ public class WarehouseController {
 		this.simulation = Simulator.createFromFile(Paths.get(fileName));
 
 		// Set up the various view components.
-		this.createFloor(this.simulation.getFloor().getNumberOfColumns(), this.simulation.getFloor().getNumberOfRows());
+		Floor floor = this.simulation.getWarehouse().getFloor();
+		this.createFloor(floor.getNumberOfColumns(), floor.getNumberOfRows());
 		this.drawInitialEntities();
 		this.refreshListViews();
 		this.labelChargeCapacity.setText(String.valueOf(this.simulation.getMaxChargeCapacity()));

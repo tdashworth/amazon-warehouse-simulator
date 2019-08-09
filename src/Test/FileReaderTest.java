@@ -45,9 +45,9 @@ public class FileReaderTest {
 		assertEquals(20, s.getRobots().get(0).getPowerUnits());
 		assertEquals("r0", s.getRobots().get(0).getUID());
 		//Floor tests
-		assertEquals(3, s.getFloor().getNumberOfColumns());
-		assertEquals(3, s.getFloor().getNumberOfRows());
-		assertEquals("Floor: - Size: 3 rows by 3 columns.", s.getFloor().toString());	
+		assertEquals(3, s.getWarehouse().getFloor().getNumberOfColumns());
+		assertEquals(3, s.getWarehouse().getFloor().getNumberOfRows());
+		assertEquals("Floor: - Size: 3 rows by 3 columns.", s.getWarehouse().getFloor().toString());	
 	}
 	
 	@Test
