@@ -43,12 +43,13 @@
                       <ColumnConstraints hgrow="SOMETIMES" />
                     </columnConstraints>
                     <rowConstraints>
+                        <RowConstraints vgrow="SOMETIMES" />
                       <RowConstraints vgrow="SOMETIMES" />
                       <RowConstraints vgrow="SOMETIMES" />
                       <RowConstraints vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Charge Capacity:" textFill="WHITE" GridPane.halignment="RIGHT">
+                        <Label text="Charge Capacity:" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                            <font>
                               <Font name="Roboto Bold" size="18.0" />
                            </font>
@@ -56,7 +57,7 @@
                               <Insets bottom="2.0" left="2.0" right="10.0" top="2.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label text="Charge Speed:" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                        <Label text="Charge Speed:" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                            <font>
                               <Font name="Roboto Bold" size="18.0" />
                            </font>
@@ -64,7 +65,7 @@
                               <Insets bottom="2.0" left="2.0" right="10.0" top="2.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label text="Tick Count:" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                        <Label text="Tick Count:" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                            <font>
                               <Font name="Roboto Bold" size="18.0" />
                            </font>
@@ -72,7 +73,7 @@
                               <Insets bottom="2.0" left="2.0" right="10.0" top="2.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label fx:id="labelChargeCapacity" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                        <Label fx:id="labelChargeCapacity" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets right="10.0" />
                            </GridPane.margin>
@@ -80,7 +81,7 @@
                               <Font name="Roboto" size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="labelChargeSpeed" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="labelChargeSpeed" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <GridPane.margin>
                               <Insets right="10.0" />
                            </GridPane.margin>
@@ -88,12 +89,17 @@
                               <Font name="Roboto" size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="labelTickCount" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label fx:id="labelTickCount" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <GridPane.margin>
                               <Insets right="10.0" />
                            </GridPane.margin>
                            <font>
                               <Font name="Roboto" size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="labelFileName" alignment="CENTER" maxWidth="1.7976931348623157E308" textAlignment="CENTER" textFill="WHITE" underline="true" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                           <font>
+                              <Font name="Roboto Bold" size="14.0" />
                            </font>
                         </Label>
                      </children>
@@ -102,7 +108,7 @@
             </AnchorPane>
             <HBox fillHeight="false" spacing="10.0">
                <children>
-                  <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#selectFile" text="Load File">
+                  <Button fx:id="buttonLoadFile" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#selectFile" text="Load File">
                      <font>
                         <Font name="Roboto" size="14.0" />
                      </font>
@@ -125,7 +131,12 @@
                         <Font name="Roboto" size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="buttonStop" alignment="CENTER" disable="true" minWidth="75.0" mnemonicParsing="false" onAction="#stopSimulation" text="Stop" textAlignment="CENTER">
+                  <Button fx:id="buttonPause" alignment="CENTER" disable="true" minWidth="75.0" mnemonicParsing="false" onAction="#pauseSimulation" text="Pause" textAlignment="CENTER">
+                     <font>
+                        <Font name="Roboto" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="buttonStop" alignment="CENTER" disable="true" minWidth="75.0" mnemonicParsing="false" onAction="#stopSimualtion" text="Stop" textAlignment="CENTER">
                      <font>
                         <Font name="Roboto" size="14.0" />
                      </font>

@@ -4,10 +4,8 @@ import java.io.File;
 import java.nio.file.Paths;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -16,7 +14,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Duration;
 import model.Entity;
 import model.Location;
@@ -35,9 +32,9 @@ public class WarehouseController {
 	@FXML
 	private GridPane grdWarehouse;
 	@FXML
-	private Label labelChargeCapacity, labelChargeSpeed, labelTickCount;
+	private Label labelChargeCapacity, labelChargeSpeed, labelTickCount, labelFileName;
 	@FXML
-	private Button buttonStop, buttonOneTick, buttonTenTicks, buttonIndefiniteTicks;
+	private Button buttonLoadFile, buttonOneTick, buttonTenTicks, buttonIndefiniteTicks, buttonPause, buttonStop;
 	@FXML
 	private ListView<Robot> robotsList;
 	@FXML
@@ -51,21 +48,23 @@ public class WarehouseController {
 	// UI Callable Methods
 
 	@FXML
-	public void selectFile(ActionEvent event) {
+	public void selectFile() {
 		try {
 			// Ask user to select a file.
 			FileChooser fileChooser = new FileChooser();
-			ExtensionFilter simFilter = new ExtensionFilter("Simulation files (*.sim)", "*.sim");
+			FileChooser.ExtensionFilter simFilter = new FileChooser.ExtensionFilter("Simulation files (*.sim)", "*.sim");
 			fileChooser.getExtensionFilters().add(simFilter);
 			File file = fileChooser.showOpenDialog(WarehouseView.getPrimaryStage());
 
 			if (file == null)
 				return; // Catch no file selected.
 
+			this.labelFileName.setText(file.getName());
 			this.loadSimulation(file.getAbsolutePath());
 
-			// Disable this button and enable the run buttons.
-			((Button) event.getSource()).setDisable(true);
+			// Disable load button and enable the run buttons.
+			buttonLoadFile.setDisable(true);
+			buttonStop.setDisable(false);
 			this.setButtonsDisablement(false);
 		} catch (Exception e) {
 			alertErrorOccured(e);
@@ -93,9 +92,21 @@ public class WarehouseController {
 	}
 
 	@FXML
-	public void stopSimulation() {
+	public void pauseSimulation() {
 		this.timeline.stop();
 		this.setButtonsDisablement(false);
+	}
+	
+	@FXML
+	public void stopSimualtion() {
+		this.timeline.stop();
+		this.simulation = null;
+		
+		// Disable run/pause/stop buttons and enable load button.
+		this.setButtonsDisablement(true);
+		buttonPause.setDisable(true);
+		buttonStop.setDisable(true);
+		buttonLoadFile.setDisable(false);
 	}
 
 	// Extracted Logic
@@ -105,6 +116,7 @@ public class WarehouseController {
 			// Execute simulation tick.
 			this.simulation.tick();
 
+			// Redraw the updated view components.
 			this.drawRobots();
 			this.refreshListViews();
 			this.labelTickCount.setText(String.valueOf(this.simulation.getTotalTickCount()));
@@ -116,7 +128,7 @@ public class WarehouseController {
 			}
 		} catch (Exception e) {
 			this.alertErrorOccured(e);
-			this.stopSimulation();
+			this.pauseSimulation();
 			e.printStackTrace();
 		}
 	}
@@ -125,8 +137,10 @@ public class WarehouseController {
 		if (fileName == null)
 			throw new SimFileFormatException("", "No file passed.");
 
+		// Create the simulation from the selected file.
 		this.simulation = Simulator.createFromFile(Paths.get(fileName));
 
+		// Set up the various view components.
 		this.createFloor(this.simulation.getFloor().getNumberOfColumns(), this.simulation.getFloor().getNumberOfRows());
 		this.drawInitialEntities();
 		this.refreshListViews();
@@ -137,6 +151,21 @@ public class WarehouseController {
 	private void createFloor(int columns, int rows) {
 		this.floor = new StackPane[columns][rows];
 
+		// Add Column Constraints.
+		this.grdWarehouse.getColumnConstraints().clear();
+		for (int column = 0; column < columns; column++) {
+			this.grdWarehouse.getColumnConstraints().add(new ColumnConstraints(TILE_DIMENTION));
+		}
+
+		// Add Row Constraints.
+		this.grdWarehouse.getRowConstraints().clear();
+		for (int row = 0; row < rows; row++) {
+			this.grdWarehouse.getRowConstraints().add(new RowConstraints(TILE_DIMENTION));
+		}
+		
+		// Add StackPane to each cell.
+		this.grdWarehouse.getChildren().removeIf(node -> node instanceof StackPane);
+		System.out.println(this.grdWarehouse.getChildren());
 		for (int column = 0; column < columns; column++) {
 			for (int row = 0; row < rows; row++) {
 				StackPane stackPane = new StackPane();
@@ -144,12 +173,8 @@ public class WarehouseController {
 				this.floor[column][row] = stackPane;
 				this.grdWarehouse.getChildren().add(stackPane);
 			}
-			this.grdWarehouse.getColumnConstraints().add(new ColumnConstraints(TILE_DIMENTION));
 		}
 
-		for (int row = 0; row < rows; row++) {
-			this.grdWarehouse.getRowConstraints().add(new RowConstraints(TILE_DIMENTION));
-		}
 	}
 
 	private void drawInitialEntities() {
@@ -197,24 +222,24 @@ public class WarehouseController {
 		buttonOneTick.setDisable(disabled);
 		buttonTenTicks.setDisable(disabled);
 		buttonIndefiniteTicks.setDisable(disabled);
-		buttonStop.setDisable(!disabled);
+		buttonPause.setDisable(!disabled);
 	}
 
 	public void alertSimulationComplete() {
-		Alert alert = new Alert(AlertType.INFORMATION);
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
 		alert.setTitle("Simulation Complete");
 		alert.setHeaderText("Congratulations, the simulation is complete!");
 		alert.setContentText("Total tick count: " + simulation.getTotalTickCount());
-		alert.setOnCloseRequest((event) -> System.exit(0));
+		alert.setOnCloseRequest((event) -> this.stopSimualtion());
 		alert.show();
 	}
 
 	public void alertErrorOccured(Exception error) {
-		Alert alert = new Alert(AlertType.ERROR);
+		Alert alert = new Alert(Alert.AlertType.ERROR);
 		alert.setTitle("Fatal Error Occured");
 		alert.setHeaderText("An error has occur thats stopped the simulation from continuing.");
 		alert.setContentText(error.toString());
-		alert.setOnCloseRequest((event) -> System.exit(0));
+		alert.setOnCloseRequest((event) -> this.stopSimualtion());
 		alert.show();
 	}
 
