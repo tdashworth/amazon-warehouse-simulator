@@ -19,7 +19,7 @@ public class Simulator {
 	 */
 	public static void main(String[] args) {
 		if (args.length == 0) {
-			System.out.println("Error, usage: java ClassName inputfile");
+			System.out.println("Error, usage: java simulation.Simulator inputfile");
 			System.exit(1);
 		}
 

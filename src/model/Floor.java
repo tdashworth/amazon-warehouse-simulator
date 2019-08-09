@@ -39,13 +39,6 @@ public class Floor {
 	}
 	
 	/**
-	 * @return The grid of entities.
-	 */
-	public Entity[][] getEntities() {
-		return grid;
-	}
-	
-	/**
 	 * Place an entity on the floor.
 	 * @param entity
 	 * @throws Exception
@@ -98,20 +91,6 @@ public class Floor {
 	public boolean locationIsEmpty(Location location) {
 		return (grid[location.getColumn()][location.getRow()] == null);
 	}
-	
-	/**
-	 * Empty the floor.
-	 */
-	public void clear()
-	{
-		for(int row = 0; row < numberOfRows -1; row++) {
-			for(int col = 0; col < numberOfColumns -1; col++) {
-				grid[row][col] = null;
-			}
-		}
-	}
-	
-	
 	
 	/**
 	 * Move an entity to a new location.

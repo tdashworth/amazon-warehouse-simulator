@@ -1,6 +1,11 @@
-package model;
+package utils;
 
 import java.util.*;
+
+import model.Floor;
+import model.Location;
+import model.LocationNotValidException;
+import model.Node;
 
 /**
  * A strategy to finding an optimal path between two location on a floor. This
