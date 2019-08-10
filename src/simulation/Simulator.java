@@ -106,7 +106,7 @@ public class Simulator {
 	 * @return boolean
 	 */
 	public boolean isComplete() {
-		return this.warehouse.areAllOrdersDispatched();
+		return this.warehouse.getOrderManager().areAllItemsComplete();
 	}
 
 	/**

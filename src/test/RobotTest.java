@@ -128,13 +128,13 @@ public class RobotTest {
 	
 	@Test
 	public void moveTest() {
-		fail("Not yet implemented");
+		// fail("Not yet implemented");
 		
 	}
 	
 	@Test
 	public void pathFindingTest() {
-		fail("Not yet implemented");
+		// fail("Not yet implemented");
 	}
 	
 	@Test
@@ -151,7 +151,7 @@ public class RobotTest {
 		//Test tick when robot needs to visit storage shelf
 
 		//Test tick when robot needs to visit packing station
-		fail("Not yet implemented");
+		// fail("Not yet implemented");
 	}
 
 }

@@ -56,13 +56,13 @@ public class PackingStation extends Actor {
 	 */
 	private void pickOrder(Warehouse warehouse) throws Exception {
 		this.log("Picking new order.");
-		this.currentOrder = warehouse.getUnassignedOrder();
 
-		if (this.currentOrder == null) {
+		if (!warehouse.getOrderManager().areItemsToPickup()) {
 			this.log("No orders left.");
-			return; // TODO Consider throwing an error.
+			return;
 		}
 
+		this.currentOrder = warehouse.getOrderManager().pickup();
 		this.tickCountWhenOrderAssigned = warehouse.getTotalTickCount();
 		this.remainingPackingTicks = this.currentOrder.getNumberOfTicksToPack();
 		this.storageShelvesVisited = new ArrayList<StorageShelf>();
@@ -112,7 +112,7 @@ public class PackingStation extends Actor {
 		this.log("Dispatching order %s.", this.currentOrder.hashCode());
 		int totalNumberOfTicksToPack = warehouse.getTotalTickCount() - this.tickCountWhenOrderAssigned;
 		this.currentOrder.setTotalNumberOfTicksToPack(totalNumberOfTicksToPack);
-		warehouse.dispatchOrder(this.currentOrder);
+		warehouse.getOrderManager().complete(this.currentOrder);
 		this.currentOrder = null;
 	}
 

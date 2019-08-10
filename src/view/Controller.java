@@ -207,18 +207,21 @@ public class Controller {
 		return this.floor[location.getColumn()][location.getRow()];
 	}
 
-	private void refreshListViews() {
+	private void refreshListViews() throws Exception {
 		this.robotsList.getItems().clear();
 		this.robotsList.getItems().addAll(this.simulation.getRobots());
 
 		this.unassignedOrders.getItems().clear();
-		this.unassignedOrders.getItems().addAll(this.simulation.getWarehouse().getUnassignedOrders());
+		this.unassignedOrders.getItems()
+				.addAll(this.simulation.getWarehouse().getOrderManager().getAwaiting());
 
 		this.assignedOrders.getItems().clear();
-		this.assignedOrders.getItems().addAll(this.simulation.getWarehouse().getAssignedOrders());
+		this.assignedOrders.getItems()
+				.addAll(this.simulation.getWarehouse().getOrderManager().getProgressing());
 
 		this.dispatchedOrders.getItems().clear();
-		this.dispatchedOrders.getItems().addAll(this.simulation.getWarehouse().getDispatchedOrders());
+		this.dispatchedOrders.getItems()
+				.addAll(this.simulation.getWarehouse().getOrderManager().getCompleted());
 	}
 
 	private void setButtonsDisablement(boolean disabled) {

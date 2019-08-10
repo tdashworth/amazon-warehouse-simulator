@@ -4,12 +4,11 @@ import java.util.*;
 import simulation.Simulator;
 
 public class Warehouse {
-	private Floor floor;
-	private Map<String, Entity> entities;
-	private Deque<Order> unassignedOrders;
-	private Set<Order> assignedOrders;
-	private Deque<Order> dispatchedOrders;
-	private Simulator simulator;
+	private final Floor floor;
+	private final ItemManager<Order> orderManager;
+	// private final ItemManager<Job> jobManager;
+	private final Map<String, Entity> entities;
+	private final Simulator simulator;
 
 
 	/**
@@ -23,9 +22,7 @@ public class Warehouse {
 			Simulator simulator) {
 		this.floor = floor;
 		this.entities = entities;
-		this.unassignedOrders = orders;
-		this.assignedOrders = new HashSet<Order>();
-		this.dispatchedOrders = new LinkedList<Order>();
+		this.orderManager = new ItemManager<Order>(orders);
 		this.simulator = simulator;
 	}
 
@@ -35,39 +32,6 @@ public class Warehouse {
 	 */
 	public Entity getEntityByUID(String uid) {
 		return this.entities.get(uid);
-	}
-
-	/**
-	 * Picks the next unassigned order and moves it to the assigned orders set.
-	 * 
-	 * @return A new order.
-	 */
-	public Order getUnassignedOrder() {
-		if (this.unassignedOrders.isEmpty())
-			return null;
-
-		Order order = this.unassignedOrders.pop();
-		this.assignedOrders.add(order);
-
-		this.log("Order %s assigned. %s remaining to assign.", order.hashCode(),
-				this.unassignedOrders.size());
-		return order;
-	}
-
-	/**
-	 * Moves the order given from the assigned set to dispatched queue.
-	 * 
-	 * @param order
-	 * @throws Exception
-	 */
-	public void dispatchOrder(Order order) throws Exception {
-		if (!this.assignedOrders.contains(order))
-			throw new Exception("Order was not found in Assigned Orders.");
-
-		this.assignedOrders.remove(order);
-		this.dispatchedOrders.add(order);
-		this.log("Order %s dispatched. %s remaining to dispatch.", order.hashCode(),
-				this.assignedOrders.size());
 	}
 
 	/**
@@ -96,10 +60,10 @@ public class Warehouse {
 	}
 
 	/**
-	 * @return true if all orders have been dispatched.
+	 * @return The order manager.
 	 */
-	public boolean areAllOrdersDispatched() {
-		return this.assignedOrders.isEmpty() && this.unassignedOrders.isEmpty();
+	public ItemManager<Order> getOrderManager() {
+		return this.orderManager;
 	}
 
 	/**
@@ -113,13 +77,11 @@ public class Warehouse {
 	 * @return A string representation of the warehouse.
 	 */
 	public String toString() {
-		return "Warehouse:" + "unassignedOrders: " + unassignedOrders.size() + "assignedOrders: "
-				+ assignedOrders.size() + "dispatchedOrders: " + dispatchedOrders.size();
+		return "Warehouse";
 	}
 
 	protected void log(String message) {
 		String classType = this.getClass().getSimpleName();
-
 		System.out.println(String.format("%s: %s", classType, message));
 	}
 
@@ -131,15 +93,4 @@ public class Warehouse {
 		return Collections.unmodifiableCollection(this.entities.values());
 	}
 
-	public Collection<Order> getUnassignedOrders() {
-		return Collections.unmodifiableCollection(this.unassignedOrders);
-	}
-
-	public Collection<Order> getAssignedOrders() {
-		return Collections.unmodifiableCollection(assignedOrders);
-	}
-
-	public Collection<Order> getDispatchedOrders() {
-		return Collections.unmodifiableCollection(dispatchedOrders);
-	}
 }

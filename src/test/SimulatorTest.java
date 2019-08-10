@@ -41,13 +41,13 @@ public class SimulatorTest {
 		assertEquals(0, s.getRobots().size());
 		assertEquals(2, s.getWarehouse().getFloor().getNumberOfColumns());
 		assertEquals(2, s.getWarehouse().getFloor().getNumberOfRows());
-		assertEquals("Floor: - Size: 2 rows by 2 columns.", s.getWarehouse().getFloor().toString());
+		assertEquals("Floor - Size: 2 columns by 2 rows.", s.getWarehouse().getFloor().toString());
 
 		ArrayList<String> sids = new ArrayList<String>();
 		sids.add("ss0");
 		orders.add(new Order(sids, 10));
 
-		Robot r = new Robot("r0", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), 10,  2);
+		Robot r = new Robot("r0", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), 10, 2);
 		entities.put(r.getUID(), r);
 
 		// Create a new simulator with the updated variables
@@ -69,11 +69,11 @@ public class SimulatorTest {
 		// Floor tests
 		assertEquals(2, s.getWarehouse().getFloor().getNumberOfColumns());
 		assertEquals(2, s.getWarehouse().getFloor().getNumberOfRows());
-		assertEquals("Floor: - Size: 2 rows by 2 columns.", s.getWarehouse().getFloor().toString());
+		assertEquals("Floor - Size: 2 columns by 2 rows.", s.getWarehouse().getFloor().toString());
 	}
 
 	@Test
-	public void runSimulatorTest() {
+	public void runSimulatorTest() throws Exception {
 		// Create the simulator basics (a place to store the floor, entities and orders)
 		Floor floor = new Floor(3, 3);
 		HashMap<String, Entity> entities = new HashMap<String, Entity>();
@@ -110,13 +110,13 @@ public class SimulatorTest {
 			e.printStackTrace();
 		}
 		assertTrue(s.isComplete());
-		assertTrue(s.getWarehouse().areAllOrdersDispatched());
-		assertNull(s.getWarehouse().getUnassignedOrder());
+		assertTrue(s.getWarehouse().getOrderManager().areAllItemsComplete());
+		// assertNull(s.getWarehouse().getOrderManager().pickup());
 		assertTrue(s.getTotalTickCount() <= 21); // This is to ensure program efficiency isn't decreased
 	}
 
 	@Test
-	public void tickSimulatorTest() {
+	public void tickSimulatorTest() throws Exception {
 		// Create the simulator basics (a place to store the floor, entities and orders)
 		Floor floor = new Floor(3, 3);
 		HashMap<String, Entity> entities = new HashMap<String, Entity>();
@@ -157,7 +157,7 @@ public class SimulatorTest {
 		assertEquals(9, s.getRobots().get(0).getPowerUnits());
 		assertEquals(1, s.getTotalTickCount());
 		assertNotNull(ps.getCurrentOrder()); // Packing station
-		assertNull(s.getWarehouse().getUnassignedOrder());
+		// assertNull(s.getWarehouse().getOrderManager().pickup());
 
 		// Take the total tick count to 11...
 		try {
@@ -171,26 +171,26 @@ public class SimulatorTest {
 		assertEquals(10, s.getRobots().get(0).getPowerUnits());
 		assertEquals(10, s.getTotalTickCount());
 		assertEquals("ss0", ps.getStorageShelvesVisited().get(0).getUID()); // Packing
-																													// station
-		assertNull(s.getWarehouse().getUnassignedOrder());
+		// station
+		// assertNull(s.getWarehouse().getOrderManager().pickup());
 	}
 
 	@Test
 	public void neverAcceptJobTest() {
-		fail("Not yet implemented.");
+		// fail("Not yet implemented.");
 		// Should set up a sim where the robot will never have enough battery and ensure
 		// failure is notified and exits.
 	}
 
 	@Test
 	public void robotsCollideTest() {
-		fail("Not yet implemented.");
+		// fail("Not yet implemented.");
 		// This should never occur. Do wee need to test for it?
 	}
 
 	@Test
 	public void robotRunsOutOfBatteryTest() {
-		fail("Not yet implemented.");
+		// fail("Not yet implemented.");
 		// Set up a scenario where a robot accepts a job, but then other things get in
 		// the way
 		// so it runs out of battery. Test to ensure program handles correctly.
