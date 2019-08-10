@@ -30,7 +30,7 @@ public class WarehouseController {
 	private Simulator simulation;
 	private Timeline timeline;
 	private StackPane[][] floor;
-	private final static int TILE_DIMENTION = 40;
+	private final static int TILE_DIMENSION = 50;
 
 	@FXML
 	private GridPane grdWarehouse;
@@ -50,6 +50,10 @@ public class WarehouseController {
 
 	// UI Callable Methods
 
+	/**
+	 * Allows the user to select a file of configurations
+	 * @param event
+	 */
 	@FXML
 	public void selectFile(ActionEvent event) {
 		try {
@@ -70,12 +74,20 @@ public class WarehouseController {
 			alertErrorOccured(e);
 		}
 	}
+	
+	/**
+	 * Runs one tick of the simulation
+	 */
 
 	@FXML
 	public void runOneTick() {
 		this.timeline.setCycleCount(1);
 		this.timeline.play();
 	}
+	
+	/**
+	 * Runs ten ticks of the simulation
+	 */
 
 	@FXML
 	public void runTenTicks() {
@@ -83,6 +95,10 @@ public class WarehouseController {
 		this.timeline.setCycleCount(10);
 		this.timeline.play();
 	}
+	
+	/**
+	 * Runs the simulation indefinitely
+	 */
 
 	@FXML
 	public void runIndefiniteTicks() {
@@ -90,6 +106,10 @@ public class WarehouseController {
 		this.timeline.setCycleCount(Timeline.INDEFINITE);
 		this.timeline.play();
 	}
+	
+	/**
+	 * Stops the simulation
+	 */
 
 	@FXML
 	public void stopSimulation() {
@@ -119,6 +139,12 @@ public class WarehouseController {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Loads a simulation from the given file
+	 * @param fileName
+	 * @throws Exception
+	 */	
 
 	private void loadSimulation(String fileName) throws Exception {
 		if (fileName == null)
@@ -132,6 +158,12 @@ public class WarehouseController {
 		this.labelChargeCapacity.setText(String.valueOf(this.simulation.getMaxChargeCapacity()));
 		this.labelChargeSpeed.setText(String.valueOf(this.simulation.getChargeSpeed()));
 	}
+	
+	/**
+	 * Creates the warehouse floor from the columns and rows provided.
+	 * @param columns
+	 * @param rows
+	 */
 
 	private void createFloor(int columns, int rows) {
 		this.floor = new StackPane[columns][rows];
@@ -143,13 +175,17 @@ public class WarehouseController {
 				this.floor[column][row] = stackPane;
 				this.grdWarehouse.getChildren().add(stackPane);
 			}
-			this.grdWarehouse.getColumnConstraints().add(new ColumnConstraints(TILE_DIMENTION));
+			this.grdWarehouse.getColumnConstraints().add(new ColumnConstraints(TILE_DIMENSION));
 		}
 
 		for (int row = 0; row < rows; row++) {
-			this.grdWarehouse.getRowConstraints().add(new RowConstraints(TILE_DIMENTION));
+			this.grdWarehouse.getRowConstraints().add(new RowConstraints(TILE_DIMENSION));
 		}
 	}
+	
+	/**
+	 * Puts a shape representation of the entities onto the floor of the warehouse
+	 */
 
 	private void drawInitialEntities() {
 		for (Entity entity : this.simulation.getWarehouse().getEntities()) {
@@ -157,6 +193,10 @@ public class WarehouseController {
 			stackPane.getChildren().add(entity.getSprite());
 		}
 	}
+	
+	/**
+	 * puts a shape representation of the robots onto the floor.
+	 */
 
 	private void drawRobots() {
 		for (Robot robot : this.simulation.getRobots()) {
@@ -173,6 +213,12 @@ public class WarehouseController {
 			newStackPane.getChildren().add(robot.getSprite());
 		}
 	}
+	
+	/**
+	 * Returns the stackpane object at a given location
+	 * @param location
+	 * @return StackPane
+	 */
 
 	private StackPane getStackPaneForLocation(Location location) {
 		return this.floor[location.getColumn()][location.getRow()];
@@ -191,6 +237,11 @@ public class WarehouseController {
 		this.dispatchedOrders.getItems().clear();
 		this.dispatchedOrders.getItems().addAll(this.simulation.getWarehouse().getDispatchedOrders());
 	}
+	
+	/**
+	 * Disables the buttons depending on the boolean value disabled
+	 * @param disabled
+	 */
 
 	private void setButtonsDisablement(boolean disabled) {
 		buttonOneTick.setDisable(disabled);
@@ -198,6 +249,10 @@ public class WarehouseController {
 		buttonIndefiniteTicks.setDisable(disabled);
 		buttonStop.setDisable(!disabled);
 	}
+	
+	/**
+	 * Shows and alert to show the simulation is complete.
+	 */
 
 	public void alertSimulationComplete() {
 		Alert alert = new Alert(AlertType.INFORMATION);
@@ -207,6 +262,11 @@ public class WarehouseController {
 		alert.setOnCloseRequest((event) -> System.exit(0));
 		alert.show();
 	}
+	
+	/**
+	 * Shows an alert when an error occurs
+	 * @param error
+	 */
 
 	public void alertErrorOccured(Exception error) {
 		Alert alert = new Alert(AlertType.ERROR);

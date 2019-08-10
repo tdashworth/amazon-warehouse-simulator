@@ -69,6 +69,12 @@ public class Robot extends Entity implements Actor {
 			this.log("Charge increased to %s.", this.powerUnits);
 		}
 	}
+	
+	/**
+	 * Collects an item from a storage shelf
+	 * @param warehouse
+	 * @throws Exception
+	 */
 
 	private void collectItemFromStorageShelf(Warehouse warehouse) throws Exception {
 		this.move(warehouse, this.storageShelf.getLocation());
@@ -80,6 +86,12 @@ public class Robot extends Entity implements Actor {
 			this.log("Reached assigned Storage Shelf.");
 		}
 	}
+	
+	/**
+	 * Method to deliver an item to a packing station
+	 * @param warehouse
+	 * @throws Exception
+	 */
 
 	private void returnItemToPackingStation(Warehouse warehouse) throws Exception {
 		this.move(warehouse, this.packingStation.getLocation());
@@ -128,7 +140,7 @@ public class Robot extends Entity implements Actor {
 	 * @param storageShelf
 	 * @param packingStation
 	 * @param warehouse
-	 * @return
+	 * @return boolean
 	 * @throws LocationNotValidException
 	 */
 	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation, Warehouse warehouse)
@@ -209,7 +221,6 @@ public class Robot extends Entity implements Actor {
 			return RobotStatus.GoingToCharge; // Nothing to do so go charge
 		}
 	}
-
 	/**
 	 * Returns the robot's current status
 	 * 
@@ -258,4 +269,15 @@ public class Robot extends Entity implements Actor {
 		powerUnits = units;
 	}
 
+	public void setLocation(Location l) {
+		location = l;
+	}
+	
+	public void setPathFinder(PathFindingStrategy pf) {
+		this.pathFinder = pf;
+	}
+	
+	public StorageShelf getShelf() {
+		return storageShelf;
+	}
 }

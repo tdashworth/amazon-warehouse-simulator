@@ -54,7 +54,7 @@ public class PackingStation extends Entity implements Actor {
 	 * @param warehouse
 	 * @throws LocationNotValidException 
 	 */
-	private void pickOrder(Warehouse warehouse) throws LocationNotValidException {
+	public void pickOrder(Warehouse warehouse) throws LocationNotValidException {
 		this.log("Picking new order.");
 		this.currentOrder = warehouse.getUnassignedOrder();
 		
@@ -73,12 +73,12 @@ public class PackingStation extends Entity implements Actor {
 	}
 	
 	/**
-	 * TODO JavaDoc description.
+	 * Request items from the warehouse remove the shelf ID from unreqested
 	 * @param The storage shelf UID.
 	 * @param Thw warehouse reference.
 	 * @throws LocationNotValidException 
 	 */
-	private void requestItems(Warehouse warehouse) throws LocationNotValidException {
+	public void requestItems(Warehouse warehouse) throws LocationNotValidException {
 		this.log("Requesting items: " + this.unrequestedStorageShelves);
 		ArrayList<String> uuidsToRemove = new ArrayList<String>();
 		
@@ -106,7 +106,7 @@ public class PackingStation extends Entity implements Actor {
 	 * @param warehouse
 	 * @throws Exception 
 	 */
-	private void dispatchOrder(Warehouse warehouse) throws Exception {
+	public void dispatchOrder(Warehouse warehouse) throws Exception {
 		this.log("Dispatching order %s.", this.currentOrder.hashCode());
 		int totalNumberOfTicksToPack = warehouse.getTotalTickCount() - this.tickCountWhenOrderAssigned; 
 		this.currentOrder.setTotalNumberOfTicksToPack(totalNumberOfTicksToPack);

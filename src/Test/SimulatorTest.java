@@ -199,13 +199,7 @@ public class SimulatorTest {
 		// failure is notified and exits.
 	}
 
-	@Test
-	public void robotsCollideTest() {
-		fail("Not yet implemented.");
-		// This should never occur. Do wee need to test for it?
-	}
-
-	@Test
+		@Test
 	public void robotRunsOutOfBatteryTest() {
 		fail("Not yet implemented.");
 		// Set up a scenario where a robot accepts a job, but then other things get in
