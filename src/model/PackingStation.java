@@ -54,7 +54,7 @@ public class PackingStation extends Actor {
 	 * @param warehouse
 	 * @throws LocationNotValidException
 	 */
-	private void pickOrder(Warehouse warehouse) throws LocationNotValidException {
+	private void pickOrder(Warehouse warehouse) throws Exception {
 		this.log("Picking new order.");
 		this.currentOrder = warehouse.getUnassignedOrder();
 
@@ -79,7 +79,7 @@ public class PackingStation extends Actor {
 	 * @param Thw warehouse reference.
 	 * @throws LocationNotValidException
 	 */
-	private void requestItems(Warehouse warehouse) throws LocationNotValidException {
+	private void requestItems(Warehouse warehouse) throws Exception {
 		this.log("Requesting items: " + this.unrequestedStorageShelves);
 		ArrayList<String> uuidsToRemove = new ArrayList<String>();
 

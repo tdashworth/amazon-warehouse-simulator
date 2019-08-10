@@ -193,7 +193,7 @@ public class AStarPathFinder extends PathFinder {
 			return; // TODO Consider throwing an error.
 
 		current.setNumberOfStepsFromStart(nextStepCost);
-		current.setDirectDistanceToTarget(AStarPathFinder.calculateHeuristic(current, target));
+		current.setDirectDistanceToTarget(current.getEuclideanDistanceTo(target));
 		current.setPreviousNodeInPath(previous);
 		this.unexploredNodes.add(current);
 	}
@@ -217,22 +217,5 @@ public class AStarPathFinder extends PathFinder {
 		}
 
 		return path;
-	}
-
-	/**
-	 * Calculates the heuristic between the two given nodes. The heuristic is simply the direct
-	 * distance between the two nodes calculated using Pythagoras Theorem.
-	 * 
-	 * This is static because it doesn't use or modify anything locally.
-	 * 
-	 * @param n1 the first Node.
-	 * @param n2 the second Node.
-	 * @return the direct distance between them.
-	 */
-	private static double calculateHeuristic(PathFindingNode n1, PathFindingNode n2) {
-		int differenceInColumns = Math.abs(n1.getColumn() - n2.getColumn());
-		int differenceInRows = Math.abs(n1.getRow() - n2.getRow());
-
-		return Math.sqrt(differenceInRows ^ 2 + differenceInColumns ^ 2);
 	}
 }

@@ -2,7 +2,8 @@ package model;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import utils.AStarPathFinder;
+import utils.BasicPathCostEstimator;
+import utils.PathCostEstimator;
 
 public class Robot extends Mover {
 	private int powerUnits;
@@ -112,7 +113,7 @@ public class Robot extends Mover {
 	 * @throws LocationNotValidException
 	 */
 	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation,
-			Warehouse warehouse) throws LocationNotValidException {
+			Warehouse warehouse) throws Exception {
 
 		if (this.storageShelf != null || this.hasItem())
 			return false;
@@ -144,25 +145,20 @@ public class Robot extends Mover {
 	 * @throws LocationNotValidException
 	 */
 	private double estimatePowerUnitCostForJob(StorageShelf storageShelf,
-			PackingStation packingStation, Floor floor) throws LocationNotValidException {
+			PackingStation packingStation, Floor floor) throws Exception {
 
-		int numberOfMovesToStorageShelf =
-				new AStarPathFinder(floor, this.getLocation(), storageShelf.getLocation())
-						.getNumberOfRemainingSteps();
+		// Setup Cost Estimator
+		PathCostEstimator costEstimator = new BasicPathCostEstimator(this.location);
+		costEstimator.addCost("laidened", Double.valueOf(POWER_UNITS_CARRYING));
+		costEstimator.addCost("unlaidened", Double.valueOf(POWER_UNITS_EMPTY));
 
-		int numberOfMovesToPackingStation =
-				new AStarPathFinder(floor, storageShelf.getLocation(), packingStation.getLocation())
-						.getNumberOfRemainingSteps();
+		// Add path Locations
+		costEstimator.addLocation(storageShelf.getLocation(), "unlaidened");
+		costEstimator.addLocation(packingStation.getLocation(), "laidened");
+		costEstimator.addLocation(this.chargingPod.getLocation(), "unlaidened");
 
-		int numberOfMovesToChargingStation =
-				new AStarPathFinder(floor, packingStation.getLocation(), this.chargingPod.getLocation())
-						.getNumberOfRemainingSteps();
-
-		double unlaidenedCost =
-				(numberOfMovesToStorageShelf + numberOfMovesToChargingStation) * POWER_UNITS_EMPTY;
-		double carryingCost = (numberOfMovesToPackingStation) * POWER_UNITS_CARRYING;
-
-		double estimatedCostWithLeeway = (unlaidenedCost + carryingCost) * 1.2;
+		// Add leeway to estimated cost and return.
+		double estimatedCostWithLeeway = costEstimator.getEstimatedCost() * 1.2;
 		return estimatedCostWithLeeway;
 	}
 

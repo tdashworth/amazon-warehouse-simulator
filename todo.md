@@ -1,10 +1,5 @@
 # To Do
 
-- PathCostEstimator
-  - Interface/Abstract
-  - Implemented
-  - Tests
-
 - Order Manager
   - Refactor out of the Warehouse
   - Tests

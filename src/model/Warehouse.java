@@ -78,7 +78,7 @@ public class Warehouse {
 	 * @throws LocationNotValidException
 	 */
 	public boolean assignJobToRobot(StorageShelf storageShelf, PackingStation packingStation)
-			throws LocationNotValidException {
+			throws Exception {
 		for (Entity entity : this.entities.values()) {
 			// If entity is a robot and the robot accepts the job, return true, otherwise keep going.
 			if (entity instanceof Robot && ((Robot) entity).acceptJob(storageShelf, packingStation, this))

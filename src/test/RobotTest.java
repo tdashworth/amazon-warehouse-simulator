@@ -101,7 +101,7 @@ public class RobotTest {
 		boolean test = true;
 		try {
 			test = r.acceptJob(ss, ps, warehouse);
-		} catch (LocationNotValidException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		assertTrue(test);
@@ -110,7 +110,7 @@ public class RobotTest {
 		test = true;
 		try {
 			test = r.acceptJob(ss, ps, warehouse);
-		} catch (LocationNotValidException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		assertFalse(test);
@@ -120,7 +120,7 @@ public class RobotTest {
 		test = true;
 		try {
 			test = r.acceptJob(ss, ps, warehouse);
-		} catch (LocationNotValidException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		assertFalse(test);
