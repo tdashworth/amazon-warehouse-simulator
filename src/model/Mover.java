@@ -1,13 +1,14 @@
 package model;
 
 import javafx.scene.Node;
-import utils.PathFindingStrategy;
+import utils.AStarPathFinder;
+import utils.PathFinder;
 
 /**
  * A model of something that moves during the simulation.
  */
 public abstract class Mover extends Actor {
-	protected PathFindingStrategy pathFinder;
+	protected PathFinder pathFinder;
 	protected Location previousLocation;
 
 	public Mover(String uid, Location location, Node sprite) {
@@ -24,25 +25,22 @@ public abstract class Mover extends Actor {
 	protected void move(Floor floor, Location targetLocation) throws Exception {
 		this.log("Moving from %s to %s.", this.location, targetLocation);
 
-		boolean pathFound = this.pathFinder.calculatePath(this.location, targetLocation);
+		try {
+			if (this.pathFinder == null)
+				this.pathFinder = new AStarPathFinder(floor, this.location, targetLocation);
 
-		if (!pathFound) {
-			this.log("No path found.");
-			return; // TODO Consider throwing an error.
+			Location newLocation = this.pathFinder.getNextLocation();
+			floor.moveEntity(this.location, newLocation);
+
+			this.previousLocation = this.location;
+			this.location = newLocation;
+		} catch (Exception ex) {
+			this.log("Failed to move.");
+			throw new Exception("Unable to make move because " + ex); // TODO Custom Exception
 		}
 
-		// this.log("Path: " + this.pathFinder.getPath());
-
-		Location newLocation = this.pathFinder.getNextLocation();
-
-		boolean successfulMove = floor.moveEntity(this.location, newLocation);
-		if (!successfulMove) {
-			this.log("Unable to make move to ", newLocation.toString());
-			throw new Exception("Unable to make move to " + newLocation.toString());
-		}
-
-		this.previousLocation = this.location;
-		this.location = newLocation;
+		if (this.location.equals(targetLocation))
+			this.pathFinder = null;
 	}
 
 	public Location getPreviousLocation() {

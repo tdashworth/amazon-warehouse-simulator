@@ -11,10 +11,7 @@ import model.LocationNotValidException;
  * efficient node is determined by a combination of heuristic (closest direct distance) and cost
  * (number of steps it took to travel to the node).
  */
-public class PathFindingStrategy {
-	private boolean avoidCollisions;
-	private Floor floor;
-	private Deque<Location> path;
+public class AStarPathFinder extends PathFinder {
 	private PathFindingNode[][] floorNodes;
 
 	List<PathFindingNode> unexploredNodes;
@@ -25,20 +22,9 @@ public class PathFindingStrategy {
 	 * 
 	 * @param floor the floor determining the size and location of other robots.
 	 */
-	public PathFindingStrategy(Floor floor) {
-		this(floor, true);
-	}
-
-	/**
-	 * Constructs a strategy for path finding.
-	 * 
-	 * @param floor           the floor determining the size and location of other robots.
-	 * @param avoidCollisions a flag allowing the search to avoid location of current robots.
-	 */
-	public PathFindingStrategy(Floor floor, boolean avoidCollisions) {
-		this.floor = floor;
-		this.avoidCollisions = avoidCollisions;
-		this.path = new LinkedList<Location>();
+	public AStarPathFinder(Floor floor, Location origin, Location target)
+			throws LocationNotValidException {
+		super(floor, origin, target);
 	}
 
 	/**
@@ -71,13 +57,13 @@ public class PathFindingStrategy {
 	 * @return a boolean value; true if a path was found, otherwise false.
 	 * @throws LocationNotValidException
 	 */
-	public boolean calculatePath(Location beginningLocation, Location targetLocation) {
-		this.floorNodes = PathFindingStrategy.buildFloorWithNodes(this.floor.getNumberOfColumns(),
-				this.floor.getNumberOfRows());
-
+	protected void calculatePath(Location beginningLocation, Location targetLocation) {
 		// If both locations are the same, return true (with a path count of 0)
 		if (beginningLocation.equals(targetLocation))
-			return false; // TODO Consider throwing an error.
+			return; // TODO Consider throwing an error.
+
+		this.floorNodes = AStarPathFinder.buildFloorWithNodes(this.floor.getNumberOfColumns(),
+				this.floor.getNumberOfRows());
 
 		// Create lists for storing nodes to explore and those explored
 		this.unexploredNodes = new ArrayList<PathFindingNode>(
@@ -96,13 +82,10 @@ public class PathFindingStrategy {
 
 		// No path was found
 		if (targetNode.getPreviousNodeInPath() == null)
-			return false; // TODO Consider throwing an error.
+			return; // TODO Consider throwing an error.
 
 		// Populate the path with calculated route.
-		this.path = PathFindingStrategy.convertLinkedNodesToPath(beginningNode, targetNode);
-
-		return true;
-
+		this.path = AStarPathFinder.convertLinkedNodesToPath(beginningNode, targetNode);
 	}
 
 	/**
@@ -114,9 +97,12 @@ public class PathFindingStrategy {
 	 * @return
 	 */
 	private PathFindingNode getNodeAtLocation(int column, int row) {
+		if (!this.floor.isLocationValid(new Location(column, row)))
+			return null;
+
 		try {
 			return this.floorNodes[column][row];
-		} catch (ArrayIndexOutOfBoundsException execption) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
@@ -190,10 +176,9 @@ public class PathFindingStrategy {
 	private void checkNodeForExploration(PathFindingNode current, int nextStepCost,
 			PathFindingNode previous, PathFindingNode target) {
 		// Check location validity
-		if (!this.floor.locationIsValid(current))
+		if (!this.floor.isLocationValid(current))
 			return; // TODO Consider throwing an error.
-		if (this.avoidCollisions && previous.getNumberOfStepsFromStart() == 0
-				&& !this.floor.locationIsEmpty(current))
+		if (previous.getNumberOfStepsFromStart() == 0 && !this.floor.isLocationValidAndEmpty(current))
 			return; // TODO Consider throwing an error.
 
 		// If the node's current cost is greater than the nextStepCost, remove from
@@ -208,7 +193,7 @@ public class PathFindingStrategy {
 			return; // TODO Consider throwing an error.
 
 		current.setNumberOfStepsFromStart(nextStepCost);
-		current.setDirectDistanceToTarget(PathFindingStrategy.calculateHeuristic(current, target));
+		current.setDirectDistanceToTarget(AStarPathFinder.calculateHeuristic(current, target));
 		current.setPreviousNodeInPath(previous);
 		this.unexploredNodes.add(current);
 	}
@@ -250,26 +235,4 @@ public class PathFindingStrategy {
 
 		return Math.sqrt(differenceInRows ^ 2 + differenceInColumns ^ 2);
 	}
-
-	/**
-	 * @return the entire path.
-	 */
-	public Collection<Location> getPath() {
-		return this.path;
-	}
-
-	/**
-	 * @return the next step in the path (which is removed).
-	 */
-	public Location getNextLocation() {
-		return this.path.pop();
-	}
-
-	/**
-	 * @return the number of steps in the path.
-	 */
-	public int getNumberOfRemainingSteps() {
-		return this.path.size();
-	}
-
 }

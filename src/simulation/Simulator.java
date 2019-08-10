@@ -80,8 +80,8 @@ public class Simulator {
 							.filter(entity -> entity instanceof Actor).map(entity -> (Actor) entity)
 							.collect(Collectors.toList());
 			for (Entity entity : entities.values()) {
-				if (entity instanceof Robot) {
-					floor.loadEntity(entity);
+				if (entity instanceof Mover) {
+					floor.loadMover((Mover) entity);
 				}
 			}
 		}
@@ -116,6 +116,7 @@ public class Simulator {
 	 */
 	public void tick() throws Exception {
 		this.totalTickCount++;
+		System.out.println("Simulation: Tick Count now " + this.totalTickCount);
 		for (Actor actor : actors) {
 			actor.tick(this.warehouse);
 		}

@@ -1,14 +1,12 @@
 package model;
 
-import java.text.MessageFormat;
-
 /**
  * A representation of a grid floor.
  */
 public class Floor {
 	private int numberOfRows;
 	private int numberOfColumns;
-	private Entity[][] grid;
+	private Mover[][] grid;
 
 	/**
 	 * A representation of a grid floor.
@@ -17,9 +15,9 @@ public class Floor {
 	 * @param numberOfColumns height
 	 */
 	public Floor(int numberOfColumns, int numberofRows) {
-		this.numberOfRows = numberofRows;
 		this.numberOfColumns = numberOfColumns;
-		this.grid = new Entity[numberOfColumns][numberofRows];
+		this.numberOfRows = numberofRows;
+		this.grid = new Mover[numberOfColumns][numberofRows];
 	}
 
 	/**
@@ -42,20 +40,10 @@ public class Floor {
 	 * @param entity
 	 * @throws Exception
 	 */
-	public void loadEntity(Entity entity) throws LocationNotValidException {
-		Location location = entity.getLocation();
-
-		// Check location is on the grid.
-		if (!locationIsValid(location))
-			throw new LocationNotValidException(location.getColumn(), location.getRow(),
-					"The location is outside of the floor");
-
-		// Checks location is empty.
-		if (!locationIsEmpty(location))
-			throw new LocationNotValidException(location.getColumn(), location.getRow(),
-					"That location is not empty");
-
-		grid[location.getColumn()][location.getRow()] = entity;
+	public void loadMover(Mover moverEntity) throws LocationNotValidException {
+		Location location = moverEntity.getLocation();
+		this.validateLocation(location);
+		grid[location.getColumn()][location.getRow()] = moverEntity;
 	}
 
 
@@ -67,14 +55,14 @@ public class Floor {
 	 */
 	public void validateLocation(Location location) throws LocationNotValidException {
 		// Check location is on the grid.
-		if (!this.locationIsValid(location))
+		if (!this.isLocationValid(location))
 			throw new LocationNotValidException(location.getColumn(), location.getRow(),
-					"The location is outside of the floor");
+					"it's outside of the floor boundaries.");
 
 		// Checks location is empty.
-		if (!this.locationIsEmpty(location))
+		if (!this.isLocationValidAndEmpty(location))
 			throw new LocationNotValidException(location.getColumn(), location.getRow(),
-					"That location is not empty");
+					"it's already occupied.");
 	}
 
 	/**
@@ -83,8 +71,11 @@ public class Floor {
 	 * @param location
 	 * @return
 	 */
-	public boolean locationIsValid(Location location) {
-		return (location.getColumn() <= this.numberOfColumns && location.getRow() <= this.numberOfRows);
+	public boolean isLocationValid(Location location) {
+		boolean withinColumns =
+				0 <= location.getColumn() && location.getColumn() < this.numberOfColumns;
+		boolean withinRows = 0 <= location.getRow() && location.getRow() < this.numberOfRows;
+		return withinColumns && withinRows;
 	}
 
 	/**
@@ -93,7 +84,10 @@ public class Floor {
 	 * @param location
 	 * @return
 	 */
-	public boolean locationIsEmpty(Location location) {
+	public boolean isLocationValidAndEmpty(Location location) {
+		if (!this.isLocationValid(location))
+			return false;
+
 		return (grid[location.getColumn()][location.getRow()] == null);
 	}
 
@@ -105,26 +99,31 @@ public class Floor {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean moveEntity(Location oldLocation, Location newLocation) throws Exception {
+	public void moveEntity(Location oldLocation, Location newLocation) throws Exception {
 		// Check old location is on the grid.
-		if (oldLocation.getColumn() > this.numberOfColumns || oldLocation.getRow() > this.numberOfRows)
+		if (!this.isLocationValid(oldLocation))
 			throw new LocationNotValidException(oldLocation.getColumn(), oldLocation.getRow(),
-					"The old location is outside of the floor.");
+					"it's outside of the floor boundaries.");
+
+		// Check old location is not empty.
+		if (this.isLocationValidAndEmpty(oldLocation))
+			throw new LocationNotValidException(oldLocation.getColumn(), oldLocation.getRow(),
+					"it's empty and nothing to move.");
 
 		// Check new location is on the grid.
-		if (newLocation.getColumn() > this.numberOfColumns || newLocation.getRow() > this.numberOfRows)
+		if (!this.isLocationValid(newLocation))
 			throw new LocationNotValidException(newLocation.getColumn(), newLocation.getRow(),
-					"The new location is outside of the floor.");
+					"it's outside of the floor boundaries.");
 
 		// Check new location is empty.
-		if (grid[newLocation.getColumn()][newLocation.getRow()] != null)
-			return false; // TODO Consider throwing an error.
+		if (!this.isLocationValidAndEmpty(newLocation))
+			throw new LocationNotValidException(newLocation.getColumn(), newLocation.getRow(),
+					"it's already occupied.");
 
 		// Move entity.
-		Entity entity = grid[oldLocation.getColumn()][oldLocation.getRow()];
+		Mover moverEntity = grid[oldLocation.getColumn()][oldLocation.getRow()];
 		grid[oldLocation.getColumn()][oldLocation.getRow()] = null;
-		grid[newLocation.getColumn()][newLocation.getRow()] = entity;
-		return true;
+		grid[newLocation.getColumn()][newLocation.getRow()] = moverEntity;
 	}
 
 	/**
@@ -133,7 +132,7 @@ public class Floor {
 	 * @return A string representation of the floor.
 	 */
 	public String toString() {
-		return MessageFormat.format("Floor:" + " - Size: {0} rows by {1} columns.", this.numberOfRows,
-				this.numberOfColumns);
+		return String.format("Floor - Size: %s columns by %s rows.", this.numberOfColumns,
+				this.numberOfRows);
 	}
 }

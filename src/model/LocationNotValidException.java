@@ -11,10 +11,10 @@ public class LocationNotValidException extends Exception {
 	 * @param column
 	 * @param string
 	 */
-	public LocationNotValidException(int row, int column, String message) {
+	public LocationNotValidException(int column, int row, String message) {
 		super();
-		this.row = row;
 		this.column = column;
+		this.row = row;
 		this.message = message;
 	}
 
@@ -41,7 +41,7 @@ public class LocationNotValidException extends Exception {
 
 	@Override
 	public String toString() {
-		return "LocationNotValidException: " + row + ", " + column
-				+ " [row, column] is invalid because " + message + ".";
+		return "LocationNotValidException: " + column + ", " + row
+				+ " [column, row] is invalid because " + message;
 	}
 }

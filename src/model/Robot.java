@@ -2,7 +2,7 @@ package model;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import utils.PathFindingStrategy;
+import utils.AStarPathFinder;
 
 public class Robot extends Mover {
 	private int powerUnits;
@@ -118,14 +118,14 @@ public class Robot extends Mover {
 			return false;
 
 		double estimatedCostWithLeeway =
-				estimatePowerUnitCostForJob(storageShelf, packingStation, warehouse);
+				estimatePowerUnitCostForJob(storageShelf, packingStation, warehouse.getFloor());
 
 		if (estimatedCostWithLeeway > this.powerUnits)
 			return false;
 
 		this.storageShelf = storageShelf;
 		this.packingStation = packingStation;
-		this.pathFinder = new PathFindingStrategy(warehouse.getFloor());
+		this.pathFinder = null;
 
 		this.log("Accepted Job to %s then %s.", storageShelf.getLocation(),
 				packingStation.getLocation());
@@ -144,17 +144,19 @@ public class Robot extends Mover {
 	 * @throws LocationNotValidException
 	 */
 	private double estimatePowerUnitCostForJob(StorageShelf storageShelf,
-			PackingStation packingStation, Warehouse warehouse) throws LocationNotValidException {
-		PathFindingStrategy tempPathFinder = new PathFindingStrategy(warehouse.getFloor(), false);
+			PackingStation packingStation, Floor floor) throws LocationNotValidException {
 
-		tempPathFinder.calculatePath(this.getLocation(), storageShelf.getLocation());
-		int numberOfMovesToStorageShelf = tempPathFinder.getNumberOfRemainingSteps();
+		int numberOfMovesToStorageShelf =
+				new AStarPathFinder(floor, this.getLocation(), storageShelf.getLocation())
+						.getNumberOfRemainingSteps();
 
-		tempPathFinder.calculatePath(storageShelf.getLocation(), packingStation.getLocation());
-		int numberOfMovesToPackingStation = tempPathFinder.getNumberOfRemainingSteps();
+		int numberOfMovesToPackingStation =
+				new AStarPathFinder(floor, storageShelf.getLocation(), packingStation.getLocation())
+						.getNumberOfRemainingSteps();
 
-		tempPathFinder.calculatePath(packingStation.getLocation(), this.chargingPod.getLocation());
-		int numberOfMovesToChargingStation = tempPathFinder.getNumberOfRemainingSteps();
+		int numberOfMovesToChargingStation =
+				new AStarPathFinder(floor, packingStation.getLocation(), this.chargingPod.getLocation())
+						.getNumberOfRemainingSteps();
 
 		double unlaidenedCost =
 				(numberOfMovesToStorageShelf + numberOfMovesToChargingStation) * POWER_UNITS_EMPTY;
