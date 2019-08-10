@@ -117,16 +117,20 @@ public class Robot extends Entity implements Actor {
 
 		boolean pathFound = this.pathFinder.calculatePath(this.location, targetLocation);
 
-		if (!pathFound)
+		if (!pathFound) {
+			this.log("No path found.");
 			return;
+		}
 
 		// this.log("Path: " + this.pathFinder.getPath());
 
 		Location newLocation = this.pathFinder.getNextLocation();
 
 		boolean successfulMove = warehouse.getFloor().moveEntity(this.location, newLocation);
-		if (!successfulMove)
+		if (!successfulMove) {
+			this.log("Unable to make move to ", newLocation.toString());
 			return;
+		}
 
 		this.location = newLocation;
 

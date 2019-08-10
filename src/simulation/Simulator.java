@@ -8,13 +8,11 @@ import java.util.stream.Collectors;
 import model.*;
 
 public class Simulator {
+	private int chargeSpeed;
+	private int maxChargeCapacity;
 	private int totalTickCount;
 	private List<Actor> actors;
 	private Warehouse warehouse;
-	private int chargeSpeed;
-	private int maxChargeCapacity;
-	private ArrayList<Robot> robots;
-	private Floor floor;
 
 	/**
 	 * Main method, creates a simulator and starts the simulation run method.
@@ -76,8 +74,6 @@ public class Simulator {
 	 */
 	public Simulator(Floor floor, int capacity, int chargeSpeed, HashMap<String, Entity> entities, Deque<Order> orders)
 			throws LocationNotValidException {
-		robots = new ArrayList<Robot>();
-		this.floor = floor;
 		this.totalTickCount = 0;
 		this.warehouse = new Warehouse(floor, entities, orders, this);
 		this.chargeSpeed = chargeSpeed;
@@ -88,7 +84,6 @@ public class Simulator {
 					.collect(Collectors.toList());
 			for (Entity entity : entities.values()) {
 				if (entity instanceof Robot) {
-					robots.add((Robot) entity);
 					floor.loadEntity(entity);
 				}
 			}
@@ -102,8 +97,9 @@ public class Simulator {
 	 * @throws Exception
 	 */
 	public void run() throws Exception {
-		while (!this.warehouse.areAllOrdersDispatched())
+		while (!this.isComplete())
 			tick();
+
 		System.out.println(String.format("All orders have been dispatched. It took %s ticks.", this.totalTickCount));
 	}
 
@@ -135,15 +131,6 @@ public class Simulator {
 		return totalTickCount;
 	}
 
-	/**
-	 * sets the tick count
-	 * 
-	 * @param ticks
-	 */
-	public void setTotalTickCount(int ticks) {
-		totalTickCount = ticks;
-	}
-
 	public int getChargeSpeed() {
 		return chargeSpeed;
 	}
@@ -159,16 +146,13 @@ public class Simulator {
 		return maxChargeCapacity;
 	}
 
-	public Floor getFloor() {
-		return floor;
-	}
-
-	public ArrayList<Robot> getRobots() {
-		return robots;
-	}
-
 	public void setMaxChargeCapacity(int capacity) {
 		maxChargeCapacity = capacity;
+	}
+
+	public List<Robot> getRobots() {
+		return this.actors.stream().filter(actor -> actor instanceof Robot).map(actor -> (Robot) actor)
+				.collect(Collectors.toList());
 	}
 
 	public Warehouse getWarehouse() {

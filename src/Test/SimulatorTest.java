@@ -43,9 +43,9 @@ public class SimulatorTest {
 		assertEquals(true, s.isComplete());
 		assertEquals(0, s.getWarehouse().getEntities().size());
 		assertEquals(0, s.getRobots().size());
-		assertEquals(2, s.getFloor().getNumberOfColumns());
-		assertEquals(2, s.getFloor().getNumberOfRows());
-		assertEquals("Floor: - Size: 2 rows by 2 columns.", s.getFloor().toString());
+		assertEquals(2, s.getWarehouse().getFloor().getNumberOfColumns());
+		assertEquals(2, s.getWarehouse().getFloor().getNumberOfRows());
+		assertEquals("Floor: - Size: 2 rows by 2 columns.", s.getWarehouse().getFloor().toString());
 
 		// Modify the capacity variable, and add an order, robot and charging pod.
 		capacity = 20;
@@ -76,9 +76,9 @@ public class SimulatorTest {
 		assertEquals(2, s.getRobots().get(0).getPowerUnits());
 		assertEquals("r0", s.getRobots().get(0).getUID());
 		// Floor tests
-		assertEquals(2, s.getFloor().getNumberOfColumns());
-		assertEquals(2, s.getFloor().getNumberOfRows());
-		assertEquals("Floor: - Size: 2 rows by 2 columns.", s.getFloor().toString());
+		assertEquals(2, s.getWarehouse().getFloor().getNumberOfColumns());
+		assertEquals(2, s.getWarehouse().getFloor().getNumberOfRows());
+		assertEquals("Floor: - Size: 2 rows by 2 columns.", s.getWarehouse().getFloor().toString());
 	}
 
 	@Test
