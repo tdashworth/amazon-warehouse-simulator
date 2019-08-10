@@ -112,7 +112,7 @@ public class Robot extends Entity implements Actor {
 	 * @throws Exception
 	 * 
 	 */
-	private void move(Warehouse warehouse, Location targetLocation) throws Exception {
+	public void move(Warehouse warehouse, Location targetLocation) throws Exception {
 		this.log("Moving from %s to %s.", this.location, targetLocation);
 
 		boolean pathFound = this.pathFinder.calculatePath(this.location, targetLocation);

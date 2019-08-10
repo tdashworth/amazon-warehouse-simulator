@@ -27,6 +27,7 @@ public class PackingStation extends Entity implements Actor {
 	 */
 	public PackingStation(String uid, Location location) {
 		super(uid, location, new Rectangle(35, 35, Color.AQUAMARINE));
+		this.storageShelvesVisited = new ArrayList<StorageShelf>();
 	}
 
 	@Override
@@ -65,7 +66,6 @@ public class PackingStation extends Entity implements Actor {
 		
 		this.tickCountWhenOrderAssigned = warehouse.getTotalTickCount();
 		this.remainingPackingTicks = this.currentOrder.getNumberOfTicksToPack();
-		this.storageShelvesVisited = new ArrayList<StorageShelf>();
 		this.unrequestedStorageShelves = new ArrayList<String>(this.currentOrder.getStorageShelfUIDs());
 		this.log("Picked order: " + this.currentOrder.hashCode());
 		

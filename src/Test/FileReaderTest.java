@@ -20,7 +20,7 @@ public class FileReaderTest {
 		//Create a new file reader and simulator to store the file reader result
 		SimulatorFileReader_V1 fr = new SimulatorFileReader_V1();
 		Simulator s = null;
-		
+
 		//Attempt to read from the file
 		try {
 			s = fr.read(Paths.get("./sample-configs/oneOfEverything.sim"));
@@ -32,7 +32,7 @@ public class FileReaderTest {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		
+
 		//Ensure that the result simulation matches the file that was read in
 		assertEquals(0, s.getTotalTickCount());
 		assertEquals(1, s.getChargeSpeed());
@@ -49,10 +49,24 @@ public class FileReaderTest {
 		assertEquals(3, s.getWarehouse().getFloor().getNumberOfRows());
 		assertEquals("Floor: - Size: 3 rows by 3 columns.", s.getWarehouse().getFloor().toString());	
 	}
-	
+
 	@Test
 	public void readInvalidConfigFileTest() {
-		fail("Not yet implemented");
+		//Create a new file reader and simulator to store the file reader result
+		SimulatorFileReader_V1 fr = new SimulatorFileReader_V1();
+		Simulator s = null;
+
+		//Attempt to read from the file
+		try {
+			s = fr.read(Paths.get("./sample-configs/invalidConfig.sim"));
+		} catch (IOException | SimFileFormatException | LocationNotValidException e) {
+			System.out.println("Testing Error reading SIM file - " + e.toString());
+		} catch (Exception e) {
+			System.out.println("Testing Error running simulation - " + e.toString());
+			e.printStackTrace();
+		}
+		//Ensure simulator has not been created from incorrect format file
+		assertEquals(null, s);
 	}
 
 }

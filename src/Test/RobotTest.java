@@ -63,10 +63,15 @@ public class RobotTest {
 		assertEquals(20, r.getPowerUnits());
 		r.charge(chargeSpeed, maxCharge);
 		assertEquals(20, r.getPowerUnits()); 
+		assertEquals(RobotStatus.Charging, r.getStatus());
 	}
 
+	/**
+	 * Test the functionality of accept job, and tick
+	 * @throws Exception
+	 */
 	@Test
-	public void acceptJobTest() throws Exception {
+	public void robotTest() throws Exception {
 		//Create a new simulator and warehouse from file so that the robot can assess jobs
 		Floor floor = new Floor(3, 3);
 		HashMap<String, Entity> entities = new HashMap<String, Entity>();
@@ -85,10 +90,10 @@ public class RobotTest {
 		Robot r = new Robot("r0", new Location(0,0), new ChargingPod("c0", new Location(0,0)), 2);
 		entities.put(r.getUID(), r);
 
-		StorageShelf ss = new StorageShelf("ss0", new Location(1,0));
+		StorageShelf ss = new StorageShelf("ss0", new Location(2,0));
 		entities.put(ss.getUID(), ss);
 
-		PackingStation ps = new PackingStation("ps0", new Location(2,0));
+		PackingStation ps = new PackingStation("ps0", new Location(2,1));
 		entities.put(ps.getUID(), ps);
 
 		//Create the simulator
@@ -102,7 +107,7 @@ public class RobotTest {
 		//Get the storage shelf and packing station for the robot to assess
 		Warehouse warehouse = s.getWarehouse();
 
-		//Test to ensure that the acceptJob method is working successfully
+		//Test to ensure that the acceptJob method is working successfully, robot won't accept job without enough power units
 		boolean test = true;
 		try {
 			test = r.acceptJob(ss, ps, warehouse);
@@ -110,9 +115,10 @@ public class RobotTest {
 			e.printStackTrace();
 		}
 		assertFalse(test);
+		assertEquals(null, r.getShelf());
 
-		//Ensure the robot has just enough charge to accept the job, and test the accept method again
-		r.charge(4, 20);
+		//Ensure the robot has enough charge to accept the job, and test the accept method again
+		r.charge(8, 20);
 		test = true;
 		try {
 			test = r.acceptJob(ss, ps, warehouse);
@@ -132,12 +138,24 @@ public class RobotTest {
 		assertFalse(test);
 		assertEquals(ss, r.getShelf());
 		
-		//Test tick when robot has accepted job and needs to collect item
+		//Test tick when robot has accepted job and needs to collect item (from two spaces away so after two ticks the robot should have the item).
 		r.setPowerUnits(20);
 		r.tick(warehouse);
-		//assertEquals("CollectingItem", r.getStatus());
+		assertEquals(RobotStatus.CollectingItem, r.getStatus());
 		assertNotEquals("Location: 0,0", r.getLocation().toString());
-
+		assertEquals(19, r.getPowerUnits());
+		assertEquals(false, r.hasItem());
+		r.tick(warehouse);
+		assertEquals(true, r.hasItem());
+		
+		//check that robot returns the item to the packing station when it has the item.
+		r.tick(warehouse);
+		assertEquals(RobotStatus.ReturningItem, r.getStatus());
+		assertEquals(null,r.getShelf());
+		assertEquals(16, r.getPowerUnits());
+		assertEquals(ps.getLocation().toString(), r.getLocation().toString());
+		assertEquals(false, r.hasItem());
+		
 	}
 
 
@@ -180,8 +198,8 @@ public class RobotTest {
 		}		
 		assertEquals(3, r.getPowerUnits());
 		assertEquals(l, r.getLocation());
-		//assertEquals("Charging", r.getStatus());
-		
+		assertEquals(RobotStatus.Charging, r.getStatus());
+			
 	}
 
 }

@@ -75,7 +75,7 @@ public class WarehouseController {
 			alertErrorOccured(e);
 		}
 	}
-
+	
 	/**
 	 * Runs one tick of the simulation
 	 */
@@ -85,7 +85,7 @@ public class WarehouseController {
 		this.timeline.setCycleCount(1);
 		this.timeline.play();
 	}
-
+	
 	/**
 	 * Runs ten ticks of the simulation
 	 */
@@ -96,7 +96,7 @@ public class WarehouseController {
 		this.timeline.setCycleCount(10);
 		this.timeline.play();
 	}
-
+	
 	/**
 	 * Runs the simulation indefinitely
 	 */
@@ -107,7 +107,7 @@ public class WarehouseController {
 		this.timeline.setCycleCount(Timeline.INDEFINITE);
 		this.timeline.play();
 	}
-
+	
 	/**
 	 * Stops the simulation
 	 */
@@ -117,12 +117,12 @@ public class WarehouseController {
 		this.timeline.stop();
 		this.setButtonsDisablement(false);
 	}
-
+	
 	@FXML
 	public void stopSimulation() {
 		this.timeline.stop();
 		this.simulation = null;
-
+		
 		// Disable run/pause/stop buttons and enable load button.
 		this.setButtonsDisablement(true);
 		buttonPause.setDisable(true);
@@ -153,7 +153,7 @@ public class WarehouseController {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Loads a simulation from the given file
 	 * @param fileName
@@ -175,7 +175,7 @@ public class WarehouseController {
 		this.labelChargeCapacity.setText(String.valueOf(this.simulation.getMaxChargeCapacity()));
 		this.labelChargeSpeed.setText(String.valueOf(this.simulation.getChargeSpeed()));
 	}
-
+	
 	/**
 	 * Creates the warehouse floor from the columns and rows provided.
 	 * @param columns
@@ -196,7 +196,7 @@ public class WarehouseController {
 		for (int row = 0; row < rows; row++) {
 			this.grdWarehouse.getRowConstraints().add(new RowConstraints(TILE_DIMENSION));
 		}
-
+		
 		// Add StackPane to each cell.
 		this.grdWarehouse.getChildren().removeIf(node -> node instanceof StackPane);
 		System.out.println(this.grdWarehouse.getChildren());
@@ -207,107 +207,101 @@ public class WarehouseController {
 				this.floor[column][row] = stackPane;
 				this.grdWarehouse.getChildren().add(stackPane);
 			}
-
-			this.grdWarehouse.getColumnConstraints().add(new ColumnConstraints(TILE_DIMENSION));
-
-			for (int row = 0; row < rows; row++) {
-				this.grdWarehouse.getRowConstraints().add(new RowConstraints(TILE_DIMENSION));
-			}
-
 		}
 	}
-			/**
-			 * Puts a shape representation of the entities onto the floor of the warehouse
-			 */
+	
+	/**
+	 * Puts a shape representation of the entities onto the floor of the warehouse
+	 */
 
-			private void drawInitialEntities() {
-				for (Entity entity : this.simulation.getWarehouse().getEntities()) {
-					StackPane stackPane = this.floor[entity.getLocation().getColumn()][entity.getLocation().getRow()];
-					stackPane.getChildren().add(entity.getSprite());
-				}
-			}
-
-			/**
-			 * puts a shape representation of the robots onto the floor.
-			 */
-
-			private void drawRobots() {
-				for (Robot robot : this.simulation.getRobots()) {
-					// Skip if not moved.
-					if (robot.getLocation().equals(robot.getPreviousLocation()))
-						continue;
-
-					// Erase old sprite.
-					StackPane oldStackPane = this.getStackPaneForLocation(robot.getPreviousLocation());
-					oldStackPane.getChildren().remove(robot.getSprite());
-
-					// Draw new sprite.
-					StackPane newStackPane = this.getStackPaneForLocation(robot.getLocation());
-					newStackPane.getChildren().add(robot.getSprite());
-				}
-			}
-
-			/**
-			 * Returns the stackpane object at a given location
-			 * @param location
-			 * @return StackPane
-			 */
-
-			private StackPane getStackPaneForLocation(Location location) {
-				return this.floor[location.getColumn()][location.getRow()];
-			}
-
-			private void refreshListViews() {
-				this.robotsList.getItems().clear();
-				this.robotsList.getItems().addAll(this.simulation.getRobots());
-
-				this.unassignedOrders.getItems().clear();
-				this.unassignedOrders.getItems().addAll(this.simulation.getWarehouse().getUnassignedOrders());
-
-				this.assignedOrders.getItems().clear();
-				this.assignedOrders.getItems().addAll(this.simulation.getWarehouse().getAssignedOrders());
-
-				this.dispatchedOrders.getItems().clear();
-				this.dispatchedOrders.getItems().addAll(this.simulation.getWarehouse().getDispatchedOrders());
-			}
-
-			/**
-			 * Disables the buttons depending on the boolean value disabled
-			 * @param disabled
-			 */
-
-			private void setButtonsDisablement(boolean disabled) {
-				buttonOneTick.setDisable(disabled);
-				buttonTenTicks.setDisable(disabled);
-				buttonIndefiniteTicks.setDisable(disabled);
-				buttonPause.setDisable(!disabled);
-			}
-
-			/**
-			 * Shows and alert to show the simulation is complete.
-			 */
-
-			public void alertSimulationComplete() {
-				Alert alert = new Alert(Alert.AlertType.INFORMATION);
-				alert.setTitle("Simulation Complete");
-				alert.setHeaderText("Congratulations, the simulation is complete!");
-				alert.setContentText("Total tick count: " + simulation.getTotalTickCount());
-				alert.setOnCloseRequest((event) -> this.stopSimulation());
-				alert.show();
-			}
-
-			/**
-			 * Shows an alert when an error occurs
-			 * @param error
-			 */
-
-			public void alertErrorOccured(Exception error) {
-				Alert alert = new Alert(Alert.AlertType.ERROR);
-				alert.setTitle("Fatal Error Occured");
-				alert.setHeaderText("An error has occur thats stopped the simulation from continuing.");
-				alert.setContentText(error.toString());
-				alert.setOnCloseRequest((event) -> this.stopSimulation());
-				alert.show();
-			}
-
+	private void drawInitialEntities() {
+		for (Entity entity : this.simulation.getWarehouse().getEntities()) {
+			StackPane stackPane = this.floor[entity.getLocation().getColumn()][entity.getLocation().getRow()];
+			stackPane.getChildren().add(entity.getSprite());
 		}
+	}
+	
+	/**
+	 * puts a shape representation of the robots onto the floor.
+	 */
+
+	private void drawRobots() {
+		for (Robot robot : this.simulation.getRobots()) {
+			// Skip if not moved.
+			if (robot.getLocation().equals(robot.getPreviousLocation()))
+				continue;
+
+			// Erase old sprite.
+			StackPane oldStackPane = this.getStackPaneForLocation(robot.getPreviousLocation());
+			oldStackPane.getChildren().remove(robot.getSprite());
+
+			// Draw new sprite.
+			StackPane newStackPane = this.getStackPaneForLocation(robot.getLocation());
+			newStackPane.getChildren().add(robot.getSprite());
+		}
+	}
+	
+	/**
+	 * Returns the stackpane object at a given location
+	 * @param location
+	 * @return StackPane
+	 */
+
+	private StackPane getStackPaneForLocation(Location location) {
+		return this.floor[location.getColumn()][location.getRow()];
+	}
+
+	private void refreshListViews() {
+		this.robotsList.getItems().clear();
+		this.robotsList.getItems().addAll(this.simulation.getRobots());
+
+		this.unassignedOrders.getItems().clear();
+		this.unassignedOrders.getItems().addAll(this.simulation.getWarehouse().getUnassignedOrders());
+
+		this.assignedOrders.getItems().clear();
+		this.assignedOrders.getItems().addAll(this.simulation.getWarehouse().getAssignedOrders());
+
+		this.dispatchedOrders.getItems().clear();
+		this.dispatchedOrders.getItems().addAll(this.simulation.getWarehouse().getDispatchedOrders());
+	}
+	
+	/**
+	 * Disables the buttons depending on the boolean value disabled
+	 * @param disabled
+	 */
+
+	private void setButtonsDisablement(boolean disabled) {
+		buttonOneTick.setDisable(disabled);
+		buttonTenTicks.setDisable(disabled);
+		buttonIndefiniteTicks.setDisable(disabled);
+		buttonPause.setDisable(!disabled);
+	}
+	
+	/**
+	 * Shows and alert to show the simulation is complete.
+	 */
+
+	public void alertSimulationComplete() {
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.setTitle("Simulation Complete");
+		alert.setHeaderText("Congratulations, the simulation is complete!");
+		alert.setContentText("Total tick count: " + simulation.getTotalTickCount());
+		alert.setOnCloseRequest((event) -> this.stopSimulation());
+		alert.show();
+	}
+	
+	/**
+	 * Shows an alert when an error occurs
+	 * @param error
+	 */
+
+	public void alertErrorOccured(Exception error) {
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.setTitle("Fatal Error Occured");
+		alert.setHeaderText("An error has occur thats stopped the simulation from continuing.");
+		alert.setContentText(error.toString());
+		alert.setOnCloseRequest((event) -> this.stopSimulation());
+		alert.show();
+	}
+
+}
