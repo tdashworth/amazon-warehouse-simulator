@@ -3,9 +3,7 @@
 - Refactor UI out of model
 
 - Tests and JavaDoc
-  - Location
   - AStarPathFinder
-  - PathFindingNode? 
   - Robot
   - PackingStation
   - ChargingPod/StorageShelf?

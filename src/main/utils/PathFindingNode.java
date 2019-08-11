@@ -45,7 +45,7 @@ public class PathFindingNode extends Location implements Comparable<PathFindingN
 	 * @return The number of steps prior to reaching this Node.
 	 */
 	public int getNumberOfStepsFromStart() {
-		return numberOfStepsFromStart;
+		return this.numberOfStepsFromStart;
 	}
 
 	/**
@@ -53,6 +53,13 @@ public class PathFindingNode extends Location implements Comparable<PathFindingN
 	 */
 	public void setNumberOfStepsFromStart(int steps) {
 		this.numberOfStepsFromStart = steps;
+	}
+
+	/**
+	 * @return The number of steps prior to reaching this Node.
+	 */
+	public double getDirectDistanceToTarget() {
+		return this.directDistanceToTarget;
 	}
 
 	/**
@@ -66,7 +73,7 @@ public class PathFindingNode extends Location implements Comparable<PathFindingN
 	 * @return The previous Node to this in the path to get here.
 	 */
 	public PathFindingNode getPreviousNodeInPath() {
-		return previousNodeInPath;
+		return this.previousNodeInPath;
 	}
 
 	/**

@@ -46,11 +46,14 @@ public class Location {
 	 * @return A boolean whether this and the given location are the same.
 	 */
 	public boolean equals(Location location) {
+		if (location == null)
+			return false;
+
 		return (this.row == location.getRow()) && (this.column == location.getColumn());
 	}
 
 	/**
-	 * Calculates the distance following the rows and columns of the grid to locations reside on.
+	 * Calculates the distance following the rows and columns of the grid the locations reside on.
 	 * 
 	 * @param location The location to calculate distance to.
 	 * @return The shortest distance from this to the given location.
