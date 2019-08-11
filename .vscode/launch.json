@@ -4,7 +4,7 @@
       "type": "java",
       "name": "Simulation GUI",
       "request": "launch",
-      "mainClass": "view.View",
+      "mainClass": "main.view.View",
       "projectName": "DC2300-Coursework",
       "vmArgs": "--module-path \"C:/Program Files/Java/javafx-sdk-11.0.2/lib\" --add-modules javafx.controls,javafx.fxml"
     },
@@ -12,7 +12,7 @@
       "type": "java",
       "name": "Simulation CLI",
       "request": "launch",
-      "mainClass": "simulation.Simulator",
+      "mainClass": "main.simulation.Simulator",
       "projectName": "DC2300-Coursework",
       "vmArgs": "--module-path \"C:/Program Files/Java/javafx-sdk-11.0.2/lib\" --add-modules javafx.controls,javafx.fxml",
       "args": "${input:simFile}"

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<SplitPane dividerPositions="0.6791979949874687" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" 
+   xmlns="http://javafx.com/javafx/8" 
+   xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.view.Controller">
+   <items>
+      <VBox prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <HBox alignment="CENTER" fillHeight="false" VBox.vgrow="NEVER">
+               <children>
+                  <Label maxWidth="1.7976931348623157E308" text="Amazon Warehouse Simulation" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+                     <font>
+                        <Font name="Roboto Bold" size="20.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <Label maxWidth="1.7976931348623157E308" text="Team 3: Tom Ashworth, Jordan Bamford, Jess Morgan">
+                     <font>
+                        <Font name="Roboto Italic" size="14.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000000;" VBox.vgrow="ALWAYS">
+               <children>
+                  <GridPane fx:id="grdWarehouse" alignment="CENTER" centerShape="false" gridLinesVisible="true" hgap="1.0" style="-fx-background-color: #ffffff;" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="50.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </GridPane>
+                  <GridPane AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                        <ColumnConstraints hgrow="SOMETIMES" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label fx:id="labelFileName" alignment="CENTER" maxWidth="1.7976931348623157E308" textAlignment="CENTER" textFill="WHITE" underline="true" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                           <font>
+                              <Font name="Roboto Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label text="Tick Count:" textFill="WHITE" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                           <font>
+                              <Font name="Roboto Bold" size="18.0" />
+                           </font>
+                           <GridPane.margin>
+                              <Insets bottom="2.0" left="2.0" right="10.0" top="2.0" />
+                           </GridPane.margin>
+                        </Label>
+                        <Label fx:id="labelTickCount" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <GridPane.margin>
+                              <Insets right="10.0" />
+                           </GridPane.margin>
+                           <font>
+                              <Font name="Roboto" size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </GridPane>
+               </children>
+            </AnchorPane>
+            <HBox fillHeight="false" spacing="10.0">
+               <children>
+                  <Button fx:id="buttonLoadFile" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#selectFile" text="Load File">
+                     <font>
+                        <Font name="Roboto" size="14.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="buttonOneTick" alignment="CENTER" disable="true" minWidth="75.0" mnemonicParsing="false" onAction="#runOneTick" text="One Tick" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+                     <font>
+                        <Font name="Roboto" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="buttonTenTicks" alignment="CENTER" disable="true" minWidth="75.0" mnemonicParsing="false" onAction="#runTenTicks" text="10 Ticks" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+                     <font>
+                        <Font name="Roboto" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="buttonIndefiniteTicks" alignment="CENTER" disable="true" minWidth="75.0" mnemonicParsing="false" onAction="#runIndefiniteTicks" text="Run to end" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+                     <font>
+                        <Font name="Roboto" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="buttonPause" alignment="CENTER" disable="true" minWidth="75.0" mnemonicParsing="false" onAction="#pauseSimulation" text="Pause" textAlignment="CENTER">
+                     <font>
+                        <Font name="Roboto" size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="buttonStop" alignment="CENTER" disable="true" minWidth="75.0" mnemonicParsing="false" onAction="#stopSimulation" text="Stop" textAlignment="CENTER">
+                     <font>
+                        <Font name="Roboto" size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+      <SplitPane dividerPositions="0.15384615384615385, 0.47491638795986624, 0.6237458193979933" orientation="VERTICAL" prefHeight="247.0" prefWidth="160.0">
+         <items>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="Robots">
+                     <font>
+                        <Font name="Roboto Bold" size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <ListView fx:id="robotsList" editable="true" prefWidth="500.0" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="Unassigned Orders">
+                     <font>
+                        <Font name="Roboto Bold" size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <ListView fx:id="unassignedOrders" editable="true" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="Assigned Orders">
+                     <font>
+                        <Font name="Roboto Bold" size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <ListView fx:id="assignedOrders" editable="true" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label text="Dispatched Orders">
+                     <font>
+                        <Font name="Roboto Bold" size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <ListView fx:id="dispatchedOrders" editable="true" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+         </items>
+      </SplitPane>
+   </items>
+</SplitPane>
