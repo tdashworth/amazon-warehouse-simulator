@@ -77,7 +77,7 @@ public class PackingStation extends Entity implements Actor {
 	}
 
 	/**
-	 * Request items from the warehouse remove the shelf ID from unreqested
+	 * Request items from the warehouse remove the shelf ID from unrequested
 	 * 
 	 * @param The storage shelf UID.
 	 * @param Thw warehouse reference.

@@ -246,7 +246,7 @@ public class WarehouseController {
 	}
 
 	/**
-	 * Returns the stackpane object at a given location
+	 * Returns the Stack Pane object at a given location
 	 * 
 	 * @param location
 	 * @return StackPane

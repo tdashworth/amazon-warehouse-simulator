@@ -9,15 +9,11 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
-import model.ChargingPod;
 import model.Entity;
 import model.Floor;
 import model.Location;
-import model.LocationNotValidException;
 import model.Order;
 import model.PackingStation;
-import model.PathFindingStrategy;
-import model.Robot;
 import model.StorageShelf;
 import model.Warehouse;
 import simulation.Simulator;
@@ -41,7 +37,6 @@ public class PackingStationTest {
 		Floor floor = new Floor(3, 3);
 		HashMap<String, Entity> entities = new HashMap<String, Entity>();
 		Deque<Order> orders = new LinkedList<Order>();
-		PathFindingStrategy pf = new PathFindingStrategy(floor, true);
 		Location l2 = new Location(1, 1);
 		StorageShelf ss = new StorageShelf("s2", l2);
 
@@ -56,9 +51,6 @@ public class PackingStationTest {
 		Order order = new Order(sids, 10);
 		orders.add(order);
 
-		// Add one of each entity to the entities list
-		Robot r = new Robot("r0", new Location(1, 1), new ChargingPod("c0", l), 2);
-
 		// Create the simulator
 		Simulator s = null;
 		s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
@@ -71,7 +63,7 @@ public class PackingStationTest {
 		assertEquals(0, ps.getStorageShelvesVisited().size());
 		assertEquals(10, ps.getRemainingPackingTicks());
 
-		// check if the packing station has recieved the item.
+		// check if the packing station has received the item.
 		ps.recieveItem(ss);
 		assertEquals(1, ps.getStorageShelvesVisited().size());
 		assertEquals(ss, ps.getStorageShelvesVisited().get(0));
