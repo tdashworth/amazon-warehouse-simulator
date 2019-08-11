@@ -100,7 +100,7 @@ public class Simulator {
 		while (!this.isComplete())
 			tick();
 
-		System.out.println(String.format("All orders have been dispatched. It took %s ticks.", this.totalTickCount));
+		this.printEndReport();
 	}
 
 	/**
@@ -157,6 +157,23 @@ public class Simulator {
 
 	public Warehouse getWarehouse() {
 		return warehouse;
+	}
+	
+	public void printEndReport() {
+		System.out.println();
+		System.out.println();
+		System.out.println("=========================================");
+		System.out.println("=========================================");
+		System.out.println();
+		System.out.println("Simulation Complete!");
+		System.out.println("Total number of ticks: "+ this.totalTickCount);
+		System.out.println("");
+		System.out.println("Completed Orders:");
+		
+		for (Order order : this.warehouse.getDispatchedOrders()) {
+			System.out.println(order);
+		}
+		
 	}
 
 }

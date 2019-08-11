@@ -55,6 +55,9 @@ public class Robot extends Entity implements Actor {
 			break;
 
 		}
+		
+		if(this.powerUnits < 0)
+			throw new Exception("Robot " + this.uid + " ran out of power.");
 	}
 
 	/**
@@ -199,7 +202,7 @@ public class Robot extends Entity implements Actor {
 		double unlaidenedCost = (numberOfMovesToStorageShelf + numberOfMovesToChargingStation) * POWER_UNITS_EMPTY;
 		double carryingCost = (numberOfMovesToPackingStation) * POWER_UNITS_CARRYING;
 
-		double estimatedCostWithLeeway = (unlaidenedCost + carryingCost) * 1.2;
+		double estimatedCostWithLeeway = (unlaidenedCost + carryingCost) * 1.3;
 		return estimatedCostWithLeeway;
 	}
 

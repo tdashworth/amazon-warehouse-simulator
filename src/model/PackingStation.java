@@ -33,24 +33,27 @@ public class PackingStation extends Entity implements Actor {
 
 	@Override
 	public void tick(Warehouse warehouse) throws Exception {
-		this.log("Ticking.");
-
-		if (this.currentOrder == null)
+		if (this.currentOrder == null) {
+			this.log("Ticking: Picking new Order.");
 			this.pickOrder(warehouse);
+		}
 
-		else if (this.unrequestedStorageShelves.size() > 0)
+		else if (this.unrequestedStorageShelves.size() > 0) {
+			this.log("Ticking: Requesting Items.");
 			this.requestItems(warehouse);
-
+		}
 		else if (this.currentOrder.getStorageShelfUIDs().size() == this.storageShelvesVisited.size()
-				&& this.remainingPackingTicks != 0)
+				&& this.remainingPackingTicks != 0) {
+			this.log("Ticking: Packing Order.");
 			this.packOrder();
-
+		}
 		else if (this.currentOrder.getStorageShelfUIDs().size() == this.storageShelvesVisited.size()
-				&& this.remainingPackingTicks == 0)
+				&& this.remainingPackingTicks == 0) {
+			this.log("Ticking: Dispatching Order.");
 			this.dispatchOrder(warehouse);
-
+		}
 		else
-			; // wait...
+			this.log("Ticking: Awaiting items. Recieved: " + this.storageShelvesVisited + " out of " + this.currentOrder.getStorageShelfUIDs());
 	}
 
 	/**
@@ -71,6 +74,7 @@ public class PackingStation extends Entity implements Actor {
 		this.tickCountWhenOrderAssigned = warehouse.getTotalTickCount();
 		this.remainingPackingTicks = this.currentOrder.getNumberOfTicksToPack();
 		this.unrequestedStorageShelves = new ArrayList<String>(this.currentOrder.getStorageShelfUIDs());
+		this.storageShelvesVisited = new ArrayList<StorageShelf>(this.currentOrder.getStorageShelfUIDs().size());
 		this.log("Picked order: " + this.currentOrder.hashCode());
 
 		this.requestItems(warehouse);

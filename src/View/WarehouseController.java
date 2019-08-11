@@ -148,6 +148,7 @@ public class WarehouseController {
 			if (this.simulation.isComplete()) {
 				this.timeline.stop();
 				alertSimulationComplete();
+				this.simulation.printEndReport();
 			}
 		} catch (Exception e) {
 			this.alertErrorOccured(e);
@@ -290,7 +291,7 @@ public class WarehouseController {
 	public void alertSimulationComplete() {
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
 		alert.setTitle("Simulation Complete");
-		alert.setHeaderText("Congratulations, the simulation is complete!");
+		alert.setHeaderText("Congratulations, the simulation is complete! \nPlease see the console for the Order report or view the dispatched orders on the right.");
 		alert.setContentText("Total tick count: " + simulation.getTotalTickCount());
 		alert.setOnCloseRequest((event) -> this.stopSimulation());
 		alert.show();
