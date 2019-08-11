@@ -18,9 +18,9 @@ public class StorageShelf extends Entity {
 	public StorageShelf(String uid, Location location) {
 		super(uid, location, new Rectangle(35, 35, Color.DARKSALMON));
 	}
-	
+
 	/**
-	 *	@return A string representation of the storage shelf.
+	 * @return A string representation of the storage shelf.
 	 */
 	public String toString() {
 		return super.toString();

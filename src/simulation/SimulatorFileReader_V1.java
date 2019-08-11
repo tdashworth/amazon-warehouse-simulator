@@ -47,7 +47,7 @@ public class SimulatorFileReader_V1 implements SimulatorFileReader {
 				throw new SimFileFormatException(line, e.toString());
 			}
 		}
-		
+
 		this.log("File read. Creating Simulation...");
 		Floor floor = new Floor(this.width, this.height);
 		Simulator simulator = new Simulator(floor, capacity, chargeSpeed, entities, orders);

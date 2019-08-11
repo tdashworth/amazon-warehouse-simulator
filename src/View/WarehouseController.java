@@ -50,6 +50,7 @@ public class WarehouseController {
 
 	/**
 	 * Allows the user to select a file of configurations
+	 * 
 	 * @param event
 	 */
 	@FXML
@@ -57,7 +58,8 @@ public class WarehouseController {
 		try {
 			// Ask user to select a file.
 			FileChooser fileChooser = new FileChooser();
-			FileChooser.ExtensionFilter simFilter = new FileChooser.ExtensionFilter("Simulation files (*.sim)", "*.sim");
+			FileChooser.ExtensionFilter simFilter = new FileChooser.ExtensionFilter("Simulation files (*.sim)",
+					"*.sim");
 			fileChooser.getExtensionFilters().add(simFilter);
 			File file = fileChooser.showOpenDialog(WarehouseView.getPrimaryStage());
 
@@ -75,7 +77,7 @@ public class WarehouseController {
 			alertErrorOccured(e);
 		}
 	}
-	
+
 	/**
 	 * Runs one tick of the simulation
 	 */
@@ -85,7 +87,7 @@ public class WarehouseController {
 		this.timeline.setCycleCount(1);
 		this.timeline.play();
 	}
-	
+
 	/**
 	 * Runs ten ticks of the simulation
 	 */
@@ -96,7 +98,7 @@ public class WarehouseController {
 		this.timeline.setCycleCount(10);
 		this.timeline.play();
 	}
-	
+
 	/**
 	 * Runs the simulation indefinitely
 	 */
@@ -107,7 +109,7 @@ public class WarehouseController {
 		this.timeline.setCycleCount(Timeline.INDEFINITE);
 		this.timeline.play();
 	}
-	
+
 	/**
 	 * Stops the simulation
 	 */
@@ -117,12 +119,12 @@ public class WarehouseController {
 		this.timeline.stop();
 		this.setButtonsDisablement(false);
 	}
-	
+
 	@FXML
 	public void stopSimulation() {
 		this.timeline.stop();
 		this.simulation = null;
-		
+
 		// Disable run/pause/stop buttons and enable load button.
 		this.setButtonsDisablement(true);
 		buttonPause.setDisable(true);
@@ -153,12 +155,13 @@ public class WarehouseController {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Loads a simulation from the given file
+	 * 
 	 * @param fileName
 	 * @throws Exception
-	 */	
+	 */
 
 	private void loadSimulation(String fileName) throws Exception {
 		if (fileName == null)
@@ -175,9 +178,10 @@ public class WarehouseController {
 		this.labelChargeCapacity.setText(String.valueOf(this.simulation.getMaxChargeCapacity()));
 		this.labelChargeSpeed.setText(String.valueOf(this.simulation.getChargeSpeed()));
 	}
-	
+
 	/**
 	 * Creates the warehouse floor from the columns and rows provided.
+	 * 
 	 * @param columns
 	 * @param rows
 	 */
@@ -196,7 +200,7 @@ public class WarehouseController {
 		for (int row = 0; row < rows; row++) {
 			this.grdWarehouse.getRowConstraints().add(new RowConstraints(TILE_DIMENSION));
 		}
-		
+
 		// Add StackPane to each cell.
 		this.grdWarehouse.getChildren().removeIf(node -> node instanceof StackPane);
 		System.out.println(this.grdWarehouse.getChildren());
@@ -209,7 +213,7 @@ public class WarehouseController {
 			}
 		}
 	}
-	
+
 	/**
 	 * Puts a shape representation of the entities onto the floor of the warehouse
 	 */
@@ -220,7 +224,7 @@ public class WarehouseController {
 			stackPane.getChildren().add(entity.getSprite());
 		}
 	}
-	
+
 	/**
 	 * puts a shape representation of the robots onto the floor.
 	 */
@@ -240,9 +244,10 @@ public class WarehouseController {
 			newStackPane.getChildren().add(robot.getSprite());
 		}
 	}
-	
+
 	/**
 	 * Returns the stackpane object at a given location
+	 * 
 	 * @param location
 	 * @return StackPane
 	 */
@@ -264,9 +269,10 @@ public class WarehouseController {
 		this.dispatchedOrders.getItems().clear();
 		this.dispatchedOrders.getItems().addAll(this.simulation.getWarehouse().getDispatchedOrders());
 	}
-	
+
 	/**
 	 * Disables the buttons depending on the boolean value disabled
+	 * 
 	 * @param disabled
 	 */
 
@@ -276,7 +282,7 @@ public class WarehouseController {
 		buttonIndefiniteTicks.setDisable(disabled);
 		buttonPause.setDisable(!disabled);
 	}
-	
+
 	/**
 	 * Shows and alert to show the simulation is complete.
 	 */
@@ -289,9 +295,10 @@ public class WarehouseController {
 		alert.setOnCloseRequest((event) -> this.stopSimulation());
 		alert.show();
 	}
-	
+
 	/**
 	 * Shows an alert when an error occurs
+	 * 
 	 * @param error
 	 */
 

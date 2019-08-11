@@ -3,20 +3,21 @@
  */
 package model;
 
-/** 
- *	A representation of a point on a grid in row and column format.
+/**
+ * A representation of a point on a grid in row and column format.
  */
 public class Location {
-	
+
 	private int row;
 	private int column;
 
 	/**
-	 * Represents a point on a grid (row and column) 
+	 * Represents a point on a grid (row and column)
+	 * 
 	 * @param row
 	 * @param column
 	 */
-	public Location(int column, int row) {		
+	public Location(int column, int row) {
 		this.row = row;
 		this.column = column;
 	}
@@ -34,15 +35,15 @@ public class Location {
 	public int getColumn() {
 		return this.column;
 	}
-	
+
 	/**
-	 *	@return A string representation of the location.
+	 * @return A string representation of the location.
 	 */
 	@Override
 	public String toString() {
 		return String.format("Location: [%s, %s]", this.column, this.row);
 	}
-	
+
 	/**
 	 * @param location
 	 * @return A boolean whether this and the given location are the same.

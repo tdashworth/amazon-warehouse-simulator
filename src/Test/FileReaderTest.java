@@ -17,11 +17,11 @@ public class FileReaderTest {
 
 	@Test
 	public void fileReaderV1ReadTest() {
-		//Create a new file reader and simulator to store the file reader result
+		// Create a new file reader and simulator to store the file reader result
 		SimulatorFileReader_V1 fr = new SimulatorFileReader_V1();
 		Simulator s = null;
 
-		//Attempt to read from the file
+		// Attempt to read from the file
 		try {
 			s = fr.read(Paths.get("./sample-configs/oneOfEverything.sim"));
 		} catch (IOException | SimFileFormatException | LocationNotValidException e) {
@@ -33,30 +33,30 @@ public class FileReaderTest {
 			System.exit(1);
 		}
 
-		//Ensure that the result simulation matches the file that was read in
+		// Ensure that the result simulation matches the file that was read in
 		assertEquals(0, s.getTotalTickCount());
 		assertEquals(1, s.getChargeSpeed());
 		assertEquals(20, s.getMaxChargeCapacity());
 		assertEquals(false, s.isComplete());
 		assertEquals(4, s.getWarehouse().getEntities().size());
-		//Robot tests
+		// Robot tests
 		assertEquals(1, s.getRobots().size());
 		assertTrue(new Location(2, 0).equals(s.getRobots().get(0).getLocation()));
 		assertEquals(20, s.getRobots().get(0).getPowerUnits());
 		assertEquals("r0", s.getRobots().get(0).getUID());
-		//Floor tests
+		// Floor tests
 		assertEquals(3, s.getWarehouse().getFloor().getNumberOfColumns());
 		assertEquals(3, s.getWarehouse().getFloor().getNumberOfRows());
-		assertEquals("Floor: - Size: 3 rows by 3 columns.", s.getWarehouse().getFloor().toString());	
+		assertEquals("Floor: - Size: 3 rows by 3 columns.", s.getWarehouse().getFloor().toString());
 	}
 
 	@Test
 	public void readInvalidConfigFileTest() {
-		//Create a new file reader and simulator to store the file reader result
+		// Create a new file reader and simulator to store the file reader result
 		SimulatorFileReader_V1 fr = new SimulatorFileReader_V1();
 		Simulator s = null;
 
-		//Attempt to read from the file
+		// Attempt to read from the file
 		try {
 			s = fr.read(Paths.get("./sample-configs/invalidConfig.sim"));
 		} catch (IOException | SimFileFormatException | LocationNotValidException e) {
@@ -65,7 +65,7 @@ public class FileReaderTest {
 			System.out.println("Testing Error running simulation - " + e.toString());
 			e.printStackTrace();
 		}
-		//Ensure simulator has not been created from incorrect format file
+		// Ensure simulator has not been created from incorrect format file
 		assertEquals(null, s);
 	}
 

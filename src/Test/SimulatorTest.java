@@ -188,7 +188,7 @@ public class SimulatorTest {
 		assertEquals(7, s.getRobots().get(0).getPowerUnits());
 		assertEquals(10, s.getTotalTickCount());
 		assertEquals("ss0", ps.getStorageShelvesVisited().get(0).getUID()); // Packing
-																													// station
+																			// station
 		assertNull(s.getWarehouse().getUnassignedOrder());
 	}
 
@@ -199,7 +199,7 @@ public class SimulatorTest {
 		// failure is notified and exits.
 	}
 
-		@Test
+	@Test
 	public void robotRunsOutOfBatteryTest() {
 		fail("Not yet implemented.");
 		// Set up a scenario where a robot accepts a job, but then other things get in

@@ -1,20 +1,17 @@
 package View;
 
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.stage.Stage;
 
-
-
 public class WarehouseView extends Application {
 
 	private static Stage primaryStage;
 
 	/**
-	 * starts the application, sets the title, stage and scene 
+	 * starts the application, sets the title, stage and scene
 	 */
 
 	@Override
@@ -37,11 +34,8 @@ public class WarehouseView extends Application {
 		return WarehouseView.primaryStage;
 	}
 
-	
-	public static void main (String[] args) {
+	public static void main(String[] args) {
 		launch(args);
 	}
 
-
-}	
-
+}
