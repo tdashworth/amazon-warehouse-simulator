@@ -1,9 +1,9 @@
-package model;
+package utils;
 
 import java.util.*;
 
 /**
- * A manager of items in three states: awaiting, progressing, complete. 
+ * A manager of items in three states: awaiting, progressing, complete.
  */
 public class ItemManager<I> {
   private final Deque<I> awaiting;
@@ -20,12 +20,23 @@ public class ItemManager<I> {
   /**
    * A manager of items in three states: awaiting, progressing, complete.
    * 
-   * @param items a collection of items to being awaiting. 
+   * @param items a collection of items to being awaiting.
    */
   public ItemManager(Collection<I> items) {
     this.awaiting = new ArrayDeque<I>(items);
     this.progressing = new HashSet<I>(items.size());
     this.completed = new ArrayDeque<I>(items.size());
+  }
+
+  /**
+   * A manager of items in three states: awaiting, progressing, complete.
+   * 
+   * @param defaultCapcity the default capcity of items being managed.
+   */
+  public ItemManager(int defaultCapcity) {
+    this.awaiting = new ArrayDeque<I>(defaultCapcity);
+    this.progressing = new HashSet<I>(defaultCapcity);
+    this.completed = new ArrayDeque<I>(defaultCapcity);
   }
 
   /**
@@ -39,7 +50,20 @@ public class ItemManager<I> {
       throw new Exception("Null items are not accepted.");
 
     this.awaiting.add(item);
-    this.log("Item %s added assigned. %s remaining to assign.", item.hashCode(), this.awaiting.size());
+    this.log("Item %s added as awaiting. %s remaining.", item.hashCode(), this.awaiting.size());
+  }
+
+  /**
+   * Return the next awaiting item without moveing it to progressing.
+   * 
+   * @return An awaitng item.
+   * @throws Exception
+   */
+  public I viewNextPickup() throws Exception {
+    if (this.awaiting.isEmpty())
+      throw new Exception("No more awaiting items.");
+
+    return this.awaiting.peek();
   }
 
   /**
@@ -55,7 +79,7 @@ public class ItemManager<I> {
     I item = this.awaiting.pop();
     this.progressing.add(item);
 
-    this.log("Item %s assigned. %s remaining.", item.hashCode(), this.awaiting.size());
+    this.log("Item %s progressing. %s remaining.", item.hashCode(), this.awaiting.size());
     return item;
   }
 
@@ -71,8 +95,7 @@ public class ItemManager<I> {
 
     this.progressing.remove(item);
     this.completed.add(item);
-    this.log("Item %s completed. %s remaining to complete.", item.hashCode(),
-        this.progressing.size());
+    this.log("Item %s completed. %s remaining.", item.hashCode(), this.progressing.size());
   }
 
   /**

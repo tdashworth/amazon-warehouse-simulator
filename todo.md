@@ -1,20 +1,8 @@
 # To Do
 
-- Order Manager
-  - Refactor out of the Warehouse
-  - Tests
-
-- Job Manager
-  - Accept
-  - Complete
-  - Collections
-    - Awaiting
-    - Progressing
-    - Completed
-
 - Refactor UI out of model
 
-- Tests
+- Tests and JavaDoc
   - Location
   - AStarPathFinder
   - PathFindingNode? 
@@ -26,5 +14,5 @@
   - Simulation?
   - SimFileReader_V1
 
-
+- Exceptions
 

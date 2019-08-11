@@ -1,20 +1,31 @@
 package test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import model.ItemManager;
-import java.util.*;
+import utils.ItemManager;
 
 public class ItemManagerTest {
 
   @Test
   public void constructorTest() {
+    // Empty constructor with no items or default.
     ItemManager<String> itemManager = new ItemManager<>();
     assertCollectionSizes(itemManager, 0, 0, 0);
 
+    // Preloaded with items Collection.
     Collection<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
     itemManager = new ItemManager<String>(items);
     assertCollectionSizes(itemManager, 3, 0, 0);
+
+    // Preset with default capacity.
+    itemManager = new ItemManager<>(10);
+    assertCollectionSizes(itemManager, 0, 0, 0);
   }
 
   @Test
@@ -40,6 +51,30 @@ public class ItemManagerTest {
     } catch (Exception e) {
       assertEquals("Null items are not accepted.", e.getMessage());
       assertCollectionSizes(itemManager, 3, 0, 0);
+    }
+  }
+
+  @Test
+  public void viewNextPickupTest() {
+    List<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
+    ItemManager<String> itemManager = new ItemManager<>(items);
+
+    // Positive case
+    try {
+      assertEquals(items.get(0), itemManager.viewNextPickup());
+      assertCollectionSizes(itemManager, 3, 0, 0);
+    } catch (Exception e) {
+      fail(e.toString());
+    }
+
+    ItemManager<String> emptyItemManager = new ItemManager<>();
+    // Negative case
+    try {
+      emptyItemManager.viewNextPickup();
+      fail("Pickuk should fail because all item are progressing.");
+    } catch (Exception e) {
+      assertEquals("No more awaiting items.", e.getMessage());
+      assertCollectionSizes(emptyItemManager, 0, 0, 0);
     }
   }
 
@@ -133,7 +168,7 @@ public class ItemManagerTest {
   public void areAllItemsCompleteTest() throws Exception {
     List<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
     ItemManager<String> itemManager = new ItemManager<>(items);
-    
+
     // Awaiting: 3, Progressing: 0, Complete: 0
     assertFalse(itemManager.areAllItemsComplete());
     String item1 = itemManager.pickup();

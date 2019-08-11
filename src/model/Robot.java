@@ -2,14 +2,14 @@ package model;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import model.Job.JobStatus;
 import utils.BasicPathCostEstimator;
+import utils.ItemManager;
 import utils.PathCostEstimator;
 
 public class Robot extends Mover {
 	private int powerUnits;
-	private StorageShelf storageShelf;
-	private StorageShelf holdingItem;
-	private PackingStation packingStation;
+	private Job currentJob;
 	private ChargingPod chargingPod;
 
 	private final int powerUnitsCapacity;
@@ -17,8 +17,8 @@ public class Robot extends Mover {
 	private final static int POWER_UNITS_EMPTY = 1;
 	private final static int POWER_UNITS_CARRYING = 2;
 
-	public static enum RobotStatus {
-		GoingToCharge, Charging, CollectingItem, ReturningItem
+	private static enum RobotStatus {
+		AwaitingJob, Charging, CollectingItem, DeliveringItem
 	}
 
 	/**
@@ -45,19 +45,51 @@ public class Robot extends Mover {
 				this.collectItemFromStorageShelf(warehouse);
 				break;
 
-			case ReturningItem:
-				this.returnItemToPackingStation(warehouse);
+			case DeliveringItem:
+				this.deliverItemToPackingStation(warehouse);
+				break;
+
+			case AwaitingJob:
+				this.awaitingJob(warehouse);
 				break;
 
 			case Charging:
 				this.charge();
 				break;
-
-			case GoingToCharge:
-				this.move(warehouse.getFloor(), this.chargingPod.getLocation());
-				break;
-
 		}
+	}
+
+	private void collectItemFromStorageShelf(Warehouse warehouse) throws Exception {
+		this.move(warehouse.getFloor(), this.currentJob.getStorageShelf().getLocation());
+		this.log("Moved closer to assigned Storage Shelf.");
+
+		if (this.location.equals(this.currentJob.getStorageShelf().getLocation())) {
+			this.currentJob.collected();
+			this.log("Reached assigned Storage Shelf.");
+		}
+	}
+
+	private void deliverItemToPackingStation(Warehouse warehouse) throws Exception {
+		this.move(warehouse.getFloor(), this.currentJob.getPackingShelf().getLocation());
+		this.log("Moved closer to assigned Packing Station.");
+
+		if (this.location.equals(this.currentJob.getPackingShelf().getLocation())) {
+			this.currentJob.delivered();
+			warehouse.getJobManager().complete(currentJob);
+			this.currentJob = null;
+			this.log("Reached assigned Packing Station.");
+		}
+	}
+
+	private void awaitingJob(Warehouse warehouse) throws Exception {
+		// If at Charging Pod, charge, otherwise move towards it.
+		if (this.location.equals(this.chargingPod.getLocation()))
+			this.charge();
+		else
+			this.move(warehouse.getFloor(), this.chargingPod.getLocation());
+
+		// Check if there's an acceptable Job to pick up.
+		this.pickupJob(warehouse.getJobManager(), warehouse.getFloor());
 	}
 
 	/**
@@ -73,29 +105,6 @@ public class Robot extends Mover {
 		}
 	}
 
-	private void collectItemFromStorageShelf(Warehouse warehouse) throws Exception {
-		this.move(warehouse.getFloor(), this.storageShelf.getLocation());
-		this.log("Moved closer to assigned Storage Shelf.");
-
-		if (this.location.equals(this.storageShelf.getLocation())) {
-			this.holdingItem = this.storageShelf;
-			this.storageShelf = null;
-			this.log("Reached assigned Storage Shelf.");
-		}
-	}
-
-	private void returnItemToPackingStation(Warehouse warehouse) throws Exception {
-		this.move(warehouse.getFloor(), this.packingStation.getLocation());
-		this.log("Moved closer to assigned Packing Station.");
-
-		if (this.location.equals(this.packingStation.getLocation())) {
-			this.packingStation.recieveItem(this.holdingItem);
-			this.packingStation = null;
-			this.holdingItem = null;
-			this.log("Reached assigned Packing Station.");
-		}
-	}
-
 	protected void move(Floor floor, Location targetLocation) throws Exception {
 		super.move(floor, targetLocation);
 
@@ -106,32 +115,28 @@ public class Robot extends Mover {
 	}
 
 	/**
-	 * @param storageShelf
-	 * @param packingStation
-	 * @param warehouse
-	 * @return
-	 * @throws LocationNotValidException
+	 * 
+	 * @param jobManager
+	 * @param floor
+	 * @throws Exception
 	 */
-	public boolean acceptJob(StorageShelf storageShelf, PackingStation packingStation,
-			Warehouse warehouse) throws Exception {
+	private void pickupJob(ItemManager<Job> jobManager, Floor floor) throws Exception {
+		if (!jobManager.areItemsToPickup())
+			return;
 
-		if (this.storageShelf != null || this.hasItem())
-			return false;
-
+		// Check out next Job and validate estimated cost.
+		Job tempJob = jobManager.viewNextPickup();
 		double estimatedCostWithLeeway =
-				estimatePowerUnitCostForJob(storageShelf, packingStation, warehouse.getFloor());
-
+				estimatePowerUnitCostForJob(tempJob.getStorageShelf(), tempJob.getPackingShelf(), floor);
 		if (estimatedCostWithLeeway > this.powerUnits)
-			return false;
+			return;
 
-		this.storageShelf = storageShelf;
-		this.packingStation = packingStation;
+		// Pickup Job
+		this.currentJob = jobManager.pickup();
 		this.pathFinder = null;
 
-		this.log("Accepted Job to %s then %s.", storageShelf.getLocation(),
-				packingStation.getLocation());
-
-		return true;
+		this.log("Job to %s then %s picked up.", this.currentJob.getStorageShelf().getLocation(),
+				this.currentJob.getPackingShelf().getLocation());
 	}
 
 	/**
@@ -171,14 +176,12 @@ public class Robot extends Mover {
 
 		if (isBatteryBelowHalfCharge && isAtChargingPod) {// Running low of powerUnits
 			return RobotStatus.Charging;
-		} else if (this.storageShelf != null) {// Storage Shelf Assigned
+		} else if (this.currentJob != null && this.currentJob.getStatus() == JobStatus.Collecting) {
 			return RobotStatus.CollectingItem;
-		} else if (this.hasItem()) {
-			return RobotStatus.ReturningItem; // Item collected
-		} else if (isAtChargingPod) {
-			return RobotStatus.Charging; // Nothing to do and already at Charging Pod
+		} else if (this.currentJob != null && this.currentJob.getStatus() == JobStatus.Delivering) {
+			return RobotStatus.DeliveringItem;
 		} else {
-			return RobotStatus.GoingToCharge; // Nothing to do so go charge
+			return RobotStatus.AwaitingJob;
 		}
 	}
 
@@ -188,7 +191,7 @@ public class Robot extends Mover {
 	 * @return boolean
 	 */
 	private boolean hasItem() {
-		return this.holdingItem != null;
+		return this.currentJob != null && this.currentJob.getStatus() == JobStatus.Delivering;
 	}
 
 	/**
@@ -205,10 +208,8 @@ public class Robot extends Mover {
 		String result = super.toString();
 		result += ", " + "Status: " + this.getStatus();
 		result += ", " + "Power: " + this.getPowerUnits();
-		if (this.storageShelf != null)
-			result += ", " + "Storage Shelf: " + this.storageShelf.getUID();
-		if (this.packingStation != null)
-			result += ", " + "Packing Station: " + this.packingStation.getUID();
+		if (this.currentJob != null)
+			result += ", " + "Current Job: " + this.currentJob;
 
 		return result;
 	}

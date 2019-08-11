@@ -2,8 +2,8 @@ package test;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import utils.PathCostEstimator;
 import utils.BasicPathCostEstimator;
+import utils.PathCostEstimator;
 import model.Location;
 
 public class PathCostEstimatorTest {

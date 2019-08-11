@@ -23,6 +23,9 @@ public abstract class Mover extends Actor {
 	 * @throws Exception
 	 */
 	protected void move(Floor floor, Location targetLocation) throws Exception {
+		if (this.location.equals(targetLocation))
+			return;
+			
 		this.log("Moving from %s to %s.", this.location, targetLocation);
 
 		try {

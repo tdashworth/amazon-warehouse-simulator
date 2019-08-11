@@ -10,11 +10,10 @@ import javafx.scene.shape.Rectangle;
  * A simple representation of a packing station within the warehouse.
  */
 public class PackingStation extends Actor {
-	private Order currentOrder;
-	private int tickCountWhenOrderAssigned;
-	private int remainingPackingTicks;
-	private List<StorageShelf> storageShelvesVisited;
-	private List<String> unrequestedStorageShelves;
+	protected Order currentOrder;
+	protected int tickCountWhenOrderAssigned;
+	protected int remainingPackingTicks;
+	protected List<StorageShelf> storageShelvesVisited;
 
 	/**
 	 * A simple representation of a packing station within the warehouse.
@@ -33,9 +32,6 @@ public class PackingStation extends Actor {
 		if (this.currentOrder == null)
 			this.pickOrder(warehouse);
 
-		else if (this.unrequestedStorageShelves.size() > 0)
-			this.requestItems(warehouse);
-
 		else if (this.currentOrder.getStorageShelfUIDs().size() == this.storageShelvesVisited.size()
 				&& this.remainingPackingTicks != 0)
 			this.packOrder();
@@ -49,7 +45,7 @@ public class PackingStation extends Actor {
 	}
 
 	/**
-	 * Pick an unassigned order from the warehouse
+	 * Pick an unassigned order from the warehouse.
 	 * 
 	 * @param warehouse
 	 * @throws LocationNotValidException
@@ -66,33 +62,24 @@ public class PackingStation extends Actor {
 		this.tickCountWhenOrderAssigned = warehouse.getTotalTickCount();
 		this.remainingPackingTicks = this.currentOrder.getNumberOfTicksToPack();
 		this.storageShelvesVisited = new ArrayList<StorageShelf>();
-		this.unrequestedStorageShelves = new ArrayList<String>(this.currentOrder.getStorageShelfUIDs());
+		this.requestJobs(warehouse, this.currentOrder.getStorageShelfUIDs());
 		this.log("Picked order: " + this.currentOrder.hashCode());
-
-		this.requestItems(warehouse);
 	}
 
 	/**
-	 * TODO JavaDoc description.
+	 * Creates a Job for each Storage Shelf and adds to Warehouse Job Manager.   
 	 * 
 	 * @param The storage shelf UID.
 	 * @param Thw warehouse reference.
 	 * @throws LocationNotValidException
 	 */
-	private void requestItems(Warehouse warehouse) throws Exception {
-		this.log("Requesting items: " + this.unrequestedStorageShelves);
-		ArrayList<String> uuidsToRemove = new ArrayList<String>();
+	private void requestJobs(Warehouse warehouse, List<String> storageShelvesToRequest) throws Exception {
+		this.log("Requesting Jobs: " + storageShelvesToRequest);
 
-		for (String storageShelfUID : this.unrequestedStorageShelves) {
+		for (String storageShelfUID : storageShelvesToRequest) {
 			StorageShelf storageShelf = (StorageShelf) warehouse.getEntityByUID(storageShelfUID);
-
-			if (warehouse.assignJobToRobot(storageShelf, this)) {
-				uuidsToRemove.add(storageShelfUID);
-				this.log("Storage Shelf %s assigned to a Robot.", storageShelf.getUID());
-			}
+			warehouse.getJobManager().add(new Job(storageShelf, this));
 		}
-
-		this.unrequestedStorageShelves.removeAll(uuidsToRemove);
 	}
 
 	/**
@@ -120,8 +107,12 @@ public class PackingStation extends Actor {
 	 * Take note that a robot has returned from a storage shelf.
 	 * 
 	 * @param The storage shelf reference.
+	 * @throws Exception
 	 */
-	public void recieveItem(StorageShelf storageShelf) {
+	public void recieveItem(StorageShelf storageShelf) throws Exception {
+		if (!this.currentOrder.getStorageShelfUIDs().contains(storageShelf.getUID()))
+			throw new Exception("Storage Shelf not required by current order.");
+
 		this.log("Item recieved from %s", storageShelf.getUID());
 		this.storageShelvesVisited.add(storageShelf);
 	}
