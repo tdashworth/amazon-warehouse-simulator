@@ -113,21 +113,21 @@ public class ItemManager<I> {
   }
 
   /**
-   * @return an unmodifable collection of awaiting items.
+   * @return an unmodifiable collection of awaiting items.
    */
   public Collection<I> getAwaiting() {
     return Collections.unmodifiableCollection(this.awaiting);
   }
 
   /**
-   * @return an unmodifable collection of progressing items.
+   * @return an unmodifiable collection of progressing items.
    */
   public Collection<I> getProgressing() {
     return Collections.unmodifiableCollection(this.progressing);
   }
 
   /**
-   * @return an unmodifable collection of completed items.
+   * @return an unmodifiable collection of completed items.
    */
   public Collection<I> getCompleted() {
     return Collections.unmodifiableCollection(this.completed);

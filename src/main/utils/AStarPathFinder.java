@@ -101,11 +101,7 @@ public class AStarPathFinder extends AbstractPathFinder {
 		if (!this.floor.isLocationValid(new Location(column, row)))
 			return null;
 
-		try {
-			return this.floorNodes[column][row];
-		} catch (Exception e) {
-			return null;
-		}
+		return this.floorNodes[column][row];
 	}
 
 	/**

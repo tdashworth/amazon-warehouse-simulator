@@ -72,7 +72,7 @@ public class ItemManagerTest {
     // Negative case
     try {
       emptyItemManager.viewNextPickup();
-      fail("Pickuk should fail because all item are progressing.");
+      fail("Pickup should fail because all item are progressing.");
     } catch (Exception e) {
       assertEquals("No more awaiting items.", e.getMessage());
       assertCollectionSizes(emptyItemManager, 0, 0, 0);
@@ -101,7 +101,7 @@ public class ItemManagerTest {
     // Negative case
     try {
       itemManager.pickup();
-      fail("Pickuk should fail because all item are progressing.");
+      fail("Pickup should fail because all item are progressing.");
     } catch (Exception e) {
       assertEquals("No more awaiting items.", e.getMessage());
       assertCollectionSizes(itemManager, 0, 3, 0);
