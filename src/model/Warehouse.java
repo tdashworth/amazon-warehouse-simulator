@@ -2,6 +2,7 @@ package model;
 
 import java.util.*;
 
+import model.Robot.RobotStatus;
 import simulation.Simulator;
 
 public class Warehouse {
@@ -76,22 +77,28 @@ public class Warehouse {
 	 */
 	public boolean assignJobToRobot(StorageShelf storageShelf, PackingStation packingStation)
 			throws Exception {
+		boolean atLeastOneRobotFullyCharged = false;
 		for (Entity entity : this.entities.values()) {
+			if (!(entity instanceof Robot))
+				continue;
+			
+			Robot robot = ((Robot) entity);
 			// If entity is a robot and the robot accepts the job, return true, otherwise
 			// keep going.
-			if (entity instanceof Robot && ((Robot) entity).acceptJob(storageShelf, packingStation, this))
+			if (robot.acceptJob(storageShelf, packingStation, this))
 				return true;
+			
+			// Check if Robot is fully charged and waiting.
+			boolean isRobotNotBusy = robot.getShelf() == null;
+			boolean isRobotFullyCharged = robot.getPowerUnits() == this.getMaxChargeCapacity();
+			if (isRobotNotBusy && isRobotFullyCharged)
+				atLeastOneRobotFullyCharged = true;				
 		}
-		
-		boolean areAllRobotsFullyCharged = true;
-		for(Entity entity : this.entities.values()) {
-			if (entity instanceof Robot && ((Robot) entity).getPowerUnits() != this.getMaxChargeCapacity()) {
-				areAllRobotsFullyCharged = false;
-			}
-		}
-		if(areAllRobotsFullyCharged) {
+
+		if(atLeastOneRobotFullyCharged) {
 			throw new Exception("Job not accepted despite all robots fully charged.");
 		}
+		
 		// No robot accepted the job.
 		return false;
 	}

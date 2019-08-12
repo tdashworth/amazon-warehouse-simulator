@@ -42,7 +42,7 @@ public class WarehouseController {
 	private ListView<Order> unassignedOrders, assignedOrders, dispatchedOrders;
 
 	public WarehouseController() {
-		timeline = new Timeline(new KeyFrame(Duration.seconds(0.01), actionEvent -> runASingleTick()));
+		timeline = new Timeline(new KeyFrame(Duration.seconds(0.25), actionEvent -> runASingleTick()));
 		timeline.setOnFinished(actionEvent -> this.setButtonsDisablement(false));
 	}
 

@@ -2,6 +2,7 @@ package Test;
 
 import static org.junit.Assert.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -197,6 +198,10 @@ public class SimulatorTest {
 		// Should set up a sim where the robot will never have enough battery and ensure
 		// failure is notified and exits.
 
+		// Set up the basic simulator variables
+		int chargeSpeed = 1;
+		int capacity = 2;
+
 		// Create the simulator basics (a place to store the floor, entities and orders)
 		Floor floor = new Floor(3, 3);
 		HashMap<String, Entity> entities = new HashMap<String, Entity>();
@@ -208,22 +213,17 @@ public class SimulatorTest {
 		PackingStation ps = new PackingStation("ps0", new Location(0, 2));
 		entities.put(ps.getUID(), ps);
 		
-		ArrayList<String> sids = new ArrayList<String>();
-		sids.add("ss0");
-		orders.add(new Order(sids, 10));
-
-		// Set up the basic simulator variables
-		int chargeSpeed = 1;
-		int capacity = 1;
+		Robot r = new Robot("r2", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), capacity);
+		entities.put(r.getUID(), r);
+		
+		orders.add(new Order(Arrays.asList("ss0"), 10));
 
 		Simulator s = null;
 		try {
 			s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
 		} catch (LocationNotValidException e) {
-			e.printStackTrace();
+			fail(e.getMessage());
 		}
-		
-		Robot r = new Robot("r2", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), 1);
 
 		try {
 			s.run();	

@@ -133,15 +133,15 @@ public class WarehouseTest {
 		int chargeSpeed = 1;
 		int capacity = 25;
 
+		Robot r = new Robot("r2", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), 25);
+		entities.put("r2", r);
 		Simulator s = null;
 		try {
 			s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
 		} catch (LocationNotValidException e) {
 			e.printStackTrace();
 		}
-
-		Robot r = new Robot("r2", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), 25);
-
+		
 		try {
 			s.run();	
 		} catch (Exception e) {
