@@ -9,10 +9,15 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
+import model.ChargingPod;
 import model.Entity;
 import model.Floor;
+import model.Location;
 import model.LocationNotValidException;
 import model.Order;
+import model.PackingStation;
+import model.Robot;
+import model.StorageShelf;
 import model.Warehouse;
 import simulation.Simulator;
 
@@ -108,7 +113,41 @@ public class WarehouseTest {
 
 	@Test
 	public void assignJobToRobotTest() {
-		fail("Not yet implemented");
+
+		// Create the simulator basics (a place to store the floor, entities and orders)
+		Floor floor = new Floor(3, 3);
+		HashMap<String, Entity> entities = new HashMap<String, Entity>();
+		Deque<Order> orders = new LinkedList<Order>();
+
+		StorageShelf ss = new StorageShelf("ss0", new Location(2, 2));
+		entities.put(ss.getUID(), ss);
+
+		PackingStation ps = new PackingStation("ps0", new Location(0, 2));
+		entities.put(ps.getUID(), ps);
+
+		ArrayList<String> sids = new ArrayList<String>();
+		sids.add("ss0");
+		orders.add(new Order(sids, 10));
+
+		// Set up the basic simulator variables
+		int chargeSpeed = 1;
+		int capacity = 25;
+
+		Simulator s = null;
+		try {
+			s = new Simulator(floor, capacity, chargeSpeed, entities, orders);
+		} catch (LocationNotValidException e) {
+			e.printStackTrace();
+		}
+
+		Robot r = new Robot("r2", new Location(0, 0), new ChargingPod("c0", new Location(0, 0)), 25);
+
+		try {
+			s.run();	
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		assertEquals(true, s.isComplete());
 	}
 
 	@Test

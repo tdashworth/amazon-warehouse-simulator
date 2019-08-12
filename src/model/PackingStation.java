@@ -60,9 +60,9 @@ public class PackingStation extends Entity implements Actor {
 	 * Pick an unassigned order from the warehouse
 	 * 
 	 * @param warehouse
-	 * @throws LocationNotValidException
+	 * @throws Exception 
 	 */
-	public void pickOrder(Warehouse warehouse) throws LocationNotValidException {
+	public void pickOrder(Warehouse warehouse) throws Exception {
 		this.log("Picking new order.");
 		this.currentOrder = warehouse.getUnassignedOrder();
 
@@ -87,7 +87,7 @@ public class PackingStation extends Entity implements Actor {
 	 * @param Thw warehouse reference.
 	 * @throws LocationNotValidException
 	 */
-	public void requestItems(Warehouse warehouse) throws LocationNotValidException {
+	public void requestItems(Warehouse warehouse) throws Exception {
 		this.log("Requesting items: " + this.unrequestedStorageShelves);
 		ArrayList<String> uuidsToRemove = new ArrayList<String>();
 
