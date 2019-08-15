@@ -6,7 +6,6 @@
   - AStarPathFinder
   - Robot
   - PackingStation
-  - ChargingPod/StorageShelf?
   - Warehouse
   - Simulation?
   - SimFileReader_V1

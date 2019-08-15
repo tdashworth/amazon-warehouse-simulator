@@ -20,6 +20,12 @@ public abstract class AbstractEntity {
 	 * @param location
 	 */
 	public AbstractEntity(String uid, Location location, Node sprite) {
+		if (uid == null)
+			throw new IllegalArgumentException("'uid' is a required, non-null parameter.");
+
+		if (location == null)
+			throw new IllegalArgumentException("'location' is a required, non-null parameter.");
+
 		this.uid = uid;
 		this.location = location;
 		this.sprite = sprite;
