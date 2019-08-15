@@ -1,9 +1,10 @@
 package main.model;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
- * TODO JavaDoc description.
+ * A representation of an Order to pack containing a list of StorageShelves to visit.
  */
 public class Order {
 	private final List<String> storageShelfUIDs;
@@ -15,6 +16,12 @@ public class Order {
 	 * @param numberOfTicksToPack
 	 */
 	public Order(List<String> storageShelfUIDs, int numberOfTicksToPack) {
+		if (storageShelfUIDs == null || storageShelfUIDs.isEmpty())
+			throw new IllegalArgumentException("'storageShelfUIDs' is a required, non-null parameter with atleast one element.");
+
+		if (numberOfTicksToPack < 0)
+			throw new IllegalArgumentException("'numberOfTicksToPack' must be a positive integer.");
+
 		this.storageShelfUIDs = storageShelfUIDs;
 		this.numberOfTicksToPack = numberOfTicksToPack;
 	}
@@ -23,7 +30,7 @@ public class Order {
 	 * @return The storage shelf UIDs required in the order.
 	 */
 	public List<String> getStorageShelfUIDs() {
-		return storageShelfUIDs;
+		return Collections.unmodifiableList(this.storageShelfUIDs);
 	}
 
 	/**
@@ -46,7 +53,10 @@ public class Order {
 	 * @param The total number of ticks to pack from assigned.
 	 */
 	public void setTotalNumberOfTicksToPack(int totalNumberOfTicksToPack) {
-		this.totalNumberOfTicksToPack = totalNumberOfTicksToPack;
+		if (totalNumberOfTicksToPack < 0)
+			throw new IllegalArgumentException("'totalNumberOfTicksToPack' must be a positive integer.");
+		
+			this.totalNumberOfTicksToPack = totalNumberOfTicksToPack;
 	}
 
 	/**

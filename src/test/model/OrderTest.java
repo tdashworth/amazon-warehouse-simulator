@@ -2,60 +2,66 @@ package test.model;
 
 import static org.junit.Assert.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
-
 import main.model.Order;
 
 public class OrderTest {
 
 	@Test
-	public void orderCreationTest() {
-		//Set up and create a simple order to perform tests on
-		List<String> SSUids = new ArrayList<String>();
-		SSUids.add("1");
-		SSUids.add("2");
-		SSUids.add("3");
-		SSUids.add("4");
-		int i = 10;
-		Order o = new Order(SSUids, i);
-	
-		//Ensure that the order was created successfully
-		assertEquals(10, o.getNumberOfTicksToPack());
-		assertEquals(SSUids, o.getStorageShelfUIDs());
-		assertEquals("Order("+o.hashCode()+"): Storage Shelfs: [1, 2, 3, 4], Ticks to pack: 10", o.toString());
+	public void constructorTest() {
+		// Working constructor.
+		List<String> storageShelves = Arrays.asList("ss1", "ss2", "ss3");
+		Order order = new Order(storageShelves, 5);
+
+		assertTrue(order.getStorageShelfUIDs().containsAll(storageShelves));
+		assertEquals(5, order.getNumberOfTicksToPack());
+
+		// Fails if storageShelves parameter is null
+		try {
+			order = new Order(null, 5);
+			fail("A null parameter should fail.");
+		} catch (Exception e) {
+			assertEquals("'storageShelfUIDs' is a required, non-null parameter with atleast one element.",
+					e.getMessage());
+		}
+
+		// Fails if storageShelves is empty.
+		try {
+			order = new Order(new ArrayList<>(), 5);
+			fail("An empty array should fail.");
+		} catch (Exception e) {
+			assertEquals("'storageShelfUIDs' is a required, non-null parameter with atleast one element.",
+					e.getMessage());
+		}
+
+		// Fails if numberOfTicksToPack is negative.
+		try {
+			order = new Order(storageShelves, -5);
+			fail("A negative parameter should fail.");
+		} catch (Exception e) {
+			assertEquals("'numberOfTicksToPack' must be a positive integer.", e.getMessage());
+		}
 	}
-	
+
 	@Test
-	public void orderSetTicksToPackTest() {
-		//Set up and create a simple order to perform tests on
-		List<String> SSUids = new ArrayList<String>();
-		SSUids.add("1");
-		SSUids.add("2");
-		SSUids.add("3");
-		SSUids.add("4");
-		int i = 10;
-		Order o = new Order(SSUids, i);
-	
-		//Ensure that the order was created successfully
-		assertEquals(10, o.getNumberOfTicksToPack());
-		assertEquals(SSUids, o.getStorageShelfUIDs());
-		assertEquals(0, o.getTotalNumberOfTicksToPack());
-		assertEquals("Order("+o.hashCode()+"): Storage Shelfs: [1, 2, 3, 4], Ticks to pack: 10", o.toString());
-		
-		//Update the number of ticks to pack and ensure everything is still correct
-		o.setTotalNumberOfTicksToPack(5);
-		assertEquals(10, o.getNumberOfTicksToPack());
-		assertEquals(SSUids, o.getStorageShelfUIDs());
-		assertEquals(5, o.getTotalNumberOfTicksToPack());
-		assertEquals("Order("+o.hashCode()+"): Storage Shelfs: [1, 2, 3, 4], Ticks to pack: 10, Total ticks to pack: 5", o.toString());
-		
-		//Update the number of ticks to pack again and ensure everything is still correct
-		o.setTotalNumberOfTicksToPack(7);
-		assertEquals(10, o.getNumberOfTicksToPack());
-		assertEquals(SSUids, o.getStorageShelfUIDs());
-		assertEquals(7, o.getTotalNumberOfTicksToPack());
-		assertEquals("Order("+o.hashCode()+"): Storage Shelfs: [1, 2, 3, 4], Ticks to pack: 10, Total ticks to pack: 7", o.toString());
+	public void setTotalNumberOfTicksToPackTest() {
+		Order order = new Order(Arrays.asList("ss1", "ss2", "ss3"), 5);
+
+		// Positive Case
+		order.setTotalNumberOfTicksToPack(15);
+
+		assertEquals(15, order.getTotalNumberOfTicksToPack());
+		assertEquals(5, order.getNumberOfTicksToPack());
+
+		// Negative Case
+		try {
+			order.setTotalNumberOfTicksToPack(-15);
+			fail("A negative parameter should fail.");
+		} catch (Exception e) {
+			assertEquals("'totalNumberOfTicksToPack' must be a positive integer.", e.getMessage());
+		}
 	}
 
 }

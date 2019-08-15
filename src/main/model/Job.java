@@ -65,7 +65,8 @@ public class Job {
   @Override
   public String toString() {
     String result = "Job(" + this.hashCode() + "): ";
-    result += "Storage Shelf: " + this.storageShelf.getUID();
+    result += "Status: " + this.status;
+    result += ", " + "Storage Shelf: " + this.storageShelf.getUID();
     result += ", " + "Packing Station: " + this.packingStation.getUID();
     return result;
   }

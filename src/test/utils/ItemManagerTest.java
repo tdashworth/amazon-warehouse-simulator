@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.junit.Test;
-
 import main.utils.ItemManager;
 
 public class ItemManagerTest {
@@ -21,7 +20,7 @@ public class ItemManagerTest {
 
     // Preloaded with items Collection.
     Collection<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
-    itemManager = new ItemManager<String>(items);
+    itemManager = new ItemManager<>(items);
     assertCollectionSizes(itemManager, 3, 0, 0);
 
     // Preset with default capacity.
@@ -30,20 +29,17 @@ public class ItemManagerTest {
   }
 
   @Test
-  public void addTest() {
+  public void addTest() throws Exception {
     ItemManager<String> itemManager = new ItemManager<>();
 
     // Positive Cases
-    try {
-      itemManager.add("Item 1");
-      assertCollectionSizes(itemManager, 1, 0, 0);
-      itemManager.add("Item 2");
-      assertCollectionSizes(itemManager, 2, 0, 0);
-      itemManager.add("Item 3");
-      assertCollectionSizes(itemManager, 3, 0, 0);
-    } catch (Exception e) {
-      fail(e.toString());
-    }
+    itemManager.add("Item 1");
+    assertCollectionSizes(itemManager, 1, 0, 0);
+    itemManager.add("Item 2");
+    assertCollectionSizes(itemManager, 2, 0, 0);
+    itemManager.add("Item 3");
+    assertCollectionSizes(itemManager, 3, 0, 0);
+
 
     // Negative Case
     try {
@@ -56,17 +52,13 @@ public class ItemManagerTest {
   }
 
   @Test
-  public void viewNextPickupTest() {
+  public void viewNextPickupTest() throws Exception {
     List<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
     ItemManager<String> itemManager = new ItemManager<>(items);
 
     // Positive case
-    try {
-      assertEquals(items.get(0), itemManager.viewNextPickup());
-      assertCollectionSizes(itemManager, 3, 0, 0);
-    } catch (Exception e) {
-      fail(e.toString());
-    }
+    assertEquals(items.get(0), itemManager.viewNextPickup());
+    assertCollectionSizes(itemManager, 3, 0, 0);
 
     ItemManager<String> emptyItemManager = new ItemManager<>();
     // Negative case
@@ -80,23 +72,19 @@ public class ItemManagerTest {
   }
 
   @Test
-  public void pickupTest() {
+  public void pickupTest() throws Exception {
     List<String> items = Arrays.asList("Item 1", "Item 2", "Item 3");
     ItemManager<String> itemManager = new ItemManager<>(items);
 
     // Positive case
-    try {
-      assertEquals(items.get(0), itemManager.pickup());
-      assertCollectionSizes(itemManager, 2, 1, 0);
+    assertEquals(items.get(0), itemManager.pickup());
+    assertCollectionSizes(itemManager, 2, 1, 0);
 
-      assertEquals(items.get(1), itemManager.pickup());
-      assertCollectionSizes(itemManager, 1, 2, 0);
+    assertEquals(items.get(1), itemManager.pickup());
+    assertCollectionSizes(itemManager, 1, 2, 0);
 
-      assertEquals(items.get(2), itemManager.pickup());
-      assertCollectionSizes(itemManager, 0, 3, 0);
-    } catch (Exception e) {
-      fail(e.toString());
-    }
+    assertEquals(items.get(2), itemManager.pickup());
+    assertCollectionSizes(itemManager, 0, 3, 0);
 
     // Negative case
     try {
@@ -116,15 +104,11 @@ public class ItemManagerTest {
     String item2 = itemManager.pickup();
 
     // Positive case
-    try {
-      itemManager.complete(item1);
-      assertCollectionSizes(itemManager, 1, 1, 1);
+    itemManager.complete(item1);
+    assertCollectionSizes(itemManager, 1, 1, 1);
 
-      itemManager.complete(item2);
-      assertCollectionSizes(itemManager, 1, 0, 2);
-    } catch (Exception e) {
-      fail(e.toString());
-    }
+    itemManager.complete(item2);
+    assertCollectionSizes(itemManager, 1, 0, 2);
 
     // Negative case
     try {
