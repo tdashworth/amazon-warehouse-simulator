@@ -7,8 +7,6 @@
 
 ## Tests and JavaDoc
 - Robot
-- ChargingPod
-- StorageShelf
 - Warehouse
 - Simulation
 - AStarPathFinder

@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
- * TODO JavaDoc description.
+ * A class to represent a storage shelf.
  */
 public class StorageShelf extends AbstractEntity {
 
