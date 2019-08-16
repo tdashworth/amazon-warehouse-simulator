@@ -15,6 +15,10 @@ public class PackingStation extends AbstractActor {
 	protected int remainingPackingTicks;
 	protected List<StorageShelf> storageShelvesVisited;
 
+	public enum PackingStationStatus {
+		Picking, Awaiting, Packing, Dispatching
+	}
+
 	/**
 	 * A simple representation of a packing station within the warehouse.
 	 * 
@@ -27,27 +31,32 @@ public class PackingStation extends AbstractActor {
 
 	@Override
 	public void tick(Warehouse warehouse) throws Exception {
-		this.log("Ticking.");
+		PackingStationStatus status = this.getStatus();
+		this.log(String.format("Ticking with status: %s.", status));
 
-		if (this.currentOrder == null)
-			this.pickOrder(warehouse);
+		switch (status) {
+			case Picking:
+				this.pickOrder(warehouse);
+				break;
 
-		else if (this.currentOrder.getStorageShelfUIDs().size() == this.storageShelvesVisited.size()
-				&& this.remainingPackingTicks != 0)
-			this.packOrder();
+			case Packing:
+				this.packOrder();
+				break;
 
-		else if (this.currentOrder.getStorageShelfUIDs().size() == this.storageShelvesVisited.size()
-				&& this.remainingPackingTicks == 0)
-			this.dispatchOrder(warehouse);
+			case Dispatching:
+				this.dispatchOrder(warehouse);
+				break;
 
-		else
-			; // wait...
+			case Awaiting:
+				break;
+
+		}
 	}
 
 	/**
 	 * Pick an unassigned order from the warehouse.
 	 * 
-	 * @param warehouse
+	 * @param warehouse The reference to the warehouse.
 	 * @throws LocationNotValidException
 	 */
 	private void pickOrder(Warehouse warehouse) throws Exception {
@@ -67,13 +76,14 @@ public class PackingStation extends AbstractActor {
 	}
 
 	/**
-	 * Creates a Job for each Storage Shelf and adds to Warehouse Job Manager.   
+	 * Creates a Job for each Storage Shelf and adds to Warehouse Job Manager.
 	 * 
-	 * @param The storage shelf UID.
-	 * @param Thw warehouse reference.
+	 * @param warehouse               The reference to the warehouse.
+	 * @param storageShelvesToRequest A list of Storage Shelves to request.
 	 * @throws LocationNotValidException
 	 */
-	private void requestJobs(Warehouse warehouse, List<String> storageShelvesToRequest) throws Exception {
+	private void requestJobs(Warehouse warehouse, List<String> storageShelvesToRequest)
+			throws Exception {
 		this.log("Requesting Jobs: " + storageShelvesToRequest);
 
 		for (String storageShelfUID : storageShelvesToRequest) {
@@ -85,14 +95,14 @@ public class PackingStation extends AbstractActor {
 	/**
 	 * Pack an order, decrements the number of packing ticks remaining.
 	 */
-	public void packOrder() {
+	private void packOrder() {
 		this.remainingPackingTicks--;
 	}
 
 	/**
 	 * Dispatch an order from the warehouse when it has been packed.
 	 * 
-	 * @param warehouse
+	 * @param warehouse The reference to the warehouse.
 	 * @throws Exception
 	 */
 	private void dispatchOrder(Warehouse warehouse) throws Exception {
@@ -106,15 +116,38 @@ public class PackingStation extends AbstractActor {
 	/**
 	 * Take note that a robot has returned from a storage shelf.
 	 * 
-	 * @param The storage shelf reference.
+	 * @param storageShelf The storage shelf reference.
 	 * @throws Exception
 	 */
-	public void recieveItem(StorageShelf storageShelf) throws Exception {
+	public void recieveItem(StorageShelf storageShelf) throws IllegalArgumentException {
+		if (storageShelf == null)
+			throw new IllegalArgumentException("'storageShelf' is a required, non-null parameter.");
+
 		if (!this.currentOrder.getStorageShelfUIDs().contains(storageShelf.getUID()))
-			throw new Exception("Storage Shelf not required by current order.");
+			throw new IllegalArgumentException(
+					"Storage Shelf '" + storageShelf.getUID() + "' is not required by current order.");
 
 		this.log("Item recieved from %s", storageShelf.getUID());
 		this.storageShelvesVisited.add(storageShelf);
+	}
+
+	/**
+	 * @return the status of the packing station based of the current state.
+	 */
+	public PackingStationStatus getStatus() {
+		if (this.currentOrder == null)
+			return PackingStationStatus.Picking;
+
+		boolean allItemsRecieved =
+				this.currentOrder.getStorageShelfUIDs().size() == this.storageShelvesVisited.size();
+
+		if (allItemsRecieved && this.remainingPackingTicks != 0)
+			return PackingStationStatus.Packing;
+
+		if (allItemsRecieved && this.remainingPackingTicks == 0)
+			return PackingStationStatus.Dispatching;
+
+		return PackingStationStatus.Awaiting;
 	}
 
 	/**
@@ -124,15 +157,6 @@ public class PackingStation extends AbstractActor {
 	 */
 	public List<StorageShelf> getStorageShelvesVisited() {
 		return storageShelvesVisited;
-	}
-
-	/**
-	 * Returns the current order of the packing station.
-	 * 
-	 * @return the current order.
-	 */
-	public Order getCurrentOrder() {
-		return currentOrder;
 	}
 
 	/**

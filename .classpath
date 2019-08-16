@@ -11,6 +11,7 @@
 	<classpathentry kind="lib" path="C:/Program Files/Java/javafx-sdk-11.0.2/lib/javafx.graphics.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/javafx-sdk-11.0.2/lib/javafx.controls.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Java/javafx-sdk-11.0.2/lib/javafx.fxml.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/mockito-all-1.10.19.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

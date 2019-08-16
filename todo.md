@@ -1,17 +1,21 @@
 # To Do
 
+## Misc
 - Refactor UI out of model
-
-- Tests and JavaDoc
-  - AStarPathFinder
-  - Robot
-  - PackingStation
-  - Warehouse
-  - Simulation?
-  - SimFileReader_V1
-
 - Exceptions
+- Convert in Maven/Grade project for VS Code
 
-- Master Merge
-  - Test for when Sim can't complete
-  - Simulation Report
+## Tests and JavaDoc
+- Robot
+- ChargingPod
+- StorageShelf
+- Warehouse
+- Simulation
+- AStarPathFinder
+- SimFileReader_V1
+
+- Break up test to be more incrementatal.
+
+## Master Merge
+- Test for when Sim can't complete
+- Simulation Report
