@@ -18,7 +18,7 @@ public abstract class AbstractMover extends AbstractActor {
 	public abstract void tick(Warehouse warehouse) throws Exception;
 
 	/**
-	 * Moves to another locationon the floor.
+	 * Moves to another location on the floor.
 	 * 
 	 * @throws Exception
 	 */

@@ -8,16 +8,16 @@ import main.utils.ItemManager;
 import main.utils.IPathCostEstimator;
 
 public class Robot extends AbstractMover {
-	private int powerUnits;
-	private Job currentJob;
-	private ChargingPod chargingPod;
+	protected int powerUnits;
+	protected Job currentJob;
+	protected ChargingPod chargingPod;
 
 	private final int powerUnitsCapacity;
 	private final int powerUnitsChargeSpeed;
 	private final static int POWER_UNITS_EMPTY = 1;
 	private final static int POWER_UNITS_CARRYING = 2;
 
-	private static enum RobotStatus {
+	public static enum RobotStatus {
 		AwaitingJob, Charging, CollectingItem, DeliveringItem
 	}
 
@@ -28,6 +28,16 @@ public class Robot extends AbstractMover {
 	public Robot(String uid, Location location, ChargingPod chargingPod, int powerUnitsCapacity,
 			int powerUnitsChargeSpeed) {
 		super(uid, location, new Circle(15, Color.RED));
+
+		if (chargingPod == null)
+			throw new IllegalArgumentException("'chargingPod' is a required, non-null parameter.");
+
+		if (powerUnitsCapacity < 0)
+			throw new IllegalArgumentException("'powerUnitsCapacity' must be a positive integer.");
+
+		if (powerUnitsChargeSpeed < 0)
+			throw new IllegalArgumentException("'powerUnitsChargeSpeed' must be a positive integer.");
+
 		this.chargingPod = chargingPod;
 		this.powerUnits = powerUnitsCapacity;
 		this.powerUnitsCapacity = powerUnitsCapacity;
@@ -50,7 +60,7 @@ public class Robot extends AbstractMover {
 				break;
 
 			case AwaitingJob:
-				this.awaitingJob(warehouse);
+				this.awaitForJob(warehouse);
 				break;
 
 			case Charging:
@@ -70,10 +80,10 @@ public class Robot extends AbstractMover {
 	}
 
 	private void deliverItemToPackingStation(Warehouse warehouse) throws Exception {
-		this.move(warehouse.getFloor(), this.currentJob.getPackingShelf().getLocation());
+		this.move(warehouse.getFloor(), this.currentJob.getPackingStation().getLocation());
 		this.log("Moved closer to assigned Packing Station.");
 
-		if (this.location.equals(this.currentJob.getPackingShelf().getLocation())) {
+		if (this.location.equals(this.currentJob.getPackingStation().getLocation())) {
 			this.currentJob.delivered();
 			warehouse.getJobManager().complete(currentJob);
 			this.currentJob = null;
@@ -81,7 +91,7 @@ public class Robot extends AbstractMover {
 		}
 	}
 
-	private void awaitingJob(Warehouse warehouse) throws Exception {
+	private void awaitForJob(Warehouse warehouse) throws Exception {
 		// If at Charging Pod, charge, otherwise move towards it.
 		if (this.location.equals(this.chargingPod.getLocation()))
 			this.charge();
@@ -95,7 +105,7 @@ public class Robot extends AbstractMover {
 	/**
 	 * Increases the robots power units
 	 */
-	public void charge() {
+	private void charge() {
 		if (this.powerUnits + powerUnitsChargeSpeed >= powerUnitsCapacity) {
 			this.powerUnits = powerUnitsCapacity;
 			this.log("Fully charged to %s", this.powerUnits);
@@ -105,6 +115,7 @@ public class Robot extends AbstractMover {
 		}
 	}
 
+	@Override
 	protected void move(Floor floor, Location targetLocation) throws Exception {
 		super.move(floor, targetLocation);
 
@@ -115,7 +126,6 @@ public class Robot extends AbstractMover {
 	}
 
 	/**
-	 * 
 	 * @param jobManager
 	 * @param floor
 	 * @throws Exception
@@ -126,8 +136,7 @@ public class Robot extends AbstractMover {
 
 		// Check out next Job and validate estimated cost.
 		Job tempJob = jobManager.viewNextPickup();
-		double estimatedCostWithLeeway =
-				estimatePowerUnitCostForJob(tempJob.getStorageShelf(), tempJob.getPackingShelf(), floor);
+		double estimatedCostWithLeeway = estimatePowerUnitCostForJob(tempJob, floor);
 		if (estimatedCostWithLeeway > this.powerUnits)
 			return;
 
@@ -136,7 +145,7 @@ public class Robot extends AbstractMover {
 		this.pathFinder = null;
 
 		this.log("Job to %s then %s picked up.", this.currentJob.getStorageShelf().getLocation(),
-				this.currentJob.getPackingShelf().getLocation());
+				this.currentJob.getPackingStation().getLocation());
 	}
 
 	/**
@@ -149,8 +158,7 @@ public class Robot extends AbstractMover {
 	 * @return
 	 * @throws LocationNotValidException
 	 */
-	private double estimatePowerUnitCostForJob(StorageShelf storageShelf,
-			PackingStation packingStation, Floor floor) throws Exception {
+	private double estimatePowerUnitCostForJob(Job job, Floor floor) throws Exception {
 
 		// Setup Cost Estimator
 		IPathCostEstimator costEstimator = new BasicPathCostEstimator(this.location);
@@ -158,8 +166,8 @@ public class Robot extends AbstractMover {
 		costEstimator.addCost("unlaidened", Double.valueOf(POWER_UNITS_EMPTY));
 
 		// Add path Locations
-		costEstimator.addLocation(storageShelf.getLocation(), "unlaidened");
-		costEstimator.addLocation(packingStation.getLocation(), "laidened");
+		costEstimator.addLocation(job.getStorageShelf().getLocation(), "unlaidened");
+		costEstimator.addLocation(job.getPackingStation().getLocation(), "laidened");
 		costEstimator.addLocation(this.chargingPod.getLocation(), "unlaidened");
 
 		// Add leeway to estimated cost and return.
@@ -174,15 +182,16 @@ public class Robot extends AbstractMover {
 		boolean isAtChargingPod = this.location.equals(this.chargingPod.getLocation());
 		boolean isBatteryBelowHalfCharge = this.powerUnits < (powerUnitsCapacity * 0.5);
 
-		if (isBatteryBelowHalfCharge && isAtChargingPod) {// Running low of powerUnits
+		if (isBatteryBelowHalfCharge && isAtChargingPod)
 			return RobotStatus.Charging;
-		} else if (this.currentJob != null && this.currentJob.getStatus() == JobStatus.Collecting) {
+
+		if (this.currentJob != null && this.currentJob.getStatus() == JobStatus.Collecting)
 			return RobotStatus.CollectingItem;
-		} else if (this.currentJob != null && this.currentJob.getStatus() == JobStatus.Delivering) {
+
+		if (this.currentJob != null && this.currentJob.getStatus() == JobStatus.Delivering)
 			return RobotStatus.DeliveringItem;
-		} else {
-			return RobotStatus.AwaitingJob;
-		}
+
+		return RobotStatus.AwaitingJob;
 	}
 
 	/**

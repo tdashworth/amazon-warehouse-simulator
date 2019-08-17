@@ -22,7 +22,7 @@ public class JobTest {
 
     assertEquals(JobStatus.Collecting, job.getStatus());
     assertEquals(storageShelf, job.getStorageShelf());
-    assertEquals(packingStation, job.getPackingShelf());
+    assertEquals(packingStation, job.getPackingStation());
   }
 
   @Test
@@ -35,7 +35,7 @@ public class JobTest {
 
     assertEquals(JobStatus.Delivering, job.getStatus());
     assertEquals(storageShelf, job.getStorageShelf());
-    assertEquals(packingStation, job.getPackingShelf());
+    assertEquals(packingStation, job.getPackingStation());
   }
 
   @Test
@@ -56,6 +56,6 @@ public class JobTest {
 
     assertEquals(JobStatus.Delivered, job.getStatus());
     assertEquals(storageShelf, job.getStorageShelf());
-    assertEquals(packingStation, job.getPackingShelf());
+    assertEquals(packingStation, job.getPackingStation());
   }
 }

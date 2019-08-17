@@ -58,7 +58,7 @@ public class Job {
   /**
    * @return the Packing Station for this Job.
    */
-  public PackingStation getPackingShelf() {
+  public PackingStation getPackingStation() {
     return this.packingStation;
   }
 

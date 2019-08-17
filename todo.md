@@ -6,11 +6,13 @@
 - Convert in Maven/Grade project for VS Code
 
 ## Tests and JavaDoc
-- Robot
 - Warehouse
 - Simulation
 - AStarPathFinder
 - SimFileReader_V1
+
+- Rename to Test[s]
+- Break up to smaller units
 
 - Break up test to be more incrementatal.
 
