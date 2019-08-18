@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import main.model.*;
 
 public class Simulator {
 	private int totalTickCount;
-	private List<AbstractActor> actors;
-	private Warehouse warehouse;
+	private final List<AbstractActor> actors;
+	private final Warehouse warehouse;
 
 	/**
 	 * Main method, creates a simulator and starts the simulation run method.
@@ -75,15 +74,12 @@ public class Simulator {
 		this.totalTickCount = 0;
 		this.warehouse = new Warehouse(floor, entities, orders);
 
-		if (entities != null) {
-			this.actors =
-					entities.values().stream().sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
-							.filter(entity -> entity instanceof AbstractActor).map(entity -> (AbstractActor) entity)
-							.collect(Collectors.toList());
-			for (AbstractEntity entity : entities.values()) {
-				if (entity instanceof AbstractMover) {
-					floor.loadMover((AbstractMover) entity);
-				}
+		this.actors = entities.values().stream().sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
+				.filter(entity -> entity instanceof AbstractActor).map(entity -> (AbstractActor) entity)
+				.collect(Collectors.toList());
+		for (AbstractEntity entity : entities.values()) {
+			if (entity instanceof AbstractMover) {
+				floor.loadMover((AbstractMover) entity);
 			}
 		}
 	}
@@ -126,7 +122,7 @@ public class Simulator {
 	/**
 	 * @return the totalTickCounts
 	 */
-	public int getTotalTickCount() {
+	public final int getTotalTickCount() {
 		return totalTickCount;
 	}
 
@@ -135,7 +131,7 @@ public class Simulator {
 				.collect(Collectors.toList());
 	}
 
-	public Warehouse getWarehouse() {
+	public final Warehouse getWarehouse() {
 		return warehouse;
 	}
 

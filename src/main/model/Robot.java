@@ -46,9 +46,10 @@ public class Robot extends AbstractMover {
 
 	@Override
 	public void tick(Warehouse warehouse, int currentTickCount) throws Exception {
+		super.tick(warehouse, currentTickCount);
+		
 		RobotStatus status = this.getStatus();
 		this.log("Ticking with status: %s.", status);
-		this.previousLocation = this.location;
 
 		switch (status) {
 			case CollectingItem:

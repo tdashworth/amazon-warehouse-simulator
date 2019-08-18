@@ -7,7 +7,7 @@ import javafx.scene.Node;
  */
 public abstract class AbstractEntity {
 	// Stores the UID in the string format (S)SNN.
-	protected String uid;
+	protected final String uid;
 	// Stores the current location of the entity on the warehouse floor.
 	protected Location location;
 	// The UI element.
@@ -34,15 +34,21 @@ public abstract class AbstractEntity {
 	/**
 	 * @return The UID.
 	 */
-	public String getUID() {
+	public final String getUID() {
 		return this.uid;
 	}
 
 	/**
 	 * @return The location.
 	 */
-	public Location getLocation() {
+	public final Location getLocation() {
 		return this.location;
+	}
+
+	public final Node getSprite() {
+		if (this.sprite == null)
+			throw new IllegalStateException("'sprite' has not been defined.");
+		return sprite;
 	}
 
 	protected void log(String message) {
@@ -55,12 +61,6 @@ public abstract class AbstractEntity {
 		this.log(String.format(format, args));
 	}
 
-	public Node getSprite() {
-		if (this.sprite == null)
-			throw new IllegalStateException("'sprite' has not been defined.");
-		return sprite;
-	}
-
 	/**
 	 * @return A string representation of a charging pod.
 	 */
@@ -68,5 +68,4 @@ public abstract class AbstractEntity {
 		String className = this.getClass().getSimpleName();
 		return String.format("%s(%s) - %s", className, this.uid, this.location);
 	}
-
 }

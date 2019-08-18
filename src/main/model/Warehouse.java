@@ -36,35 +36,35 @@ public class Warehouse {
 	 * @param uid
 	 * @return The entity with the given UID.
 	 */
-	public AbstractEntity getEntityByUID(String uid) {
+	public final AbstractEntity getEntityByUID(String uid) {
 		return this.entities.get(uid);
 	}
 
 	/**
 	 * @return The warehouse floor.
 	 */
-	public Floor getFloor() {
+	public final Floor getFloor() {
 		return this.floor;
 	}
 
 	/**
 	 * @return The order manager.
 	 */
-	public ItemManager<Order> getOrderManager() {
+	public final ItemManager<Order> getOrderManager() {
 		return this.orderManager;
 	}
 
 	/**
 	 * @return The job manager.
 	 */
-	public ItemManager<Job> getJobManager() {
+	public final ItemManager<Job> getJobManager() {
 		return this.jobManager;
 	}
 
 	/**
 	 * @return an unmodifable collection of entities.
 	 */
-	public Collection<AbstractEntity> getEntities() {
+	public final Collection<AbstractEntity> getEntities() {
 		return Collections.unmodifiableCollection(this.entities.values());
 	}
 
