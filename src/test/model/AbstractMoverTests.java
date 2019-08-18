@@ -16,7 +16,7 @@ public class AbstractMoverTests {
       super(uid, location, sprite);
     }
 
-    public void tick(Warehouse warehouse) throws Exception {
+    public void tick(Warehouse warehouse, int currentTickCount) throws Exception {
       throw new Exception("Not implemented.");
     };
   }

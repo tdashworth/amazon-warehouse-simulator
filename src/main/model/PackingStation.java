@@ -30,13 +30,13 @@ public class PackingStation extends AbstractActor {
 	}
 
 	@Override
-	public void tick(Warehouse warehouse) throws Exception {
+	public void tick(Warehouse warehouse, int currentTickCount) throws Exception {
 		PackingStationStatus status = this.getStatus();
 		this.log(String.format("Ticking with status: %s.", status));
 
 		switch (status) {
 			case Picking:
-				this.pickOrder(warehouse);
+				this.pickOrder(warehouse, currentTickCount);
 				break;
 
 			case Packing:
@@ -44,7 +44,7 @@ public class PackingStation extends AbstractActor {
 				break;
 
 			case Dispatching:
-				this.dispatchOrder(warehouse);
+				this.dispatchOrder(warehouse, currentTickCount);
 				break;
 
 			case Awaiting:
@@ -59,7 +59,7 @@ public class PackingStation extends AbstractActor {
 	 * @param warehouse The reference to the warehouse.
 	 * @throws LocationNotValidException
 	 */
-	private void pickOrder(Warehouse warehouse) throws Exception {
+	private void pickOrder(Warehouse warehouse, int currentTickCount) throws Exception {
 		this.log("Picking new order.");
 
 		if (!warehouse.getOrderManager().areItemsToPickup()) {
@@ -68,7 +68,7 @@ public class PackingStation extends AbstractActor {
 		}
 
 		this.currentOrder = warehouse.getOrderManager().pickup();
-		this.tickCountWhenOrderAssigned = warehouse.getTotalTickCount();
+		this.tickCountWhenOrderAssigned = currentTickCount;
 		this.remainingPackingTicks = this.currentOrder.getNumberOfTicksToPack();
 		this.storageShelvesVisited = new ArrayList<StorageShelf>();
 		this.requestJobs(warehouse, this.currentOrder.getStorageShelfUIDs());
@@ -105,9 +105,9 @@ public class PackingStation extends AbstractActor {
 	 * @param warehouse The reference to the warehouse.
 	 * @throws Exception
 	 */
-	private void dispatchOrder(Warehouse warehouse) throws Exception {
+	private void dispatchOrder(Warehouse warehouse, int currentTickCount) throws Exception {
 		this.log("Dispatching order %s.", this.currentOrder.hashCode());
-		int totalNumberOfTicksToPack = warehouse.getTotalTickCount() - this.tickCountWhenOrderAssigned;
+		int totalNumberOfTicksToPack = currentTickCount - this.tickCountWhenOrderAssigned;
 		this.currentOrder.setTotalNumberOfTicksToPack(totalNumberOfTicksToPack);
 		warehouse.getOrderManager().complete(this.currentOrder);
 		this.currentOrder = null;

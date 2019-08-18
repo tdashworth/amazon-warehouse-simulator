@@ -3,14 +3,12 @@ package main.model;
 import java.util.*;
 
 import main.utils.ItemManager;
-import main.simulation.Simulator;
 
 public class Warehouse {
 	private final Floor floor;
 	private final ItemManager<Order> orderManager;
 	private final ItemManager<Job> jobManager;
 	private final Map<String, AbstractEntity> entities;
-	private final Simulator simulator;
 
 	/**
 	 * A representation of a warehouse
@@ -19,13 +17,11 @@ public class Warehouse {
 	 * @param entities
 	 * @param orders
 	 */
-	public Warehouse(Floor floor, Map<String, AbstractEntity> entities, Deque<Order> orders,
-			Simulator simulator) {
+	public Warehouse(Floor floor, Map<String, AbstractEntity> entities, Deque<Order> orders) {
 		this.floor = floor;
 		this.entities = entities;
 		this.orderManager = new ItemManager<Order>(orders);
 		this.jobManager = new ItemManager<Job>();
-		this.simulator = simulator;
 	}
 
 	/**
@@ -55,13 +51,6 @@ public class Warehouse {
 	 */
 	public ItemManager<Job> getJobManager() {
 		return this.jobManager;
-	}
-
-	/**
-	 * @return the totalTickCounts
-	 */
-	public int getTotalTickCount() {
-		return this.simulator.getTotalTickCount();
 	}
 
 	/**

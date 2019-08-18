@@ -9,10 +9,8 @@ import org.junit.Test;
 
 import main.model.AbstractEntity;
 import main.model.Floor;
-import main.model.LocationNotValidException;
 import main.model.Order;
 import main.model.Warehouse;
-import main.simulation.Simulator;
 
 public class WarehouseTests {
 
@@ -22,18 +20,10 @@ public class WarehouseTests {
 		Floor floor = new Floor(2, 2);
 		HashMap<String, AbstractEntity> entities = new HashMap<String, AbstractEntity>();
 		Deque<Order> orders = new LinkedList<Order>();
-
-		Simulator s = null;
-		try {
-			s = new Simulator(floor, entities, orders);
-		} catch (LocationNotValidException e) {
-			e.printStackTrace();
-		}
-		Warehouse w = new Warehouse(floor, entities, orders, s);
+		Warehouse w = new Warehouse(floor, entities, orders);
 
 		// Test to ensure that the warehouse was set up correctly
 		// assertEquals(null, w.getOrderManager().pickup());
-		assertEquals(0, w.getTotalTickCount());
 		assertEquals(true, w.getOrderManager().areAllItemsComplete());
 		assertEquals(2, w.getFloor().getNumberOfColumns());
 		assertEquals(2, w.getFloor().getNumberOfRows());
@@ -51,14 +41,7 @@ public class WarehouseTests {
 		shelf.add("ss1");
 		Order o = new Order(shelf, 2);
 		orders.add(o);
-
-		Simulator s = null;
-		try {
-			s = new Simulator(floor, entities, orders);
-		} catch (LocationNotValidException e) {
-			e.printStackTrace();
-		}
-		Warehouse w = new Warehouse(floor, entities, orders, s);
+		Warehouse w = new Warehouse(floor, entities, orders);
 
 		// warehouse with one order
 		assertEquals(o, w.getOrderManager().pickup());
@@ -77,14 +60,7 @@ public class WarehouseTests {
 		shelf.add("ss1");
 		Order o = new Order(shelf, 2);
 		orders.add(o);
-
-		Simulator s = null;
-		try {
-			s = new Simulator(floor, entities, orders);
-		} catch (LocationNotValidException e) {
-			e.printStackTrace();
-		}
-		Warehouse w = new Warehouse(floor, entities, orders, s);
+		Warehouse w = new Warehouse(floor, entities, orders);
 
 		// warehouse with one order
 		assertEquals(o, w.getOrderManager().pickup());
@@ -114,14 +90,7 @@ public class WarehouseTests {
 		shelf.add("ss1");
 		Order o = new Order(shelf, 2);
 		orders.add(o);
-
-		Simulator s = null;
-		try {
-			s = new Simulator(floor, entities, orders);
-		} catch (LocationNotValidException e) {
-			e.printStackTrace();
-		}
-		Warehouse w = new Warehouse(floor, entities, orders, s);
+		Warehouse w = new Warehouse(floor, entities, orders);
 
 		assertEquals(false, w.getOrderManager().areAllItemsComplete());
 

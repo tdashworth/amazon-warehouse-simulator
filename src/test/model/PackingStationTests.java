@@ -65,12 +65,11 @@ public class PackingStationTests {
 		Warehouse warehouse = mock(Warehouse.class);
 		when(warehouse.getOrderManager()).thenReturn(orderManager);
 		when(warehouse.getJobManager()).thenReturn(jobManager);
-		when(warehouse.getTotalTickCount()).thenReturn(1);
 		when(warehouse.getEntityByUID("ss1")).thenReturn(new StorageShelf("ss1", new Location(1, 0)));
 		when(warehouse.getEntityByUID("ss2")).thenReturn(new StorageShelf("ss2", new Location(0, 1)));
 		
 		PackingStation packingStation = new PackingStation("ps1", new Location(0, 0));
-		packingStation.tick(warehouse);
+		packingStation.tick(warehouse, 1);
 		
 		assertEquals(0, orderManager.getAwaiting().size());
 		assertEquals(1, orderManager.getProgressing().size());
@@ -86,12 +85,11 @@ public class PackingStationTests {
 		Warehouse warehouse = mock(Warehouse.class);
 		when(warehouse.getOrderManager()).thenReturn(orderManager);
 		when(warehouse.getJobManager()).thenReturn(jobManager);
-		when(warehouse.getTotalTickCount()).thenReturn(1);
 		when(warehouse.getEntityByUID("ss1")).thenReturn(new StorageShelf("ss1", new Location(1, 0)));
 		when(warehouse.getEntityByUID("ss2")).thenReturn(new StorageShelf("ss2", new Location(0, 1)));
 		
 		PackingStation packingStation = new PackingStation("ps1", new Location(0, 0));
-		packingStation.tick(warehouse);
+		packingStation.tick(warehouse, 1);
 
 		assertEquals(0, orderManager.getAwaiting().size());
 		assertEquals(0, orderManager.getProgressing().size());
@@ -113,11 +111,11 @@ public class PackingStationTests {
 			}
 		};
 		assertEquals(PackingStationStatus.Packing, packingStation.getStatus());
-		packingStation.tick(warehouse);
+		packingStation.tick(warehouse, 1);
 		assertEquals(PackingStationStatus.Packing, packingStation.getStatus());
-		packingStation.tick(warehouse);
+		packingStation.tick(warehouse, 1);
 		assertEquals(PackingStationStatus.Packing, packingStation.getStatus());
-		packingStation.tick(warehouse);
+		packingStation.tick(warehouse, 1);
 		assertEquals(PackingStationStatus.Dispatching, packingStation.getStatus());
 	}
 
@@ -140,7 +138,7 @@ public class PackingStationTests {
 		};
 
 		assertEquals(PackingStationStatus.Dispatching, packingStation.getStatus());
-		packingStation.tick(warehouse);
+		packingStation.tick(warehouse, 1);
 		assertEquals(PackingStationStatus.Picking, packingStation.getStatus());
 		assertEquals(0, orderManager.getProgressing().size());
 		assertEquals(1, orderManager.getCompleted().size());

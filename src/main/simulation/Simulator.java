@@ -73,7 +73,7 @@ public class Simulator {
 	public Simulator(Floor floor, HashMap<String, AbstractEntity> entities, Deque<Order> orders)
 			throws LocationNotValidException {
 		this.totalTickCount = 0;
-		this.warehouse = new Warehouse(floor, entities, orders, this);
+		this.warehouse = new Warehouse(floor, entities, orders);
 
 		if (entities != null) {
 			this.actors =
@@ -119,7 +119,7 @@ public class Simulator {
 		this.totalTickCount++;
 		System.out.println("Simulation: Tick Count now " + this.totalTickCount);
 		for (AbstractActor actor : actors) {
-			actor.tick(this.warehouse);
+			actor.tick(this.warehouse, this.totalTickCount);
 		}
 	}
 

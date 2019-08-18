@@ -18,5 +18,5 @@ public abstract class AbstractActor extends AbstractEntity {
 	 * @param warehouse
 	 * @throws Exception
 	 */
-	public abstract void tick(Warehouse warehouse) throws Exception;
+	public abstract void tick(Warehouse warehouse, int currentTickCount) throws Exception;
 }
