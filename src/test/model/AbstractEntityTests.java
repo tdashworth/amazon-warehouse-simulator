@@ -7,7 +7,7 @@ import javafx.scene.shape.Circle;
 import main.model.Location;
 import main.model.AbstractEntity;
 
-public class AbstractEntityTest {
+public class AbstractEntityTests {
 
   class ConcreteAbstractEntity extends AbstractEntity {
 
@@ -17,7 +17,7 @@ public class AbstractEntityTest {
   }
 
   @Test
-  public void constructorTest() {
+  public void testConstructorWithValidParametersShouldSuccussfullyCreate() {
     String uid = "uid";
     Location location = new Location(0, 0);
     Node sprite = new Circle();
@@ -26,17 +26,29 @@ public class AbstractEntityTest {
     assertEquals(uid, entity.getUID());
     assertEquals(location, entity.getLocation());
     assertEquals(sprite, entity.getSprite());
+  }
 
-    // Negative Cases
+  @Test
+  public void testConstructorWithNullUIDShouldThrowIllegalArgumentException() throws Exception {
+    Location location = new Location(0, 0);
+    Node sprite = new Circle();
+
     try {
-      entity = new ConcreteAbstractEntity(null, location, sprite);
+      new ConcreteAbstractEntity(null, location, sprite);
       fail("A null parameter should fail this.");
     } catch (Exception e) {
       assertEquals("'uid' is a required, non-null parameter.", e.getMessage());
     }
+  }
+
+  @Test
+  public void testConstructorWithNullLocationShouldThrowIllegalArgumentException()
+      throws Exception {
+    String uid = "uid";
+    Node sprite = new Circle();
 
     try {
-      entity = new ConcreteAbstractEntity(uid, null, sprite);
+      new ConcreteAbstractEntity(uid, null, sprite);
       fail("A null parameter should fail this.");
     } catch (Exception e) {
       assertEquals("'location' is a required, non-null parameter.", e.getMessage());

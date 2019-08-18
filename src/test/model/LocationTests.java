@@ -4,10 +4,10 @@ import org.junit.Test;
 import main.model.Location;
 import static org.junit.Assert.*;
 
-public class LocationTest {
+public class LocationTests {
 
   @Test
-  public void constructorTest() {
+  public void testConstructorWithValidParametersShouldSuccussfullyCreate() {
     Location location = new Location(4, 7);
 
     assertEquals(4, location.getColumn());
@@ -15,7 +15,7 @@ public class LocationTest {
   }
 
   @Test
-  public void equalsTest() {
+  public void testEqualsWithVariousCombinationsShouldReturnTrueOrFalseRespectively() {
     Location location1 = new Location(4, 7);
     Location location2 = new Location(4, 7);
     Location location3 = new Location(7, 4);
@@ -29,7 +29,7 @@ public class LocationTest {
   }
 
   @Test
-  public void getManhattanDistanceToTest() {
+  public void testGetManhattanDistanceToVariousCombinationsShouldReturnCorrectly() {
     Location location1 = new Location(0, 0);
     Location location2 = new Location(4, 7);
     Location location3 = new Location(7, 4);
@@ -43,7 +43,7 @@ public class LocationTest {
   }
 
   @Test
-  public void getEuclideanDistanceToTest() {
+  public void testGetEuclideanDistanceToTestVariousCombinationsShouldReturnCorrectly() {
     Location location1 = new Location(0, 0);
     Location location2 = new Location(4, 7);
     Location location3 = new Location(7, 4);

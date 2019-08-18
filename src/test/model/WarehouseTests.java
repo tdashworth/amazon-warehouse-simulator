@@ -14,7 +14,7 @@ import main.model.Order;
 import main.model.Warehouse;
 import main.simulation.Simulator;
 
-public class WarehouseTest {
+public class WarehouseTests {
 
 	@Test
 	public void warehouseCreationTest() throws Exception {

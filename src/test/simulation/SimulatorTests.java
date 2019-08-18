@@ -18,7 +18,7 @@ import main.model.Robot;
 import main.model.StorageShelf;
 import main.simulation.Simulator;
 
-public class SimulatorTest {
+public class SimulatorTests {
 
 	@Test
 	public void createSimulatorTest() {

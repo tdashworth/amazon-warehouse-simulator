@@ -18,10 +18,10 @@ import main.model.Job.JobStatus;
 import main.model.Robot.RobotStatus;
 import main.utils.ItemManager;
 
-public class RobotTest {
+public class RobotTests {
 
 	@Test
-	public void testConstructorWithValidParametersWhichSuccussfullyCreates() throws Exception {
+	public void testConstructorWithValidParametersShouldSuccussfullyCreate() throws Exception {
 		String uid = "r1";
 		Location location = new Location(0, 0);
 		ChargingPod chargingPod = mockChargingPodWithLocation(location);
@@ -37,7 +37,7 @@ public class RobotTest {
 	}
 
 	@Test
-	public void testConstructorWithNullUIDWhichThrowsIllegalArgumentException() throws Exception {
+	public void testConstructorWithNullUIDShouldThrowIllegalArgumentException() throws Exception {
 		Location location = new Location(0, 0);
 		ChargingPod chargingPod = mockChargingPodWithLocation(location);
 
@@ -50,7 +50,7 @@ public class RobotTest {
 	}
 
 	@Test
-	public void testConstructorWithNullLoationWhichThrowsIllegalArgumentException() throws Exception {
+	public void testConstructorWithNullLoationShouldThrowIllegalArgumentException() throws Exception {
 		ChargingPod chargingPod = mockChargingPodWithLocation(new Location(0, 0));
 
 		try {
@@ -63,7 +63,7 @@ public class RobotTest {
 	}
 
 	@Test
-	public void testConstructorWithNullChargingPodWhichThrowsIllegalArgumentException() {
+	public void testConstructorWithNullChargingPodShouldThrowIllegalArgumentException() {
 		try {
 			new Robot("r1", new Location(0, 0), null, 50, 5);
 
@@ -74,7 +74,7 @@ public class RobotTest {
 	}
 
 	@Test
-	public void testConstructorWithNegativePowerUnitsCapacityWhichThrowsIllegalArgumentException()
+	public void testConstructorWithNegativePowerUnitsCapacityShouldThrowIllegalArgumentException()
 			throws Exception {
 		ChargingPod chargingPod = mockChargingPodWithLocation(new Location(0, 0));
 
@@ -88,7 +88,7 @@ public class RobotTest {
 	}
 
 	@Test
-	public void testConstructorWithNegativePowerUnitsChargeSpeedWhichThrowsIllegalArgumentException()
+	public void testConstructorWithNegativePowerUnitsChargeSpeedShouldThrowIllegalArgumentException()
 			throws Exception {
 		String uid = "r1";
 		Location location = new Location(0, 0);

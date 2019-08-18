@@ -6,17 +6,17 @@ import static org.junit.Assert.*;
 public class AStarPathFinderTest {
 
   @Test
-  public void constructorTest() {
+  public void testConstructorWithValidParametersShouldSuccussfullyCreate() {
     // TODO Test.
   }
 
   @Test
-  public void getNextLocationTest() {
+  public void testGetNextLocation() {
     // TODO Test.
   }
 
   @Test
-  public void getNumberOfRemainingStepsTest() {
+  public void testGetNumberOfRemainingSteps() {
     // TODO Test.
   }
 }

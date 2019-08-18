@@ -11,13 +11,19 @@ public class Floor {
 	/**
 	 * A representation of a grid floor.
 	 * 
-	 * @param numberofRows    width
+	 * @param numberOfRows    width
 	 * @param numberOfColumns height
 	 */
-	public Floor(int numberOfColumns, int numberofRows) {
+	public Floor(int numberOfColumns, int numberOfRows) {
+		if (numberOfColumns < 0)
+			throw new IllegalArgumentException("'numberOfColumns' must be a positive integer.");
+
+		if (numberOfRows < 0)
+			throw new IllegalArgumentException("'numberOfRows' must be a positive integer.");
+
 		this.numberOfColumns = numberOfColumns;
-		this.numberOfRows = numberofRows;
-		this.grid = new AbstractMover[numberOfColumns][numberofRows];
+		this.numberOfRows = numberOfRows;
+		this.grid = new AbstractMover[numberOfColumns][numberOfRows];
 	}
 
 	/**

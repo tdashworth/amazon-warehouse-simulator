@@ -7,10 +7,10 @@ import main.utils.BasicPathCostEstimator;
 import main.utils.IPathCostEstimator;
 
 
-public class BasicPathCostEstimatorTest {
+public class BasicPathCostEstimatorTests {
 
   @Test
-  public void constructorTest() {
+  public void testConstructorWithValidParametersShouldSuccussfullyCreate() {
     Location origin = new Location(0, 0);
 
     IPathCostEstimator pathCostEstimator = new BasicPathCostEstimator(origin);
@@ -19,25 +19,31 @@ public class BasicPathCostEstimatorTest {
   }
 
   @Test
-  public void addCostTest() {
+  public void testAddCostWithValidParametersShouldSuccussfullyCreateCosts() throws Exception {
     Location origin = new Location(0, 0);
     IPathCostEstimator pathCostEstimator = new BasicPathCostEstimator(origin);
 
-    // Positive case
-    try {
-      pathCostEstimator.addCost("cost1", 1.0);
-      pathCostEstimator.addCost("cost2", 2.2);
-    } catch (Exception e) {
-      fail(e.toString());
-    }
+    pathCostEstimator.addCost("cost1", 1.0);
+    pathCostEstimator.addCost("cost2", 2.2);
+  }
 
-    // Negative case
+  @Test
+  public void testAddCostWithNullLabelShouldThrowException() throws Exception {
+    Location origin = new Location(0, 0);
+    IPathCostEstimator pathCostEstimator = new BasicPathCostEstimator(origin);
+
     try {
       pathCostEstimator.addCost(null, 1.0);
       fail("Adding a cost with a null label is forbiden and should fail.");
     } catch (Exception e) {
       assertEquals("The parameter 'label' must not be null.", e.getMessage());
     }
+  }
+
+  @Test
+  public void testAddCostWithNullCostShouldThrowException() throws Exception {
+    Location origin = new Location(0, 0);
+    IPathCostEstimator pathCostEstimator = new BasicPathCostEstimator(origin);
 
     try {
       pathCostEstimator.addCost("cost2", null);
@@ -48,25 +54,33 @@ public class BasicPathCostEstimatorTest {
   }
 
   @Test
-  public void addLocationTest() throws Exception {
+  public void testAddLocationWithValidLocationShouldNotThrowException() throws Exception {
     Location origin = new Location(0, 0);
     IPathCostEstimator pathCostEstimator = new BasicPathCostEstimator(origin);
     pathCostEstimator.addCost("cost1", 1.0);
 
-    // Positive case
-    try {
-      pathCostEstimator.addLocation(new Location(0, 1), "cost1");
-    } catch (Exception e) {
-      fail(e.toString());
-    }
+    pathCostEstimator.addLocation(new Location(0, 1), "cost1");
+  }
 
-    // Negative case
+  @Test
+  public void testAddLocationWithNullLocationShouldThrowException() throws Exception {
+    Location origin = new Location(0, 0);
+    IPathCostEstimator pathCostEstimator = new BasicPathCostEstimator(origin);
+    pathCostEstimator.addCost("cost1", 1.0);
+
     try {
       pathCostEstimator.addLocation(null, "cost1");
       fail("Adding a location with a null value is forbiden and should fail.");
     } catch (Exception e) {
       assertEquals("The parameter 'location' must not be null.", e.getMessage());
     }
+  }
+
+  @Test
+  public void testAddLocationWithNullCostShouldThrowException() throws Exception {
+    Location origin = new Location(0, 0);
+    IPathCostEstimator pathCostEstimator = new BasicPathCostEstimator(origin);
+    pathCostEstimator.addCost("cost1", 1.0);
 
     try {
       pathCostEstimator.addLocation(new Location(0, 1), null);
@@ -76,6 +90,13 @@ public class BasicPathCostEstimatorTest {
           "Cost label 'null' has not been set. Use the addCost method to set it before using it here.",
           e.getMessage());
     }
+  }
+
+  @Test
+  public void testAddLocationWithInvalidCostShouldThrowException() throws Exception {
+    Location origin = new Location(0, 0);
+    IPathCostEstimator pathCostEstimator = new BasicPathCostEstimator(origin);
+    pathCostEstimator.addCost("cost1", 1.0);
 
     try {
       pathCostEstimator.addLocation(new Location(0, 1), "cost2");
@@ -85,6 +106,5 @@ public class BasicPathCostEstimatorTest {
           "Cost label 'cost2' has not been set. Use the addCost method to set it before using it here.",
           e.getMessage());
     }
-
   }
 }

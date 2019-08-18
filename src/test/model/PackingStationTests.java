@@ -16,10 +16,10 @@ import main.model.Warehouse;
 import main.model.PackingStation.PackingStationStatus;
 import main.utils.ItemManager;
 
-public class PackingStationTest {
+public class PackingStationTests {
 
 	@Test
-	public void constructorTest() {
+	public void testConstructorWithValidParametersShouldSuccussfullyCreate() {
 		String uid = "ps1";
 		Location location = new Location(0, 0);
 		PackingStation packingStation = new PackingStation(uid, location);
@@ -30,18 +30,26 @@ public class PackingStationTest {
 		assertEquals(35, ((Rectangle) packingStation.getSprite()).getHeight(), 0.0);
 		assertEquals(35, ((Rectangle) packingStation.getSprite()).getWidth(), 0.0);
 		assertEquals(Color.AQUAMARINE, ((Rectangle) packingStation.getSprite()).getFill());
-		assertEquals(PackingStationStatus.Picking, packingStation.getStatus());
+		assertEquals(PackingStationStatus.Picking, packingStation.getStatus());		
+	}
 
-		// Negative Cases
+	@Test
+	public void testConstructorWithNullUIDShouldThrowIllegalArgumentException() throws Exception {
+		Location location = new Location(0, 0);
+
 		try {
-			packingStation = new PackingStation(null, location);
+			new PackingStation(null, location);
 			fail("A null parameter should fail this.");
 		} catch (Exception e) {
 			assertEquals("'uid' is a required, non-null parameter.", e.getMessage());
 		}
+	}
 
+	@Test
+	public void testConstructorWithNullLocationShouldThrowIllegalArgumentException()
+			throws Exception {
 		try {
-			packingStation = new PackingStation(uid, null);
+			new PackingStation("ps1", null);
 			fail("A null parameter should fail this.");
 		} catch (Exception e) {
 			assertEquals("'location' is a required, non-null parameter.", e.getMessage());
@@ -49,7 +57,7 @@ public class PackingStationTest {
 	}
 
 	@Test
-	public void tickPickOrderTest() throws Exception {
+	public void testTickPickOrderWithOrderToPickupShouldPickUpOrder() throws Exception {
 		ItemManager<Order> orderManager = new ItemManager<>();
 		orderManager.add(new Order(Arrays.asList("ss1", "ss2"), 5)); 
 		ItemManager<Job> jobManager = new ItemManager<>();
@@ -61,7 +69,6 @@ public class PackingStationTest {
 		when(warehouse.getEntityByUID("ss1")).thenReturn(new StorageShelf("ss1", new Location(1, 0)));
 		when(warehouse.getEntityByUID("ss2")).thenReturn(new StorageShelf("ss2", new Location(0, 1)));
 		
-		// Positive Case
 		PackingStation packingStation = new PackingStation("ps1", new Location(0, 0));
 		packingStation.tick(warehouse);
 		
@@ -69,13 +76,21 @@ public class PackingStationTest {
 		assertEquals(1, orderManager.getProgressing().size());
 		assertEquals(2, jobManager.getAwaiting().size());
 		assertEquals(PackingStationStatus.Awaiting, packingStation.getStatus());
-		
-		// Negative Case
-		orderManager = new ItemManager<>();
-		jobManager = new ItemManager<>();
+	}
+
+	@Test
+	public void testTickPickOrderWithNoOrderToPickupShouldDoNothing() throws Exception {
+		ItemManager<Order> orderManager = new ItemManager<>();
+		ItemManager<Job> jobManager = new ItemManager<>();
+
+		Warehouse warehouse = mock(Warehouse.class);
 		when(warehouse.getOrderManager()).thenReturn(orderManager);
 		when(warehouse.getJobManager()).thenReturn(jobManager);
-		packingStation = new PackingStation("ps1", new Location(0, 0));
+		when(warehouse.getTotalTickCount()).thenReturn(1);
+		when(warehouse.getEntityByUID("ss1")).thenReturn(new StorageShelf("ss1", new Location(1, 0)));
+		when(warehouse.getEntityByUID("ss2")).thenReturn(new StorageShelf("ss2", new Location(0, 1)));
+		
+		PackingStation packingStation = new PackingStation("ps1", new Location(0, 0));
 		packingStation.tick(warehouse);
 
 		assertEquals(0, orderManager.getAwaiting().size());
@@ -85,7 +100,7 @@ public class PackingStationTest {
 	}
 
 	@Test
-	public void tickPackOrderTest() throws Exception {
+	public void testTickPackOrderShouldDecrementUntilZero() throws Exception {
 		StorageShelf storageShelf = new StorageShelf("ss1", new Location(1, 0));
 		Order order = new Order(Arrays.asList(storageShelf.getUID()), 3);
 		Warehouse warehouse = mock(Warehouse.class);
@@ -107,7 +122,7 @@ public class PackingStationTest {
 	}
 
 	@Test
-	public void tickDispatchOrderTest() throws Exception {
+	public void testTickDispatchOrderShouldCompleteOrderAndReturnBackToPicking() throws Exception {
 		StorageShelf storageShelf = new StorageShelf("ss1", new Location(1, 0));
 		Order order = new Order(Arrays.asList(storageShelf.getUID()), 3);
 		ItemManager<Order> orderManager = new ItemManager<>();
@@ -132,7 +147,7 @@ public class PackingStationTest {
 	}
 
 	@Test
-	public void recieveItemTest() throws Exception {
+	public void testRecieveItemWithValidStorageShelfShouldNotThrowException() throws Exception {
 		PackingStation packingStation = new PackingStation("ps1", new Location(0, 0)) {
 			{
 				this.currentOrder = new Order(Arrays.asList("ss1"), 0);
@@ -140,20 +155,39 @@ public class PackingStationTest {
 			}
 		};
 
-		// Positive Case
 		StorageShelf item = new StorageShelf("ss1", new Location(0, 0));
 		packingStation.recieveItem(item);
+	}
 
-		// Negative Case
+	@Test
+	public void testRecieveItemWithNullStorageShelfShouldNotThrowIllegalArgumentException() throws Exception {
+		PackingStation packingStation = new PackingStation("ps1", new Location(0, 0)) {
+			{
+				this.currentOrder = new Order(Arrays.asList("ss1"), 0);
+				this.storageShelvesVisited = new ArrayList<>();
+			}
+		};
+
 		try {
 			packingStation.recieveItem(null);
 			fail("Null parameter should fail.");
 		} catch (IllegalArgumentException e) {
 			assertEquals("'storageShelf' is a required, non-null parameter.", e.getMessage());
 		}
+	}
+
+	@Test
+	public void testRecieveItemWithInvalidStorageShelfShouldNotThrowIllegalArgumentException()
+			throws Exception {
+		PackingStation packingStation = new PackingStation("ps1", new Location(0, 0)) {
+			{
+				this.currentOrder = new Order(Arrays.asList("ss1"), 0);
+				this.storageShelvesVisited = new ArrayList<>();
+			}
+		};
 
 		try {
-			item = new StorageShelf("ss2", new Location(0, 0));
+			StorageShelf item = new StorageShelf("ss2", new Location(0, 0));
 			packingStation.recieveItem(item);
 			fail("Not required Storage Shelf should fail.");
 		} catch (IllegalArgumentException e) {

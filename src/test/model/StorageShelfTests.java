@@ -2,36 +2,40 @@ package test.model;
 
 import static org.junit.Assert.*;
 import org.junit.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import main.model.StorageShelf;
 import main.model.Location;
 
-public class StorageShelfTest {
+public class StorageShelfTests {
 
   @Test
-  public void constructorTest() {
-    String uid = "ss1";
+  public void testConstructorWithValidParametersShouldSuccussfullyCreate() {
+    String uid = "uid";
     Location location = new Location(0, 0);
     StorageShelf storageShelf = new StorageShelf(uid, location);
 
     assertEquals(uid, storageShelf.getUID());
     assertEquals(location, storageShelf.getLocation());
-    assertTrue(storageShelf.getSprite() instanceof Rectangle);
-    assertEquals(35, ((Rectangle) storageShelf.getSprite()).getHeight(), 0.0);
-    assertEquals(35, ((Rectangle) storageShelf.getSprite()).getWidth(), 0.0);
-    assertEquals(Color.DARKSALMON, ((Rectangle) storageShelf.getSprite()).getFill());
+  }
 
-    // Negative Cases
+  @Test
+  public void testConstructorWithNullUIDShouldThrowIllegalArgumentException() throws Exception {
+    Location location = new Location(0, 0);
+
     try {
-      storageShelf = new StorageShelf(null, location);
+      new StorageShelf(null, location);
       fail("A null parameter should fail this.");
     } catch (Exception e) {
       assertEquals("'uid' is a required, non-null parameter.", e.getMessage());
     }
+  }
+
+  @Test
+  public void testConstructorWithNullLocationShouldThrowIllegalArgumentException()
+      throws Exception {
+    String uid = "uid";
 
     try {
-      storageShelf = new StorageShelf(uid, null);
+      new StorageShelf(uid, null);
       fail("A null parameter should fail this.");
     } catch (Exception e) {
       assertEquals("'location' is a required, non-null parameter.", e.getMessage());

@@ -13,7 +13,7 @@ import main.simulation.SimFileFormatException;
 import main.simulation.Simulator;
 import main.simulation.SimulatorFileReader_V1;
 
-public class SimulatorFileReader_V1Test {
+public class SimulatorFileReader_V1Tests {
 
 	@Test
 	public void fileReaderV1ReadTest() {

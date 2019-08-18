@@ -17,7 +17,8 @@ public class Order {
 	 */
 	public Order(List<String> storageShelfUIDs, int numberOfTicksToPack) {
 		if (storageShelfUIDs == null || storageShelfUIDs.isEmpty())
-			throw new IllegalArgumentException("'storageShelfUIDs' is a required, non-null parameter with atleast one element.");
+			throw new IllegalArgumentException(
+					"'storageShelfUIDs' is a required, non-null parameter with atleast one element.");
 
 		if (numberOfTicksToPack < 0)
 			throw new IllegalArgumentException("'numberOfTicksToPack' must be a positive integer.");
@@ -55,8 +56,8 @@ public class Order {
 	public void setTotalNumberOfTicksToPack(int totalNumberOfTicksToPack) {
 		if (totalNumberOfTicksToPack < 0)
 			throw new IllegalArgumentException("'totalNumberOfTicksToPack' must be a positive integer.");
-		
-			this.totalNumberOfTicksToPack = totalNumberOfTicksToPack;
+
+		this.totalNumberOfTicksToPack = totalNumberOfTicksToPack;
 	}
 
 	/**

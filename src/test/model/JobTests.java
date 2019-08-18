@@ -1,21 +1,17 @@
 package test.model;
 
 import org.junit.Test;
-
 import main.model.Job;
 import main.model.Location;
-import main.model.Order;
 import main.model.PackingStation;
 import main.model.StorageShelf;
 import main.model.Job.JobStatus;
-
 import static org.junit.Assert.assertEquals;
-import java.util.ArrayList;
-import java.util.Arrays;
+import static org.mockito.Mockito.*;
 
-public class JobTest {
+public class JobTests {
   @Test
-  public void constructorTest() {
+  public void testConstructorWithValidParametersShouldSuccussfullyCreate() {
     StorageShelf storageShelf = new StorageShelf("ss1", new Location(0, 0));
     PackingStation packingStation = new PackingStation("ps1", new Location(0, 0));
     Job job = new Job(storageShelf, packingStation);
@@ -26,7 +22,7 @@ public class JobTest {
   }
 
   @Test
-  public void collectedTest() {
+  public void testCollectedShouldUpdateTheStatusToDelievering() {
     StorageShelf storageShelf = new StorageShelf("ss1", new Location(0, 0));
     PackingStation packingStation = new PackingStation("ps1", new Location(0, 0));
     Job job = new Job(storageShelf, packingStation);
@@ -39,19 +35,12 @@ public class JobTest {
   }
 
   @Test
-  public void deliveredTest() throws Exception {
+  public void testDelieveredShouldUpdateTheStatusToDelievered() throws Exception {
     StorageShelf storageShelf = new StorageShelf("ss1", new Location(0, 0));
-    PackingStation packingStation = new PackingStation("ps1", new Location(0, 0)) {
-      {
-        // Fake the packing station has an order.
-        this.currentOrder = new Order(Arrays.asList("ss1"), 0);
-        // Required as a dependency.
-        this.storageShelvesVisited = new ArrayList<>();
-      }
-    };
+    PackingStation packingStation = mock(PackingStation.class);
     Job job = new Job(storageShelf, packingStation);
-
     job.collected();
+
     job.delivered();
 
     assertEquals(JobStatus.Delivered, job.getStatus());

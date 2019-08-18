@@ -42,11 +42,11 @@ public class LocationNotValidException extends Exception {
 	 * @return the message
 	 */
 	public String getMessage() {
-		return message;
+		return this.location + " is invalid because " + message;
 	}
 
 	@Override
 	public String toString() {
-		return "LocationNotValidException: " + this.location + " is invalid because " + getMessage();
+		return "LocationNotValidException: " + getMessage();
 	}
 }

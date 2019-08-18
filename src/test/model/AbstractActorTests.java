@@ -8,7 +8,7 @@ import main.model.Location;
 import main.model.Warehouse;
 import main.model.AbstractActor;
 
-public class AbstractActorTest {
+public class AbstractActorTests {
 
   class ConcreteAbstractActor extends AbstractActor {
 
@@ -22,7 +22,7 @@ public class AbstractActorTest {
   }
 
   @Test
-  public void constructorTest() {
+  public void testConstructorWithValidParametersShouldSuccussfullyCreate() {
     String uid = "uid";
     Location location = new Location(0, 0);
     Node sprite = new Circle();
@@ -31,17 +31,29 @@ public class AbstractActorTest {
     assertEquals(uid, actor.getUID());
     assertEquals(location, actor.getLocation());
     assertEquals(sprite, actor.getSprite());
+  }
 
-    // Negative Cases
+  @Test
+	public void testConstructorWithNullUIDShouldThrowIllegalArgumentException() throws Exception {
+		Location location = new Location(0, 0);
+    Node sprite = new Circle();
+
     try {
-      actor = new ConcreteAbstractActor(null, location, sprite);
+      new ConcreteAbstractActor(null, location, sprite);
       fail("A null parameter should fail this.");
     } catch (Exception e) {
       assertEquals("'uid' is a required, non-null parameter.", e.getMessage());
     }
+  }
+
+  @Test
+  public void testConstructorWithNullLocationShouldThrowIllegalArgumentException()
+      throws Exception {
+    String uid = "uid";
+    Node sprite = new Circle();
 
     try {
-      actor = new ConcreteAbstractActor(uid, null, sprite);
+      new ConcreteAbstractActor(uid, null, sprite);
       fail("A null parameter should fail this.");
     } catch (Exception e) {
       assertEquals("'location' is a required, non-null parameter.", e.getMessage());

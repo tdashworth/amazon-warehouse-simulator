@@ -8,7 +8,7 @@ import main.model.Location;
 import main.model.Warehouse;
 import main.model.AbstractMover;
 
-public class AbstractMoverTest {
+public class AbstractMoverTests {
 
   class ConcreteAbstractMover extends AbstractMover {
 
@@ -22,7 +22,7 @@ public class AbstractMoverTest {
   }
 
   @Test
-  public void constructorTest() {
+  public void testConstructorWithValidParametersShouldSuccussfullyCreate() {
     String uid = "uid";
     Location location = new Location(0, 0);
     Node sprite = new Circle();
@@ -31,17 +31,29 @@ public class AbstractMoverTest {
     assertEquals(uid, mover.getUID());
     assertEquals(location, mover.getLocation());
     assertEquals(sprite, mover.getSprite());
+  }
 
-    // Negative Cases
+  @Test
+  public void testConstructorWithNullUIDShouldThrowIllegalArgumentException() throws Exception {
+    Location location = new Location(0, 0);
+    Node sprite = new Circle();
+
     try {
-      mover = new ConcreteAbstractMover(null, location, sprite);
+      new ConcreteAbstractMover(null, location, sprite);
       fail("A null parameter should fail this.");
     } catch (Exception e) {
       assertEquals("'uid' is a required, non-null parameter.", e.getMessage());
     }
+  }
+
+  @Test
+  public void testConstructorWithNullLocationShouldThrowIllegalArgumentException()
+      throws Exception {
+    String uid = "uid";
+    Node sprite = new Circle();
 
     try {
-      mover = new ConcreteAbstractMover(uid, null, sprite);
+      new ConcreteAbstractMover(uid, null, sprite);
       fail("A null parameter should fail this.");
     } catch (Exception e) {
       assertEquals("'location' is a required, non-null parameter.", e.getMessage());

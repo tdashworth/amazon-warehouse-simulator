@@ -5,10 +5,10 @@ import main.model.Location;
 import main.utils.PathFindingNode;
 import static org.junit.Assert.*;
 
-public class PathFindingNodeTest {
+public class PathFindingNodeTests {
 
   @Test
-  public void constructorTest() {
+  public void testConstructorWithValidParametersShouldSuccussfullyCreate() {
     PathFindingNode pathFindingNode = new PathFindingNode(new Location(4, 7));
 
     assertEquals(4, pathFindingNode.getColumn());
@@ -16,7 +16,7 @@ public class PathFindingNodeTest {
   }
 
   @Test
-  public void numberOfStepsFromStartTest() {
+  public void testNumberOfStepsFromStartWithSetShouldBeEqualToGet() {
     PathFindingNode pathFindingNode = new PathFindingNode(new Location(4, 7));
     
     pathFindingNode.setNumberOfStepsFromStart(5);
@@ -27,7 +27,7 @@ public class PathFindingNodeTest {
   }
 
   @Test
-  public void directDistanceToTargetTest() {
+  public void testDirectDistanceToTargetWithSetShouldBeEqualToGet() {
     PathFindingNode pathFindingNode = new PathFindingNode(new Location(4, 7));
 
     pathFindingNode.setDirectDistanceToTarget(2.5);
@@ -38,7 +38,7 @@ public class PathFindingNodeTest {
   }
 
   @Test
-  public void compareToTest() {
+  public void testCompareToShouldReturnPositiveNegativeAndZeroRespectively() {
     PathFindingNode pathFindingNode1 = new PathFindingNode(new Location(4, 7));
     pathFindingNode1.setDirectDistanceToTarget(1.1);
     pathFindingNode1.setNumberOfStepsFromStart(3);
