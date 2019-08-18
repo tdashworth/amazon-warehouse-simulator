@@ -1,7 +1,6 @@
 package main.model;
 
 import java.util.*;
-
 import main.utils.ItemManager;
 
 public class Warehouse {
@@ -18,6 +17,15 @@ public class Warehouse {
 	 * @param orders
 	 */
 	public Warehouse(Floor floor, Map<String, AbstractEntity> entities, Deque<Order> orders) {
+		if (floor == null)
+			throw new IllegalArgumentException("'floor' is a required, non-null parameter.");
+
+		if (entities == null)
+			throw new IllegalArgumentException("'entities' is a required, non-null parameter.");
+
+		if (orders == null)
+			throw new IllegalArgumentException("'orders' is a required, non-null parameter.");
+
 		this.floor = floor;
 		this.entities = entities;
 		this.orderManager = new ItemManager<Order>(orders);

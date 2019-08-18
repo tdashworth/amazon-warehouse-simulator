@@ -1,110 +1,121 @@
 package test.model;
 
 import static org.junit.Assert.*;
-import java.util.ArrayList;
+import static org.mockito.Mockito.*;
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import org.junit.Test;
 
 import main.model.AbstractEntity;
 import main.model.Floor;
 import main.model.Order;
+import main.model.PackingStation;
+import main.model.StorageShelf;
 import main.model.Warehouse;
 
 public class WarehouseTests {
 
 	@Test
-	public void warehouseCreationTest() throws Exception {
-		// Set up the basic variables for a new Warehouse
-		Floor floor = new Floor(2, 2);
-		HashMap<String, AbstractEntity> entities = new HashMap<String, AbstractEntity>();
-		Deque<Order> orders = new LinkedList<Order>();
-		Warehouse w = new Warehouse(floor, entities, orders);
+	public void testConstructorWithValidParametersShouldSuccussfullyCreate() throws Exception {
+		Floor floor = mock(Floor.class);
+		HashMap<String, AbstractEntity> entities = new HashMap<>();
+		Deque<Order> orders = new ArrayDeque<>();
 
-		// Test to ensure that the warehouse was set up correctly
-		// assertEquals(null, w.getOrderManager().pickup());
-		assertEquals(true, w.getOrderManager().areAllItemsComplete());
-		assertEquals(2, w.getFloor().getNumberOfColumns());
-		assertEquals(2, w.getFloor().getNumberOfRows());
-		assertEquals("Floor - Size: 2 columns by 2 rows.", w.getFloor().toString());
+		Warehouse warehouse = new Warehouse(floor, entities, orders);
+
+		assertEquals(floor, warehouse.getFloor());
+		assertNotNull(warehouse.getEntities());
+		assertNotNull(warehouse.getOrderManager());
+		assertNotNull(warehouse.getJobManager());
 	}
 
 	@Test
-	public void pickupTest() throws Exception {
-		// Set up the basic variables for a new Warehouse
-		Floor floor = new Floor(2, 2);
-		HashMap<String, AbstractEntity> entities = new HashMap<String, AbstractEntity>();
-		Deque<Order> orders = new LinkedList<Order>();
-		// create an order to add to the warehouse
-		ArrayList<String> shelf = new ArrayList<String>();
-		shelf.add("ss1");
-		Order o = new Order(shelf, 2);
-		orders.add(o);
-		Warehouse w = new Warehouse(floor, entities, orders);
+	public void testConstructorWithEntitiesShouldSuccussfullyCreate() throws Exception {
+		Floor floor = mock(Floor.class);
+		HashMap<String, AbstractEntity> entities = new HashMap<>();
+		entities.put("ss1", mock(StorageShelf.class));
+		entities.put("ps1", mock(PackingStation.class));
+		Deque<Order> orders = new ArrayDeque<>();
 
-		// warehouse with one order
-		assertEquals(o, w.getOrderManager().pickup());
-		// assertEquals(null, w.getOrderManager().pickup());
-		assertEquals(true, w.getOrderManager().getProgressing().contains(o));
+		Warehouse warehouse = new Warehouse(floor, entities, orders);
+
+		assertEquals(2, warehouse.getEntities().size());
 	}
 
 	@Test
-	public void completeTest() throws Exception {
-		// Set up the basic variables for a new Warehouse
-		Floor floor = new Floor(2, 2);
-		HashMap<String, AbstractEntity> entities = new HashMap<String, AbstractEntity>();
-		Deque<Order> orders = new LinkedList<Order>();
-		// create an order to add to the warehouse
-		ArrayList<String> shelf = new ArrayList<String>();
-		shelf.add("ss1");
-		Order o = new Order(shelf, 2);
-		orders.add(o);
-		Warehouse w = new Warehouse(floor, entities, orders);
+	public void testConstructorWithOrdersShouldSuccussfullyCreate() throws Exception {
+		Floor floor = mock(Floor.class);
+		HashMap<String, AbstractEntity> entities = new HashMap<>();
+		Deque<Order> orders = new ArrayDeque<>();
+		orders.add(mock(Order.class));
 
-		// warehouse with one order
-		assertEquals(o, w.getOrderManager().pickup());
-		// assertEquals(null, w.getOrderManager().pickup());
+		Warehouse warehouse = new Warehouse(floor, entities, orders);
+
+		assertEquals(1, warehouse.getOrderManager().getAwaiting().size());
+	}
+
+	@Test
+	public void testConstructorWithNullFloorShouldThrowIllegalArgumentException() throws Exception {
+		HashMap<String, AbstractEntity> entities = new HashMap<>();
+		Deque<Order> orders = new ArrayDeque<>();
+
 		try {
-			w.getOrderManager().complete(o);
+			new Warehouse(null, entities, orders);
+			fail("A null parameter should fail this.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			assertEquals("'floor' is a required, non-null parameter.", e.getMessage());
 		}
-		assertEquals(true, w.getOrderManager().getProgressing().isEmpty());
-		assertEquals(true, w.getOrderManager().getCompleted().contains(o));
 	}
 
 	@Test
-	public void assignJobToRobotTest() {
-		// fail("Not yet implemented");
-	}
+	public void testConstructorWithNullEntitiesShouldThrowIllegalArgumentException() throws Exception {
+		Floor floor = mock(Floor.class);
+		Deque<Order> orders = new ArrayDeque<>();
 
-	@Test
-	public void allOrdersAreDispatchedTest() throws Exception {
-		// Set up the basic variables for a new Warehouse
-		Floor floor = new Floor(2, 2);
-		HashMap<String, AbstractEntity> entities = new HashMap<String, AbstractEntity>();
-		Deque<Order> orders = new LinkedList<Order>();
-		// create an order to add to the warehouse
-		ArrayList<String> shelf = new ArrayList<String>();
-		shelf.add("ss1");
-		Order o = new Order(shelf, 2);
-		orders.add(o);
-		Warehouse w = new Warehouse(floor, entities, orders);
-
-		assertEquals(false, w.getOrderManager().areAllItemsComplete());
-
-		assertEquals(o, w.getOrderManager().pickup());
-		// assertEquals(null, w.getOrderManager().pickup());
 		try {
-			w.getOrderManager().complete(o);
+			new Warehouse(floor, null, orders);
+			fail("A null parameter should fail this.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			assertEquals("'entities' is a required, non-null parameter.", e.getMessage());
 		}
-		assertEquals(true, w.getOrderManager().getProgressing().isEmpty());
-		assertEquals(true, w.getOrderManager().getCompleted().contains(o));
+	}
 
-		assertEquals(true, w.getOrderManager().areAllItemsComplete());
+	@Test
+	public void testConstructorWithNullOrdersShouldThrowIllegalArgumentException() throws Exception {
+		Floor floor = mock(Floor.class);
+		HashMap<String, AbstractEntity> entities = new HashMap<>();
+
+		try {
+			new Warehouse(floor, entities, null);
+			fail("A null parameter should fail this.");
+		} catch (Exception e) {
+			assertEquals("'orders' is a required, non-null parameter.", e.getMessage());
+		}
+	}
+
+	@Test
+	public void testGetEntityByUIDWithValidUIDShouldReturnTheEntity() {
+		Floor floor = mock(Floor.class);
+		StorageShelf storageShelf = mock(StorageShelf.class);
+		HashMap<String, AbstractEntity> entities = new HashMap<>();
+		entities.put("ss1", storageShelf);
+		Deque<Order> orders = new ArrayDeque<>();
+		Warehouse warehouse = new Warehouse(floor, entities, orders);
+
+		assertEquals(storageShelf, warehouse.getEntityByUID("ss1"));
+	}
+
+	@Test
+	public void testGetEntityByUIDWithInvalidUIDShouldReturnNull() {
+		Floor floor = mock(Floor.class);
+		StorageShelf storageShelf = mock(StorageShelf.class);
+		HashMap<String, AbstractEntity> entities = new HashMap<>();
+		entities.put("ss1", storageShelf);
+		Deque<Order> orders = new ArrayDeque<>();
+		Warehouse warehouse = new Warehouse(floor, entities, orders);
+
+		assertEquals(null, warehouse.getEntityByUID("cp1"));
 	}
 
 }

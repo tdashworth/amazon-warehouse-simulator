@@ -6,7 +6,6 @@
 - Convert in Maven/Grade project for VS Code
 
 ## Tests and JavaDoc
-- Warehouse
 - Simulation
 - AStarPathFinder
 - SimFileReader_V1
