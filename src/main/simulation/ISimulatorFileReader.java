@@ -5,7 +5,7 @@ import java.nio.file.Path;
 
 import main.model.LocationNotValidException;
 
-public interface SimulatorFileReader {
+public interface ISimulatorFileReader {
 	/**
 	 * TODO JavaDoc description.
 	 * 

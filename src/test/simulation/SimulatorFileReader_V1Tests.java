@@ -11,14 +11,14 @@ import main.model.Location;
 import main.model.LocationNotValidException;
 import main.simulation.SimFileFormatException;
 import main.simulation.Simulator;
-import main.simulation.SimulatorFileReader_V1;
+import main.simulation.Version1SimulatorFileReader;
 
 public class SimulatorFileReader_V1Tests {
 
 	@Test
 	public void fileReaderV1ReadTest() {
 		//Create a new file reader and simulator to store the file reader result
-		SimulatorFileReader_V1 fr = new SimulatorFileReader_V1();
+		Version1SimulatorFileReader fr = new Version1SimulatorFileReader();
 		Simulator s = null;
 		
 		//Attempt to read from the file

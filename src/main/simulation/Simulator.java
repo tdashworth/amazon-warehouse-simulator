@@ -46,7 +46,7 @@ public class Simulator {
 	 */
 	public static Simulator createFromFile(Path fileLocation)
 			throws IOException, SimFileFormatException, LocationNotValidException {
-		SimulatorFileReader simulatorFileReader;
+		ISimulatorFileReader simulatorFileReader;
 		List<String> lines = Files.readAllLines(fileLocation);
 
 		if (lines.size() == 0)
@@ -54,7 +54,7 @@ public class Simulator {
 
 		switch (lines.get(0)) {
 			case "format 1":
-				simulatorFileReader = new SimulatorFileReader_V1();
+				simulatorFileReader = new Version1SimulatorFileReader();
 				break;
 			default:
 				throw new SimFileFormatException(lines.get(0), "File is empty or of wrong format.");
@@ -93,8 +93,8 @@ public class Simulator {
 		while (!this.isComplete())
 			tick();
 
-		System.out.println(
-				String.format("All orders have been dispatched. It took %s ticks.", this.totalTickCount));
+		new BasicSimulatorReport(Paths.get("./EndReport.txt")).write(this);
+		System.out.println("Completed, end report created.");
 	}
 
 	/**

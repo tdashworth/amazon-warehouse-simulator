@@ -9,7 +9,7 @@ import main.model.*;
 /**
  * TODO JavaDoc description.
  */
-public class SimulatorFileReader_V1 implements SimulatorFileReader {
+public class Version1SimulatorFileReader implements ISimulatorFileReader {
 	private int width;
 	private int height;
 	private int capacity;
@@ -20,7 +20,7 @@ public class SimulatorFileReader_V1 implements SimulatorFileReader {
 	/**
 	 * TODO JavaDoc description.
 	 */
-	public SimulatorFileReader_V1() {
+	public Version1SimulatorFileReader() {
 		this.entities = new HashMap<String, AbstractEntity>();
 		this.orders = new LinkedList<Order>();
 	}
