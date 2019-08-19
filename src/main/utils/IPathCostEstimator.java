@@ -1,6 +1,6 @@
 package main.utils;
 
-import main.model.Location;
+import main.simulation.Location;
 
 public interface IPathCostEstimator {
   /**

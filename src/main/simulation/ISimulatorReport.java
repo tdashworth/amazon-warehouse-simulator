@@ -1,14 +1,15 @@
 package main.simulation;
 
 import java.io.IOException;
-import main.model.LocationNotValidException;
+import java.nio.file.Path;
+import main.simulation.LocationNotValidException;
 
-public interface ISimulatorReport {
+public interface ISimulatorReport<W extends IWorld> {
   /**
    * TODO JavaDoc description.
    * 
    * @throws IOException
    * @throws LocationNotValidException
    */
-  public void write(Simulator simulator) throws Exception;
+  public void write(Simulator<?> simulator, Path fileLocation) throws Exception;
 }

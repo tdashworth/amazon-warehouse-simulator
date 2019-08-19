@@ -3,15 +3,15 @@ package main.simulation;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import main.model.LocationNotValidException;
+import main.simulation.LocationNotValidException;
 
-public interface ISimulatorFileReader {
+public interface ISimulatorFileReader<W extends IWorld> {
 	/**
 	 * TODO JavaDoc description.
 	 * 
 	 * @throws IOException
 	 * @throws LocationNotValidException
 	 */
-	public Simulator read(Path fileLocation)
+	public W read(Path fileLocation)
 			throws SimFileFormatException, IOException, LocationNotValidException;
 }

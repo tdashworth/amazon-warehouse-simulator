@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.2.3" icons="true" always-add-relationships="true" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="main.model.AbstractMover" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/AbstractMover.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="1" language="java" name="main.amazon.AbstractMover" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/AbstractMover.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1375" y="1086"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -10,8 +10,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="main.model.Job" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/Job.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="2" language="java" name="main.amazon.Job" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/Job.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="268" y="913"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -19,8 +19,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="main.model.Order" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/Order.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="main.amazon.Order" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/Order.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="551" y="913"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -28,8 +28,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="main.model.PackingStation" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/PackingStation.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="main.amazon.PackingStation" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/PackingStation.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="869" y="913"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -37,8 +37,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="5" language="java" name="main.model.Robot.RobotStatus" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/Robot.java" binary="false" corner="BOTTOM_RIGHT">    
+  <enumeration id="5" language="java" name="main.amazon.Robot.RobotStatus" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/Robot.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="598" y="1229"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -46,8 +46,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="6" language="java" name="main.model.Warehouse" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/Warehouse.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="6" language="java" name="main.amazon.Warehouse" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/Warehouse.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1729" y="283"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -55,8 +55,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="main.model.Floor" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/Floor.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="7" language="java" name="main.amazon.Floor" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/Floor.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1728" y="686"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -64,8 +64,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="main.model.Location" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/Location.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="8" language="java" name="main.amazon.Location" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/Location.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1729" y="1086"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -73,8 +73,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="main.model.AbstractEntity" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/AbstractEntity.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="9" language="java" name="main.amazon.AbstractEntity" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/AbstractEntity.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1375" y="686"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -82,8 +82,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="main.model.ChargingPod" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/ChargingPod.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="10" language="java" name="main.amazon.ChargingPod" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/ChargingPod.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1070" y="686"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -91,8 +91,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="main.model.LocationNotValidException" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/LocationNotValidException.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="11" language="java" name="main.amazon.LocationNotValidException" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/LocationNotValidException.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2142" y="988"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -100,8 +100,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="main.model.StorageShelf" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/StorageShelf.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="12" language="java" name="main.amazon.StorageShelf" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/StorageShelf.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="868" y="496"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -109,8 +109,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <class id="13" language="java" name="main.model.Robot" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/Robot.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="13" language="java" name="main.amazon.Robot" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/Robot.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="852" y="1229"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -118,8 +118,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </class>  
-  <enumeration id="14" language="java" name="main.model.Job.JobStatus" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/Job.java" binary="false" corner="BOTTOM_RIGHT">    
+  <enumeration id="14" language="java" name="main.amazon.Job.JobStatus" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/Job.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="268" y="1197"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
@@ -127,8 +127,8 @@
       <operations public="true" package="false" protected="false" private="false" static="true"/>    
     </display>  
   </enumeration>  
-  <class id="15" language="java" name="main.model.AbstractActor" project="DC2300-Coursework" 
-    file="/DC2300-Coursework/src/main/model/AbstractActor.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="15" language="java" name="main.amazon.AbstractActor" project="DC2300-Coursework" 
+    file="/DC2300-Coursework/src/main.amazon/AbstractActor.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1375" y="913"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
       sort-features="false" accessors="true" visibility="true">      

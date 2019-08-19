@@ -2,7 +2,7 @@ package test.utils;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import main.model.Location;
+import main.simulation.Location;
 import main.utils.BasicPathCostEstimator;
 import main.utils.IPathCostEstimator;
 

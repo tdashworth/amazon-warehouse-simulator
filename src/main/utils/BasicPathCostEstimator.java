@@ -2,7 +2,7 @@ package main.utils;
 
 import java.util.*;
 
-import main.model.Location;
+import main.simulation.Location;
 
 public class BasicPathCostEstimator implements IPathCostEstimator {
   private final HashMap<String, Double> costFactors;

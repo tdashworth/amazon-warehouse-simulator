@@ -2,9 +2,9 @@ package main.utils;
 
 import java.util.Deque;
 
-import main.model.Floor;
-import main.model.Location;
-import main.model.LocationNotValidException;
+import main.simulation.Floor;
+import main.simulation.Location;
+import main.simulation.LocationNotValidException;
 
 public abstract class AbstractPathFinder {
   protected final Floor floor;

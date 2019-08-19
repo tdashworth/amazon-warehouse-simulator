@@ -1,9 +1,10 @@
 # To Do
 
 ## Misc
-- Refactor UI out of model
+- Refactor UI out of.amazon
 - Exceptions
 - Convert in Maven/Grade project for VS Code
+- Report Writer... ???
 
 ## Tests and JavaDoc
 - Simulation

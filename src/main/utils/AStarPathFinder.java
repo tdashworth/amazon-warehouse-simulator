@@ -2,9 +2,9 @@ package main.utils;
 
 import java.util.*;
 
-import main.model.Floor;
-import main.model.Location;
-import main.model.LocationNotValidException;
+import main.simulation.Floor;
+import main.simulation.Location;
+import main.simulation.LocationNotValidException;
 
 /**
  * A strategy to finding an optimal path between two location on a floor. This strategy explores

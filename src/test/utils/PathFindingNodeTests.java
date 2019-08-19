@@ -1,7 +1,7 @@
 package test.utils;
 
 import org.junit.Test;
-import main.model.Location;
+import main.simulation.Location;
 import main.utils.PathFindingNode;
 import static org.junit.Assert.*;
 
