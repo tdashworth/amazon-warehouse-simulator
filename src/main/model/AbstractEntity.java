@@ -34,18 +34,18 @@ public abstract class AbstractEntity {
 	/**
 	 * @return The UID.
 	 */
-	public final String getUID() {
+	public String getUID() {
 		return this.uid;
 	}
 
 	/**
 	 * @return The location.
 	 */
-	public final Location getLocation() {
+	public Location getLocation() {
 		return this.location;
 	}
 
-	public final Node getSprite() {
+	public Node getSprite() {
 		if (this.sprite == null)
 			throw new IllegalStateException("'sprite' has not been defined.");
 		return sprite;

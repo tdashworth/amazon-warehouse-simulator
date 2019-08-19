@@ -18,7 +18,7 @@ public abstract class AbstractMover extends AbstractActor {
 	public void tick(Warehouse warehouse, int currentTickCount) throws Exception {
 		this.previousLocation = this.location;
 	};
-
+	
 	/**
 	 * Moves to another location on the floor.
 	 * 
@@ -48,7 +48,7 @@ public abstract class AbstractMover extends AbstractActor {
 			this.pathFinder = null;
 	}
 
-	public final Location getPreviousLocation() {
+	public Location getPreviousLocation() {
 		return previousLocation;
 	}
 }

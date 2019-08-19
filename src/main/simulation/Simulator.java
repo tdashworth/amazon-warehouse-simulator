@@ -122,7 +122,7 @@ public class Simulator {
 	/**
 	 * @return the totalTickCounts
 	 */
-	public final int getTotalTickCount() {
+	public int getTotalTickCount() {
 		return totalTickCount;
 	}
 
@@ -131,7 +131,7 @@ public class Simulator {
 				.collect(Collectors.toList());
 	}
 
-	public final Warehouse getWarehouse() {
+	public Warehouse getWarehouse() {
 		return warehouse;
 	}
 
