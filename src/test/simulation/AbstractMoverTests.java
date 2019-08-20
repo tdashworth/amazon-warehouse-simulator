@@ -6,17 +6,17 @@ import javafx.scene.Node;
 import javafx.scene.shape.Circle;
 import main.simulation.Location;
 import main.simulation.AMover;
-import main.simulation.IWorld;
+import main.simulation.AWorld;
 
 public class AbstractMoverTests {
 
-  class ConcreteAbstractMover extends AMover<IWorld> {
+  class ConcreteAbstractMover extends AMover<AWorld> {
 
     public ConcreteAbstractMover(String uid, Location location, Node sprite) {
       super(uid, location, sprite);
     }
 
-    public void tick(IWorld world, int currentTickCount) throws Exception {
+    public void tick(AWorld world, int currentTickCount) throws Exception {
       throw new Exception("Not implemented.");
     };
   }

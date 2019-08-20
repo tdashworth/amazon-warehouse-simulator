@@ -14,14 +14,14 @@ public class WarehouseV1FileReader implements ISimulatorFileReader<Warehouse> {
 	private int height;
 	private int capacity;
 	private int chargeSpeed;
-	private HashMap<String, AEntity> entities;
+	private List<AEntity> entities;
 	private Deque<Order> orders;
 
 	/**
 	 * TODO JavaDoc description.
 	 */
 	public WarehouseV1FileReader() {
-		this.entities = new HashMap<String, AEntity>();
+		this.entities = new ArrayList<AEntity>();
 		this.orders = new LinkedList<Order>();
 	}
 
@@ -55,7 +55,7 @@ public class WarehouseV1FileReader implements ISimulatorFileReader<Warehouse> {
 
 	@SuppressWarnings("unchecked")
 	public List<IActor<Warehouse>> getActors() {
-		return entities.values().stream().sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
+		return entities.stream().sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
 				.filter(entity -> entity instanceof IActor).map(entity -> (IActor<Warehouse>) entity)
 				.collect(Collectors.toList());
 	}
@@ -101,9 +101,9 @@ public class WarehouseV1FileReader implements ISimulatorFileReader<Warehouse> {
 				ChargingPod chargingPod = new ChargingPod(words.get(1), location);
 				Robot robot =
 						new Robot(words.get(2), location, chargingPod, this.capacity, this.chargeSpeed);
-				this.entities.put(words.get(1), chargingPod);
+				this.entities.add(chargingPod);
 				this.log("Charging Pod %s created at %s", chargingPod.getUID(), location);
-				this.entities.put(words.get(2), robot);
+				this.entities.add(robot);
 				this.log("Robot %s created at %s", robot.getUID(), location);
 				break;
 
@@ -111,7 +111,7 @@ public class WarehouseV1FileReader implements ISimulatorFileReader<Warehouse> {
 				location = this.createAndValidateLocation(Integer.parseInt(words.get(2)),
 						Integer.parseInt(words.get(3)));
 				StorageShelf storageShelf = new StorageShelf(words.get(1), location);
-				this.entities.put(words.get(1), storageShelf);
+				this.entities.add(storageShelf);
 				this.log("Storage Shelf %s created at %s", storageShelf.getUID(), location);
 				break;
 
@@ -119,7 +119,7 @@ public class WarehouseV1FileReader implements ISimulatorFileReader<Warehouse> {
 				location = this.createAndValidateLocation(Integer.parseInt(words.get(2)),
 						Integer.parseInt(words.get(3)));
 				PackingStation packingStation = new PackingStation(words.get(1), location);
-				this.entities.put(words.get(1), packingStation);
+				this.entities.add(packingStation);
 				this.log("Packing Station %s created at %s", packingStation.getUID(), location);
 				break;
 

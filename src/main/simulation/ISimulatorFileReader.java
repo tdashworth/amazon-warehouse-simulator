@@ -3,7 +3,7 @@ package main.simulation;
 import java.nio.file.Path;
 import java.util.List;
 
-public interface ISimulatorFileReader<W extends IWorld> {
+public interface ISimulatorFileReader<W extends AWorld> {
 	/**
 	 * TODO JavaDoc description.
 	 */

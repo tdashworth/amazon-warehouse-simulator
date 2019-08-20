@@ -2,9 +2,7 @@ package test.amazon;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashMap;
+import java.util.*;
 import org.junit.Test;
 import main.simulation.AEntity;
 import main.simulation.Floor;
@@ -19,7 +17,7 @@ public class WarehouseTests {
 	@Test
 	public void testConstructorWithValidParametersShouldSuccussfullyCreate() throws Exception {
 		Floor floor = mock(Floor.class);
-		HashMap<String, AEntity> entities = new HashMap<>();
+		List<AEntity> entities = new ArrayList<>();
 		Deque<Order> orders = new ArrayDeque<>();
 
 		Warehouse warehouse = new Warehouse(floor, entities, orders);
@@ -33,9 +31,9 @@ public class WarehouseTests {
 	@Test
 	public void testConstructorWithEntitiesShouldSuccussfullyCreate() throws Exception {
 		Floor floor = mock(Floor.class);
-		HashMap<String, AEntity> entities = new HashMap<>();
-		entities.put("ss1", mock(StorageShelf.class));
-		entities.put("ps1", mock(PackingStation.class));
+		List<AEntity> entities = new ArrayList<>();
+		entities.add(mockStorageShelf("ss1"));
+		entities.add(mockPackingStation("ps1"));
 		Deque<Order> orders = new ArrayDeque<>();
 
 		Warehouse warehouse = new Warehouse(floor, entities, orders);
@@ -46,7 +44,7 @@ public class WarehouseTests {
 	@Test
 	public void testConstructorWithOrdersShouldSuccussfullyCreate() throws Exception {
 		Floor floor = mock(Floor.class);
-		HashMap<String, AEntity> entities = new HashMap<>();
+		List<AEntity> entities = new ArrayList<>();
 		Deque<Order> orders = new ArrayDeque<>();
 		orders.add(mock(Order.class));
 
@@ -57,7 +55,7 @@ public class WarehouseTests {
 
 	@Test
 	public void testConstructorWithNullFloorShouldThrowIllegalArgumentException() throws Exception {
-		HashMap<String, AEntity> entities = new HashMap<>();
+		List<AEntity> entities = new ArrayList<>();
 		Deque<Order> orders = new ArrayDeque<>();
 
 		try {
@@ -85,7 +83,7 @@ public class WarehouseTests {
 	@Test
 	public void testConstructorWithNullOrdersShouldThrowIllegalArgumentException() throws Exception {
 		Floor floor = mock(Floor.class);
-		HashMap<String, AEntity> entities = new HashMap<>();
+		List<AEntity> entities = new ArrayList<>();
 
 		try {
 			new Warehouse(floor, entities, null);
@@ -99,9 +97,9 @@ public class WarehouseTests {
 	public void testGetEntityByUIDWithValidUIDShouldReturnTheEntity()
 			throws LocationNotValidException {
 		Floor floor = mock(Floor.class);
-		StorageShelf storageShelf = mock(StorageShelf.class);
-		HashMap<String, AEntity> entities = new HashMap<>();
-		entities.put("ss1", storageShelf);
+		StorageShelf storageShelf = mockStorageShelf("ss1");
+		List<AEntity> entities = new ArrayList<>();
+		entities.add(storageShelf);
 		Deque<Order> orders = new ArrayDeque<>();
 		Warehouse warehouse = new Warehouse(floor, entities, orders);
 
@@ -112,12 +110,26 @@ public class WarehouseTests {
 	public void testGetEntityByUIDWithInvalidUIDShouldReturnNull() throws LocationNotValidException {
 		Floor floor = mock(Floor.class);
 		StorageShelf storageShelf = mock(StorageShelf.class);
-		HashMap<String, AEntity> entities = new HashMap<>();
-		entities.put("ss1", storageShelf);
+		List<AEntity> entities = new ArrayList<>();
+		entities.add(storageShelf);
 		Deque<Order> orders = new ArrayDeque<>();
 		Warehouse warehouse = new Warehouse(floor, entities, orders);
 
 		assertEquals(null, warehouse.getEntityByUID("cp1"));
+	}
+
+	private StorageShelf mockStorageShelf(String uid) {
+		StorageShelf storageShelf = mock(StorageShelf.class);
+		when(storageShelf.getUID()).thenReturn(uid);
+
+		return storageShelf;
+	}
+
+	private PackingStation mockPackingStation(String uid) {
+		PackingStation packingStation = mock(PackingStation.class);
+		when(packingStation.getUID()).thenReturn(uid);
+
+		return packingStation;
 	}
 
 }

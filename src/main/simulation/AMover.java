@@ -7,7 +7,7 @@ import main.utils.AbstractPathFinder;
 /**
  * A.amazon of something that moves during the simulation.
  */
-public abstract class AMover<W extends IWorld> extends AEntity implements IActor<W> {
+public abstract class AMover<W extends AWorld> extends AEntity implements IActor<W> {
 	protected AbstractPathFinder pathFinder;
 	protected Location previousLocation;
 

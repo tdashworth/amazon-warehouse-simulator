@@ -1,10 +1,9 @@
 package main.simulation;
 
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Simulator<W extends IWorld> {
+public class Simulator<W extends AWorld> {
 	private int totalTickCount;
 	private final List<IActor<W>> actors;
 	private final W world;
@@ -26,20 +25,11 @@ public class Simulator<W extends IWorld> {
 	 * @throws Exception
 	 */
 	public void run() throws Exception {
-		while (!this.isComplete())
+		while (!this.world.isComplete())
 			tick();
 
-		this.world.getReportWriter().write(this, Paths.get("./EndReport.txt"));
+		// this.world.getReportWriter().write(this, Paths.get("./EndReport.txt"));
 		System.out.println("Completed, end report created.");
-	}
-
-	/**
-	 * returns true if all orders have been dispatched.
-	 * 
-	 * @return boolean
-	 */
-	public boolean isComplete() {
-		return this.world.isComplete();
 	}
 
 	/**
@@ -60,6 +50,10 @@ public class Simulator<W extends IWorld> {
 	 */
 	public int getTotalTickCount() {
 		return totalTickCount;
+	}
+
+	public List<IActor<W>> getActors() {
+		return Collections.unmodifiableList(this.actors);
 	}
 
 	public List<AMover<W>> getMovers() {
