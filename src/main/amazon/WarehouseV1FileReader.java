@@ -3,6 +3,7 @@ package main.amazon;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import main.simulation.*;
 
 /**
@@ -25,7 +26,7 @@ public class WarehouseV1FileReader implements ISimulatorFileReader<Warehouse> {
 	}
 
 	@Override
-	public Warehouse read(Path fileLocation)
+	public void read(Path fileLocation)
 			throws SimFileFormatException, IOException, LocationNotValidException {
 		this.log("Reading file: %s", fileLocation.toAbsolutePath());
 		List<String> lines = Files.readAllLines(fileLocation);
@@ -44,8 +45,19 @@ public class WarehouseV1FileReader implements ISimulatorFileReader<Warehouse> {
 		}
 
 		this.log("File read. Creating Simulation...");
+
+	}
+
+	public Warehouse getWorld() throws LocationNotValidException {
 		Floor floor = new Floor(this.width, this.height);
 		return new Warehouse(floor, entities, orders);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<IActor<Warehouse>> getActors() {
+		return entities.values().stream().sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
+				.filter(entity -> entity instanceof IActor).map(entity -> (IActor<Warehouse>) entity)
+				.collect(Collectors.toList());
 	}
 
 	/**

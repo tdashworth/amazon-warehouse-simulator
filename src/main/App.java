@@ -1,30 +1,24 @@
-package main.amazon;
+package main;
 
 import java.io.IOException;
 import java.nio.file.*;
-import main.simulation.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import main.simulation.*;
+import main.amazon.*;
 
-public class Program {
+public class App {
 
   /**
    * Main method, creates a simulator and starts the simulation run method.
    */
-  @SuppressWarnings("unchecked")
   public static void main(String[] args) {
     if (args.length == 0) {
-      System.out.println("Error, usage: java " + Program.class.getName() + " inputfile");
+      System.out.println("Error, usage: java " + App.class.getName() + " inputfile");
       System.exit(1);
     }
 
     try {
-      Warehouse warehouse = createFromFile(Paths.get(args[0]));
-      List<IActor<Warehouse>> actors = warehouse.getEntities().stream().sorted((e1, e2) -> e1.getUID().compareTo(e2.getUID()))
-				.filter(entity -> entity instanceof IActor).map(entity -> (IActor<Warehouse>) entity)
-				.collect(Collectors.toList());
-
-      new Simulator<>(warehouse, actors).run();
+      createFromFile(Paths.get(args[0])).run();
     } catch (IOException | SimFileFormatException | LocationNotValidException e) {
       System.out.println("Error reading SIM file - " + e.toString());
       System.exit(1);
@@ -45,8 +39,7 @@ public class Program {
    * @throws SimFileFormatException
    * @throws LocationNotValidException
    */
-  public static Warehouse createFromFile(Path fileLocation)
-      throws IOException, SimFileFormatException, LocationNotValidException {
+  public static Simulator<Warehouse> createFromFile(Path fileLocation) throws Exception {
     ISimulatorFileReader<Warehouse> fileReader;
     List<String> lines = Files.readAllLines(fileLocation);
 
@@ -61,7 +54,8 @@ public class Program {
         throw new SimFileFormatException(lines.get(0), "File is empty or of wrong format.");
     }
 
-    return fileReader.read(fileLocation);
+    fileReader.read(fileLocation);
+    return new Simulator<Warehouse>(fileReader.getWorld(), fileReader.getActors());
   }
 
 }

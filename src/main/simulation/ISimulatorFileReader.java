@@ -1,17 +1,15 @@
 package main.simulation;
 
-import java.io.IOException;
 import java.nio.file.Path;
-
-import main.simulation.LocationNotValidException;
+import java.util.List;
 
 public interface ISimulatorFileReader<W extends IWorld> {
 	/**
 	 * TODO JavaDoc description.
-	 * 
-	 * @throws IOException
-	 * @throws LocationNotValidException
 	 */
-	public W read(Path fileLocation)
-			throws SimFileFormatException, IOException, LocationNotValidException;
+	public void read(Path fileLocation) throws Exception;
+
+	public W getWorld() throws Exception;
+
+	public List<IActor<W>> getActors();
 }
