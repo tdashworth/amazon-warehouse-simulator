@@ -4,9 +4,8 @@
       "type": "java",
       "name": "Simulation CLI",
       "request": "launch",
-      "mainClass": "main.App",
-      "projectName": "DC2300-Coursework",
-      "vmArgs": "--module-path \"C:/Program Files/Java/javafx-sdk-11.0.2/lib\" --add-modules javafx.controls,javafx.fxml",
+      "mainClass": "amazon.App",
+      "projectName": "amazon",
       "args": "${input:simFile}"
     }
   ],
