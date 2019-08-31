@@ -1,0 +1,20 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Simulation CLI",
+      "request": "launch",
+      "mainClass": "amazon.App",
+      "projectName": "amazon",
+      "args": "${input:simFile}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "simFile",
+      "description": "Location of the sim file",
+      "type": "promptString",
+      "default": "./sample-configs/twoShelves-v2.sim",
+    }
+  ]
+}
