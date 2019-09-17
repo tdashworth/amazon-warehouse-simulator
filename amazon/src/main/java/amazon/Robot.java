@@ -149,6 +149,8 @@ public class Robot extends AMover<Warehouse> {
 				this.currentJob.getPackingStation().getLocation());
 	}
 
+	enum CostEstimationFactors { Laidened, Unlaidened };
+
 	/**
 	 * Given a storage shelf and packing station this will calculate the number of power units to make
 	 * the trip back to its charging pod with a leeway of 20%.
@@ -162,14 +164,14 @@ public class Robot extends AMover<Warehouse> {
 	private double estimatePowerUnitCostForJob(Job job, Floor floor) throws Exception {
 
 		// Setup Cost Estimator
-		IPathCostEstimator costEstimator = new BasicPathCostEstimator(this.location);
-		costEstimator.addCost("laidened", Double.valueOf(POWER_UNITS_CARRYING));
-		costEstimator.addCost("unlaidened", Double.valueOf(POWER_UNITS_EMPTY));
+		IPathCostEstimator<CostEstimationFactors> costEstimator = new BasicPathCostEstimator<>(this.location);
+		costEstimator.addCost(CostEstimationFactors.Laidened, Double.valueOf(POWER_UNITS_CARRYING));
+		costEstimator.addCost(CostEstimationFactors.Unlaidened, Double.valueOf(POWER_UNITS_EMPTY));
 
 		// Add path Locations
-		costEstimator.addLocation(job.getStorageShelf().getLocation(), "unlaidened");
-		costEstimator.addLocation(job.getPackingStation().getLocation(), "laidened");
-		costEstimator.addLocation(this.chargingPod.getLocation(), "unlaidened");
+		costEstimator.addLocation(job.getStorageShelf().getLocation(), CostEstimationFactors.Unlaidened);
+		costEstimator.addLocation(job.getPackingStation().getLocation(), CostEstimationFactors.Laidened);
+		costEstimator.addLocation(this.chargingPod.getLocation(), CostEstimationFactors.Unlaidened);
 
 		// Add leeway to estimated cost and return.
 		double estimatedCostWithLeeway = costEstimator.getEstimatedCost() * 1.2;
