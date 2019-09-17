@@ -33,8 +33,7 @@ public class WarehouseV1FileReader implements ISimulatorFileReader<Warehouse> {
 	}
 
 	@Override
-	public void read(Path fileLocation)
-			throws SimFileFormatException, IOException, LocationNotValidException {
+	public void read(Path fileLocation) throws SimFileFormatException, IOException, LocationNotValidException {
 		this.log("Reading file: %s", fileLocation.toAbsolutePath());
 		List<String> lines = Files.readAllLines(fileLocation);
 		if (lines.size() == 0)
@@ -76,69 +75,99 @@ public class WarehouseV1FileReader implements ISimulatorFileReader<Warehouse> {
 	 */
 	private void parseLine(String line) throws NumberFormatException, LocationNotValidException {
 		List<String> words = Arrays.asList(line.split(" "));
-		Location location;
 
 		if (words.size() == 0)
 			; // Empty line.
 
 		switch (words.get(0)) {
-			case "width":
-				this.width = Integer.parseInt(words.get(1));
-				this.log("Width set to %s", this.width);
-				break;
+		case "width":
+			this.setWidth(words);
+			break;
 
-			case "height":
-				this.height = Integer.parseInt(words.get(1));
-				this.log("Heigth set to %s", this.height);
-				break;
+		case "height":
+			this.setHeight(words);
+			break;
 
-			case "capacity":
-				this.capacity = Integer.parseInt(words.get(1));
-				this.log("Robot's charge capacity set to %s", this.capacity);
-				break;
+		case "capacity":
+			this.setCapacity(words);
+			break;
 
-			case "chargeSpeed":
-				this.chargeSpeed = Integer.parseInt(words.get(1));
-				this.log("Robot's charge speed set to %s", this.chargeSpeed);
-				break;
+		case "chargeSpeed":
+			this.setChargeSpeed(words);
+			break;
 
-			case "podRobot":
-				location = this.createAndValidateLocation(Integer.parseInt(words.get(3)),
-						Integer.parseInt(words.get(4)));
-				ChargingPod chargingPod = new ChargingPod(words.get(1), location);
-				Robot robot =
-						new Robot(words.get(2), location, chargingPod, this.capacity, this.chargeSpeed);
-				this.entities.add(chargingPod);
-				this.log("Charging Pod %s created at %s", chargingPod.getUID(), location);
-				this.entities.add(robot);
-				this.log("Robot %s created at %s", robot.getUID(), location);
-				break;
+		case "podRobot":
+			this.createRobotAndChargingPod(words);
+			break;
 
-			case "shelf":
-				location = this.createAndValidateLocation(Integer.parseInt(words.get(2)),
-						Integer.parseInt(words.get(3)));
-				StorageShelf storageShelf = new StorageShelf(words.get(1), location);
-				this.entities.add(storageShelf);
-				this.log("Storage Shelf %s created at %s", storageShelf.getUID(), location);
-				break;
+		case "shelf":
+			this.createStorageShelf(words);
+			break;
 
-			case "station":
-				location = this.createAndValidateLocation(Integer.parseInt(words.get(2)),
-						Integer.parseInt(words.get(3)));
-				PackingStation packingStation = new PackingStation(words.get(1), location);
-				this.entities.add(packingStation);
-				this.log("Packing Station %s created at %s", packingStation.getUID(), location);
-				break;
+		case "station":
+			this.createPackingStation(words);
+			break;
 
-			case "order":
-				Order order = new Order(words.subList(2, words.size()), Integer.parseInt(words.get(1)));
-				orders.add(order);
-				this.log("Order %s created.", order.hashCode());
-				break;
+		case "order":
+			this.createOrder(words);
+			break;
 
-			default:
-				break;
+		default:
+			break;
 		}
+	}
+
+	private void setWidth(List<String> words) {
+		this.width = Integer.parseInt(words.get(1));
+		this.log("Width set to %s", this.width);
+	}
+
+	private void setHeight(List<String> words) {
+		this.height = Integer.parseInt(words.get(1));
+		this.log("Height set to %s", this.height);
+	}
+
+	private void setCapacity(List<String> words) {
+		this.capacity = Integer.parseInt(words.get(1));
+		this.log("Capacity set to %s", this.capacity);
+	}
+
+	private void setChargeSpeed(List<String> words) {
+		this.chargeSpeed = Integer.parseInt(words.get(1));
+		this.log("Charge Speed set to %s", this.chargeSpeed);
+	}
+
+	private void createRobotAndChargingPod(List<String> words) throws NumberFormatException, LocationNotValidException {
+		Location location = this.createAndValidateLocation(Integer.parseInt(words.get(3)),
+				Integer.parseInt(words.get(4)));
+		ChargingPod chargingPod = new ChargingPod(words.get(1), location);
+		Robot robot = new Robot(words.get(2), location, chargingPod, this.capacity, this.chargeSpeed);
+		this.entities.add(chargingPod);
+		this.log("Charging Pod %s created at %s", chargingPod.getUID(), location);
+		this.entities.add(robot);
+		this.log("Robot %s created at %s", robot.getUID(), location);
+	}
+
+	private void createStorageShelf(List<String> words) throws NumberFormatException, LocationNotValidException {
+		Location location = this.createAndValidateLocation(Integer.parseInt(words.get(2)),
+				Integer.parseInt(words.get(3)));
+		StorageShelf storageShelf = new StorageShelf(words.get(1), location);
+		this.entities.add(storageShelf);
+		this.log("Storage Shelf %s created at %s", storageShelf.getUID(), location);
+	}
+
+	private void createPackingStation(List<String> words) throws NumberFormatException, LocationNotValidException {
+		Location location = this.createAndValidateLocation(Integer.parseInt(words.get(2)),
+				Integer.parseInt(words.get(3)));
+		PackingStation packingStation = new PackingStation(words.get(1), location);
+		this.entities.add(packingStation);
+		this.log("Packing Station %s created at %s", packingStation.getUID(), location);
+	}
+
+	private void createOrder(List<String> words) {
+		Order order = new Order(words.subList(2, words.size()), Integer.parseInt(words.get(1)));
+		orders.add(order);
+		this.log("Order %s created.", order.hashCode());
 	}
 
 	private Location createAndValidateLocation(int column, int row) throws LocationNotValidException {
