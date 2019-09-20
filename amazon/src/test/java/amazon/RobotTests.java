@@ -9,11 +9,10 @@ import amazon.Job;
 import simulator.Location;
 import simulator.LocationNotValidException;
 import amazon.packingStation.PackingStation;
-import amazon.Robot;
+import amazon.robot.Robot;
 import amazon.StorageShelf;
 import amazon.Warehouse;
 import amazon.Job.JobStatus;
-import amazon.Robot.RobotStatus;
 import simulator.utils.ItemManager;
 
 public class RobotTests {
@@ -28,7 +27,7 @@ public class RobotTests {
 
 		assertEquals(uid, robot.getUID());
 		assertEquals(location, robot.getLocation());
-		assertEquals(RobotStatus.AwaitingJob, robot.getStatus());
+		assertEquals(robot.awaitingJobState, robot.getStatus());
 	}
 
 	@Test
@@ -107,7 +106,7 @@ public class RobotTests {
 		robot.tick(warehouse, 1);
 
 		assertTrue(chargingPod.getLocation().equals(robot.getLocation()));
-		assertEquals(RobotStatus.AwaitingJob, robot.getStatus());
+		assertEquals(robot.awaitingJobState, robot.getStatus());
 		assertEquals(49, robot.getPowerUnits());
 	}
 
@@ -124,7 +123,7 @@ public class RobotTests {
 		robot.tick(warehouse, 1);
 
 		assertTrue(chargingPod.getLocation().equals(robot.getLocation()));
-		assertEquals(RobotStatus.AwaitingJob, robot.getStatus());
+		assertEquals(robot.awaitingJobState, robot.getStatus());
 		assertEquals(45, robot.getPowerUnits());
 	}
 
@@ -145,7 +144,7 @@ public class RobotTests {
 
 		robot.tick(warehouse, 1);
 
-		assertEquals(RobotStatus.CollectingItem, robot.getStatus());
+		assertEquals(robot.collectingItemState, robot.getStatus());
 		verify(warehouse.getJobManager()).pickup();
 	}
 
@@ -160,6 +159,7 @@ public class RobotTests {
 		Robot robot = new Robot("r1", new Location(0, 0), chargingPod, 50, 5) {
 			{
 				this.currentJob = job;
+				this.state = this.collectingItemState;
 			}
 		};
 		Warehouse warehouse = mockWarehouse(robot);
@@ -169,7 +169,7 @@ public class RobotTests {
 		assertTrue(robot.getLocation().equals(new Location(1, 0))
 				|| robot.getLocation().equals(new Location(0, 1)));
 		assertEquals(49, robot.getPowerUnits());
-		assertEquals(RobotStatus.CollectingItem, robot.getStatus());
+		assertEquals(robot.collectingItemState, robot.getStatus());
 		verify(job, never()).collected();
 	}
 
@@ -184,6 +184,7 @@ public class RobotTests {
 		Robot robot = new Robot("r1", new Location(1, 0), chargingPod, 50, 5) {
 			{
 				this.currentJob = job;
+				this.state = this.collectingItemState;
 			}
 		};
 		Warehouse warehouse = mockWarehouse(robot);
@@ -193,7 +194,7 @@ public class RobotTests {
 
 		assertTrue(robot.getLocation().equals(new Location(1, 1)));
 		assertEquals(49, robot.getPowerUnits());
-		assertEquals(RobotStatus.DeliveringItem, robot.getStatus());
+		assertEquals(robot.deliveringItemState, robot.getStatus());
 		verify(job).collected();
 	}
 
@@ -207,6 +208,7 @@ public class RobotTests {
 		Robot robot = new Robot("r1", new Location(1, 1), chargingPod, 50, 5) {
 			{
 				this.currentJob = job;
+				this.state = this.deliveringItemState;
 			}
 		};
 		Warehouse warehouse = mockWarehouse(robot);
@@ -216,7 +218,7 @@ public class RobotTests {
 		assertTrue(robot.getLocation().equals(new Location(1, 0))
 				|| robot.getLocation().equals(new Location(0, 1)));
 		assertEquals(48, robot.getPowerUnits());
-		assertEquals(RobotStatus.DeliveringItem, robot.getStatus());
+		assertEquals(robot.deliveringItemState, robot.getStatus());
 		verify(job, never()).delivered();
 		verify(warehouse.getJobManager(), never()).complete(job);
 	}
@@ -231,6 +233,7 @@ public class RobotTests {
 		Robot robot = new Robot("r1", new Location(0, 1), chargingPod, 50, 5) {
 			{
 				this.currentJob = job;
+				this.state = this.deliveringItemState;
 			}
 		};
 		Warehouse warehouse = mockWarehouse(robot);
@@ -239,7 +242,7 @@ public class RobotTests {
 
 		assertTrue(robot.getLocation().equals(new Location(0, 0)));
 		assertEquals(48, robot.getPowerUnits());
-		assertEquals(RobotStatus.AwaitingJob, robot.getStatus());
+		assertEquals(robot.awaitingJobState, robot.getStatus());
 		verify(job).delivered();
 		verify(warehouse.getJobManager()).complete(job);
 	}
@@ -258,7 +261,7 @@ public class RobotTests {
 		robot.tick(warehouse, 1);
 
 		assertEquals(20, robot.getPowerUnits());
-		assertEquals(RobotStatus.Charging, robot.getStatus());
+		assertEquals(robot.awaitingJobState, robot.getStatus());
 	}
 
 	@Test

@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import amazon.packingStation.PackingStation;
+import amazon.robot.Robot;
 import simulator.AEntity;
 import simulator.Floor;
 import simulator.IActor;
