@@ -8,7 +8,7 @@ import simulator.AEntity;
 import simulator.Floor;
 import simulator.LocationNotValidException;
 import amazon.Order;
-import amazon.PackingStation;
+import amazon.packingStation.PackingStation;
 import amazon.StorageShelf;
 import amazon.Warehouse;
 

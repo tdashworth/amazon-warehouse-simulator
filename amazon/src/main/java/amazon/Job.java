@@ -1,5 +1,7 @@
 package amazon;
 
+import amazon.packingStation.PackingStation;
+
 /**
  * A container for a Storage Shelf and Packing Station which make up a Job.
  */

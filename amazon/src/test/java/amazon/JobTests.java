@@ -3,7 +3,7 @@ package amazon;
 import org.junit.Test;
 import amazon.Job;
 import simulator.Location;
-import amazon.PackingStation;
+import amazon.packingStation.PackingStation;
 import amazon.StorageShelf;
 import amazon.Job.JobStatus;
 import static org.junit.Assert.assertEquals;
