@@ -34,7 +34,8 @@ public class Location {
 	}
 
 	/**
-	 * Calculates the distance following the rows and columns of the grid the locations reside on.
+	 * Calculates the distance following the rows and columns of the grid the
+	 * locations reside on.
 	 * 
 	 * @param location The location to calculate distance to.
 	 * @return The shortest distance from this to the given location.
@@ -57,6 +58,15 @@ public class Location {
 		int differenceInRows = Math.abs(this.getRow() - location.getRow());
 
 		return Math.sqrt(differenceInRows ^ 2 + differenceInColumns ^ 2);
+	}
+
+	/**
+	 * @param columnShift relative change in the column
+	 * @param rowShift    relative change in row
+	 * @return a new Location with updated column and row
+	 */
+	public Location transform(int columnShift, int rowShift) {
+		return new Location(this.column + columnShift, this.row + rowShift);
 	}
 
 	/**

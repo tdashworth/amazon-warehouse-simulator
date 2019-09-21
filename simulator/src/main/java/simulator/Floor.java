@@ -76,6 +76,9 @@ public class Floor {
 	 * @return
 	 */
 	public boolean isLocationValid(Location location) {
+		if (location == null)
+			return false;
+		
 		boolean withinColumns =
 				0 <= location.getColumn() && location.getColumn() < this.numberOfColumns;
 		boolean withinRows = 0 <= location.getRow() && location.getRow() < this.numberOfRows;

@@ -7,10 +7,11 @@ import simulator.Location;
 import simulator.LocationNotValidException;
 
 /**
- * A strategy to finding an optimal path between two location on a floor. This strategy explores
- * nodes in a recursive fashion choosing the "most efficient" node to explore next. The most
- * efficient node is determined by a combination of heuristic (closest direct distance) and cost
- * (number of steps it took to travel to the node).
+ * A strategy to finding an optimal path between two location on a floor. This
+ * strategy explores nodes in a recursive fashion choosing the "most efficient"
+ * node to explore next. The most efficient node is determined by a combination
+ * of heuristic (closest direct distance) and cost (number of steps it took to
+ * travel to the node).
  */
 public class AStarPathFinder extends AbstractPathFinder {
 	private PathFindingNode[][] floorNodes;
@@ -19,18 +20,18 @@ public class AStarPathFinder extends AbstractPathFinder {
 	List<PathFindingNode> exploredNodes;
 
 	/**
-	 * Constructs a strategy for path finding with a default value to avoid collisions.
+	 * Constructs a strategy for path finding with a default value to avoid
+	 * collisions.
 	 * 
 	 * @param floor the floor determining the size and location of other robots.
 	 */
-	public AStarPathFinder(Floor floor, Location origin, Location target)
-			throws LocationNotValidException {
+	public AStarPathFinder(Floor floor, Location origin, Location target) throws LocationNotValidException {
 		super(floor, origin, target);
 	}
 
 	/**
-	 * Given a number of columns and rows (typically for the Floor), this recreates it with Nodes used
-	 * by the searching.
+	 * Given a number of columns and rows (typically for the Floor), this recreates
+	 * it with Nodes used by the searching.
 	 * 
 	 * This is a static method as it does not use or modify anything locally.
 	 * 
@@ -67,10 +68,8 @@ public class AStarPathFinder extends AbstractPathFinder {
 				this.floor.getNumberOfRows());
 
 		// Create lists for storing nodes to explore and those explored
-		this.unexploredNodes = new ArrayList<PathFindingNode>(
-				this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
-		this.exploredNodes = new ArrayList<PathFindingNode>(
-				this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
+		this.unexploredNodes = new ArrayList<>(this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
+		this.exploredNodes = new ArrayList<>(this.floor.getNumberOfColumns() * this.floor.getNumberOfRows());
 
 		// Convert Locations to Nodes
 		PathFindingNode beginningNode = this.getNodeAtLocation(beginningLocation);
@@ -90,8 +89,8 @@ public class AStarPathFinder extends AbstractPathFinder {
 	}
 
 	/**
-	 * Returns a node at a given x, y coordinates. Returns null if the given coordinates are Out Of
-	 * Bounds
+	 * Returns a node at a given x, y coordinates. Returns null if the given
+	 * coordinates are Out Of Bounds
 	 * 
 	 * @param column
 	 * @param row
@@ -105,10 +104,11 @@ public class AStarPathFinder extends AbstractPathFinder {
 	}
 
 	/**
-	 * Returns a node at a given Location. Returns null if the given Location is Out Of Bounds
+	 * Returns a node at a given Location. Returns null if the given Location is Out
+	 * Of Bounds.
 	 * 
-	 * @param location
-	 * @return
+	 * @param location the Location used to select PathFindingNode
+	 * @return the PathFindingNode at respective Location
 	 */
 	private PathFindingNode getNodeAtLocation(Location location) {
 		return this.getNodeAtLocation(location.getColumn(), location.getRow());
@@ -126,52 +126,38 @@ public class AStarPathFinder extends AbstractPathFinder {
 
 			PathFindingNode currentNode = this.unexploredNodes.get(0);
 
+			// Move current node to explored.
+			this.unexploredNodes.remove(currentNode);
+			this.exploredNodes.add(currentNode);
+
 			// Found target, breaking out to stop search
 			if (currentNode.equals(targetLocation))
 				break;
 
 			int nextStepCost = currentNode.getNumberOfStepsFromStart() + 1;
 
-			this.checkNodeForExplorationInDirection(nextStepCost, currentNode, targetNode, +0, -1); // ABOVE
-			this.checkNodeForExplorationInDirection(nextStepCost, currentNode, targetNode, +1, +0); // RIGHT
-			this.checkNodeForExplorationInDirection(nextStepCost, currentNode, targetNode, +0, +1); // BELOW
-			this.checkNodeForExplorationInDirection(nextStepCost, currentNode, targetNode, -1, +0); // LEFT
-
-			// Move current node to explored.
-			this.unexploredNodes.remove(currentNode);
-			this.exploredNodes.add(currentNode);
-
+			this.checkNodeForExploration(currentNode, this.getNodeAtLocation(currentNode.transform(+0, -1)), targetNode,
+					nextStepCost); // ABOVE
+			this.checkNodeForExploration(currentNode, this.getNodeAtLocation(currentNode.transform(+1, +0)), targetNode,
+					nextStepCost); // RIGHT
+			this.checkNodeForExploration(currentNode, this.getNodeAtLocation(currentNode.transform(+0, +1)), targetNode,
+					nextStepCost); // BELOW
+			this.checkNodeForExploration(currentNode, this.getNodeAtLocation(currentNode.transform(-1, +0)), targetNode,
+					nextStepCost); // LEFT
 		} while (unexploredNodes.size() > 0);
 	}
 
 	/**
-	 * A wrapper around checkNodeForExploration(...) defining the current node as the relative
-	 * position change from the previous node.
+	 * Adding a node to explore checking the location is valid, it hasn't been
+	 * explored already.
 	 * 
-	 * @param nextStepCost the cost taken to travel to this node.
 	 * @param previous     the previous node to the one being explored.
-	 * @param target       the target node used to determine heuristic later.
-	 * @param columnChange the relative change in column.
-	 * @param rowChange    the relative change in row.
-	 */
-	private void checkNodeForExplorationInDirection(int nextStepCost, PathFindingNode previous,
-			PathFindingNode target, int columnChange, int rowChange) {
-		PathFindingNode current =
-				this.getNodeAtLocation(previous.getColumn() + columnChange, previous.getRow() + rowChange);
-		if (current != null)
-			this.checkNodeForExploration(current, nextStepCost, previous, target);
-	}
-
-	/**
-	 * Adding a node to explore checking the location is valid, it hasn't been explored already.
-	 * 
 	 * @param current      the current node to explore.
-	 * @param nextStepCost the cost taken to travel to this node.
-	 * @param previous     the previous node to the one being explored.
 	 * @param target       the target node used to determine heuristic later.
+	 * @param nextStepCost the cost taken to travel to this node.
 	 */
-	private void checkNodeForExploration(PathFindingNode current, int nextStepCost,
-			PathFindingNode previous, PathFindingNode target) {
+	private void checkNodeForExploration(PathFindingNode previous, PathFindingNode current, PathFindingNode target,
+			int nextStepCost) {
 		// Check location validity
 		if (!this.floor.isLocationValid(current))
 			return; // TODO Consider throwing an error.
@@ -203,8 +189,7 @@ public class AStarPathFinder extends AbstractPathFinder {
 	 * @param start the beginning node of the path (used as a stopping condition)
 	 * @param end   the target node of the path (used as the initial point)
 	 */
-	private static Deque<PathFindingNode> convertLinkedNodesToPath(PathFindingNode start,
-			PathFindingNode end) {
+	private static Deque<PathFindingNode> convertLinkedNodesToPath(PathFindingNode start, PathFindingNode end) {
 		Deque<PathFindingNode> path = new LinkedList<PathFindingNode>();
 		PathFindingNode currentNode = end;
 
