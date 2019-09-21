@@ -1,4 +1,4 @@
-package simulator.utils;
+package simulator.utils.pathFinder;
 
 import simulator.Location;
 

@@ -2,7 +2,7 @@ package simulator.utils;
 
 import org.junit.Test;
 import simulator.Location;
-import simulator.utils.PathFindingNode;
+import simulator.utils.pathFinder.PathFindingNode;
 import static org.junit.Assert.*;
 
 public class PathFindingNodeTests {

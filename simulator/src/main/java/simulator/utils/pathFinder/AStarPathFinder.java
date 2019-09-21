@@ -1,4 +1,4 @@
-package simulator.utils;
+package simulator.utils.pathFinder;
 
 import java.util.*;
 
@@ -58,10 +58,10 @@ public class AStarPathFinder extends AbstractPathFinder {
 	 * @return a boolean value; true if a path was found, otherwise false.
 	 * @throws LocationNotValidException
 	 */
-	protected void calculatePath(Location beginningLocation, Location targetLocation) {
+	protected Deque<PathFindingNode> calculatePath(Location beginningLocation, Location targetLocation) {
 		// If both locations are the same, return true (with a path count of 0)
 		if (beginningLocation.equals(targetLocation))
-			return; // TODO Consider throwing an error.
+			return null; // TODO Consider throwing an error.
 
 		this.floorNodes = AStarPathFinder.buildFloorWithNodes(this.floor.getNumberOfColumns(),
 				this.floor.getNumberOfRows());
@@ -83,10 +83,10 @@ public class AStarPathFinder extends AbstractPathFinder {
 
 		// No path was found
 		if (targetNode.getPreviousNodeInPath() == null)
-			return; // TODO Consider throwing an error.
+			return null; // TODO Consider throwing an error.
 
 		// Populate the path with calculated route.
-		this.path = AStarPathFinder.convertLinkedNodesToPath(beginningNode, targetNode);
+		return AStarPathFinder.convertLinkedNodesToPath(beginningNode, targetNode);
 	}
 
 	/**

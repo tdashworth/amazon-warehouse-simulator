@@ -1,13 +1,13 @@
 package simulator;
 
-import simulator.utils.AStarPathFinder;
-import simulator.utils.AbstractPathFinder;
+import simulator.utils.pathFinder.AStarPathFinder;
+import simulator.utils.pathFinder.IPathFinder;
 
 /**
  * A.amazon of something that moves during the simulation.
  */
 public abstract class AMover<W extends AWorld> extends AEntity implements IActor<W> {
-	protected AbstractPathFinder pathFinder;
+	protected IPathFinder pathFinder;
 	protected Location previousLocation;
 
 	public AMover(String uid, Location location) {
