@@ -5,17 +5,19 @@ import amazon.Warehouse;
 
 public class PackingState implements PackingStationState {
   private final PackingStation context;
+  protected int remainingPackingTicks;
 
-  public PackingState(PackingStation context) {
+  public PackingState(PackingStation context, int remainingPackingTicks) {
     this.context = context;
+    this.remainingPackingTicks = remainingPackingTicks;
   }
 
   @Override
   public void tick(Warehouse world, int currentTickCount) throws Exception {
-    this.context.remainingPackingTicks--;
+    this.remainingPackingTicks--;
 
-    if (this.context.remainingPackingTicks == 0)
-      this.context.state = this.context.dispatchingState;
+    if (this.remainingPackingTicks == 0)
+      this.context.state = new DispatchingState(context);
   }
 
   @Override

@@ -9,7 +9,7 @@ import org.junit.Test;
 import amazon.Job;
 import simulator.Location;
 import amazon.Order;
-import amazon.packingStation.PackingStation;
+import amazon.packingStation.*;
 import amazon.StorageShelf;
 import amazon.Warehouse;
 import simulator.utils.ItemManager;;
@@ -24,7 +24,7 @@ public class PackingStationTests {
 
 		assertEquals(uid, packingStation.getUID());
 		assertEquals(location, packingStation.getLocation());
-		assertEquals(packingStation.pickingState, packingStation.getStatus());
+		assertEquals(PickingState.class, packingStation.getStatus().getClass());
 	}
 
 	@Test
@@ -68,7 +68,7 @@ public class PackingStationTests {
 		assertEquals(0, orderManager.getAwaiting().size());
 		assertEquals(1, orderManager.getProgressing().size());
 		assertEquals(2, jobManager.getAwaiting().size());
-		assertEquals(packingStation.awaitingState, packingStation.getStatus());
+		assertEquals(AwaitingState.class, packingStation.getStatus().getClass());
 	}
 
 	@Test
@@ -88,7 +88,7 @@ public class PackingStationTests {
 		assertEquals(0, orderManager.getAwaiting().size());
 		assertEquals(0, orderManager.getProgressing().size());
 		assertEquals(0, jobManager.getAwaiting().size());
-		assertEquals(packingStation.pickingState, packingStation.getStatus());
+		assertEquals(PickingState.class, packingStation.getStatus().getClass());
 	}
 
 	@Test
@@ -100,18 +100,17 @@ public class PackingStationTests {
 		PackingStation packingStation = new PackingStation("ps1", new Location(0, 0)) {
 			{
 				this.currentOrder = order;
-				this.remainingPackingTicks = order.getNumberOfTicksToPack();
 				this.storageShelvesVisited = Arrays.asList(storageShelf);
-				this.state = this.packingState;
+				this.state = new PackingState(this, order.getNumberOfTicksToPack());
 			}
 		};
-		assertEquals(packingStation.packingState, packingStation.getStatus());
+		assertEquals(PackingState.class, packingStation.getStatus().getClass());
 		packingStation.tick(warehouse, 1);
-		assertEquals(packingStation.packingState, packingStation.getStatus());
+		assertEquals(PackingState.class, packingStation.getStatus().getClass());
 		packingStation.tick(warehouse, 1);
-		assertEquals(packingStation.packingState, packingStation.getStatus());
+		assertEquals(PackingState.class, packingStation.getStatus().getClass());
 		packingStation.tick(warehouse, 1);
-		assertEquals(packingStation.dispatchingState, packingStation.getStatus());
+		assertEquals(DispatchingState.class, packingStation.getStatus().getClass());
 	}
 
 	@Test
@@ -126,16 +125,15 @@ public class PackingStationTests {
 
 		PackingStation packingStation = new PackingStation("ps1", new Location(0, 0)) {
 			{
-				this.currentOrder = orderManager.pickup();;
-				this.remainingPackingTicks = 0;
+				this.currentOrder = orderManager.pickup();
 				this.storageShelvesVisited = Arrays.asList(storageShelf);
-				this.state = this.dispatchingState;
+				this.state = new DispatchingState(this);
 			}
 		};
 
-		assertEquals(packingStation.dispatchingState, packingStation.getStatus());
+		assertEquals(DispatchingState.class, packingStation.getStatus().getClass());
 		packingStation.tick(warehouse, 1);
-		assertEquals(packingStation.pickingState, packingStation.getStatus());
+		assertEquals(PickingState.class, packingStation.getStatus().getClass());
 		assertEquals(0, orderManager.getProgressing().size());
 		assertEquals(1, orderManager.getCompleted().size());
 	}
@@ -146,7 +144,7 @@ public class PackingStationTests {
 			{
 				this.currentOrder = new Order(Arrays.asList("ss1"), 0);
 				this.storageShelvesVisited = new ArrayList<>();
-				this.state = this.awaitingState;
+				this.state = new AwaitingState(this);
 			}
 		};
 
@@ -161,7 +159,7 @@ public class PackingStationTests {
 			{
 				this.currentOrder = new Order(Arrays.asList("ss1"), 0);
 				this.storageShelvesVisited = new ArrayList<>();
-				this.state = this.awaitingState;
+				this.state = new AwaitingState(this);
 			}
 		};
 
@@ -180,7 +178,7 @@ public class PackingStationTests {
 			{
 				this.currentOrder = new Order(Arrays.asList("ss1"), 0);
 				this.storageShelvesVisited = new ArrayList<>();
-				this.state = this.awaitingState;
+				this.state = new AwaitingState(this);
 			}
 		};
 

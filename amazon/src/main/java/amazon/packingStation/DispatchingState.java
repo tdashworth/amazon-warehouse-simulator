@@ -17,7 +17,7 @@ public class DispatchingState implements PackingStationState {
     this.context.currentOrder.setTotalNumberOfTicksToPack(totalNumberOfTicksToPack);
     warehouse.getOrderManager().complete(this.context.currentOrder);
     this.context.currentOrder = null;
-    this.context.state = this.context.pickingState;
+    this.context.state = new PickingState(context);
   }
 
   @Override

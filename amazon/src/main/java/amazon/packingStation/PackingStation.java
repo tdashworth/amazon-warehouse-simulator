@@ -12,13 +12,7 @@ import simulator.*;
 public class PackingStation extends AEntity implements IActor<Warehouse>, PackingStationState {
 	protected Order currentOrder;
 	protected int tickCountWhenOrderAssigned;
-	protected int remainingPackingTicks;
 	protected List<StorageShelf> storageShelvesVisited;
-
-	public final PackingStationState pickingState = new PickingState(this);
-	public final PackingStationState packingState = new PackingState(this);
-	public final PackingStationState dispatchingState = new DispatchingState(this);
-	public final PackingStationState awaitingState = new AwaitingState(this);
 
 	protected PackingStationState state;
 
@@ -30,7 +24,7 @@ public class PackingStation extends AEntity implements IActor<Warehouse>, Packin
 	 */
 	public PackingStation(String uid, Location location) {
 		super(uid, location);
-		this.state = this.pickingState;
+		this.state = new PickingState(this);
 	}
 
 	@Override
@@ -64,11 +58,11 @@ public class PackingStation extends AEntity implements IActor<Warehouse>, Packin
 	 */
 	public String toString() {
 		String result = super.toString();
-
+		// TODO Get state to cover this
 		if (this.currentOrder != null) {
 			result += ", " + "Current Order: " + this.currentOrder;
 			result += ", " + "Tick count when assigned: " + this.tickCountWhenOrderAssigned;
-			result += ", " + "Remaining packing ticks: " + this.remainingPackingTicks;
+			// result += ", " + "Remaining packing ticks: " + this.remainingPackingTicks;
 			result += ", " + "Visited Shelves: "
 					+ this.storageShelvesVisited.stream().map(shelf -> shelf.getUID()).collect(Collectors.joining(","));
 		}

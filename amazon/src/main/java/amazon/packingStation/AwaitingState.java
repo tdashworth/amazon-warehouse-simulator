@@ -15,8 +15,10 @@ public class AwaitingState implements PackingStationState {
 
     boolean allItemsRecieved = this.context.currentOrder.getStorageShelfUIDs()
         .size() == this.context.storageShelvesVisited.size();
+    int numberOfTicksToPack = this.context.currentOrder.getNumberOfTicksToPack();
+
     if (allItemsRecieved)
-      this.context.state = this.context.packingState;
+      this.context.state = new PackingState(context, numberOfTicksToPack);
   }
 
   @Override

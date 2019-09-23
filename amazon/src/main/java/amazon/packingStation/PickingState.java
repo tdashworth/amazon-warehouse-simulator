@@ -23,11 +23,10 @@ public class PickingState implements PackingStationState {
 
 		this.context.currentOrder = warehouse.getOrderManager().pickup();
 		this.context.tickCountWhenOrderAssigned = currentTickCount;
-		this.context.remainingPackingTicks = this.context.currentOrder.getNumberOfTicksToPack();
 		this.context.storageShelvesVisited = new ArrayList<StorageShelf>();
 		this.requestJobs(warehouse, this.context.currentOrder.getStorageShelfUIDs());
 
-		this.context.state = this.context.awaitingState;
+		this.context.state = new AwaitingState(context);
 		//this.log("Picked order: " + this.context.currentOrder.hashCode());
   }
 
