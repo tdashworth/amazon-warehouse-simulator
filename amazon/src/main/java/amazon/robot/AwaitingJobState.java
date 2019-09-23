@@ -46,6 +46,8 @@ class AwaitingJobState implements RobotState {
 		// this.log("Job to %s then %s picked up.", this.context.currentJob.getStorageShelf().getLocation(),
 		// 		this.context.currentJob.getPackingStation().getLocation());
   }
+
+  enum CostEstimationFactors { Laidened, Unlaidened };
   
   /**
 	 * Given a storage shelf and packing station this will calculate the number of power units to make
@@ -60,14 +62,14 @@ class AwaitingJobState implements RobotState {
 	private double estimatePowerUnitCostForJob(Job job, Floor floor) throws Exception {
 
 		// Setup Cost Estimator
-		IPathCostEstimator costEstimator = new BasicPathCostEstimator(this.context.getLocation());
-		costEstimator.addCost("laidened", Double.valueOf(Robot.POWER_UNITS_CARRYING));
-		costEstimator.addCost("unlaidened", Double.valueOf(Robot.POWER_UNITS_EMPTY));
+		IPathCostEstimator<CostEstimationFactors> costEstimator = new BasicPathCostEstimator<>(this.context.getLocation());
+		costEstimator.addCost(CostEstimationFactors.Laidened, Double.valueOf(Robot.POWER_UNITS_CARRYING));
+		costEstimator.addCost(CostEstimationFactors.Unlaidened, Double.valueOf(Robot.POWER_UNITS_EMPTY));
 
 		// Add path Locations
-		costEstimator.addLocation(job.getStorageShelf().getLocation(), "unlaidened");
-		costEstimator.addLocation(job.getPackingStation().getLocation(), "laidened");
-		costEstimator.addLocation(this.context.chargingPod.getLocation(), "unlaidened");
+		costEstimator.addLocation(job.getStorageShelf().getLocation(), CostEstimationFactors.Unlaidened);
+		costEstimator.addLocation(job.getPackingStation().getLocation(), CostEstimationFactors.Laidened);
+		costEstimator.addLocation(this.context.chargingPod.getLocation(), CostEstimationFactors.Unlaidened);
 
 		// Add leeway to estimated cost and return.
 		double estimatedCostWithLeeway = costEstimator.getEstimatedCost() * 1.2;
