@@ -1,6 +1,5 @@
 package simulator;
 
-import simulator.utils.pathFinder.AStarPathFinder;
 import simulator.utils.pathFinder.IPathFinder;
 
 /**
@@ -30,9 +29,6 @@ public abstract class AMover<W extends AWorld> extends AEntity implements IActor
 		this.log("Moving from %s to %s.", this.location, targetLocation);
 
 		try {
-			if (this.pathFinder == null)
-				this.pathFinder = new AStarPathFinder(floor, this.location, targetLocation);
-
 			Location newLocation = this.pathFinder.getNextLocation();
 			floor.moveEntity(this.location, newLocation);
 

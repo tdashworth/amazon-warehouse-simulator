@@ -6,6 +6,7 @@ import simulator.Location;
 import simulator.utils.BasicPathCostEstimator;
 import simulator.utils.IPathCostEstimator;
 import simulator.utils.ItemManager;
+import simulator.utils.pathFinder.PerpendicularAStarPathFinder;
 
 public class Robot extends AMover<Warehouse> {
 	protected int powerUnits;
@@ -47,26 +48,26 @@ public class Robot extends AMover<Warehouse> {
 	@Override
 	public void tick(Warehouse warehouse, int currentTickCount) throws Exception {
 		super.tick(warehouse, currentTickCount);
-		
+
 		RobotStatus status = this.getStatus();
 		this.log("Ticking with status: %s.", status);
 
 		switch (status) {
-			case CollectingItem:
-				this.collectItemFromStorageShelf(warehouse);
-				break;
+		case CollectingItem:
+			this.collectItemFromStorageShelf(warehouse);
+			break;
 
-			case DeliveringItem:
-				this.deliverItemToPackingStation(warehouse);
-				break;
+		case DeliveringItem:
+			this.deliverItemToPackingStation(warehouse);
+			break;
 
-			case AwaitingJob:
-				this.awaitForJob(warehouse);
-				break;
+		case AwaitingJob:
+			this.awaitForJob(warehouse);
+			break;
 
-			case Charging:
-				this.charge();
-				break;
+		case Charging:
+			this.charge();
+			break;
 		}
 	}
 
@@ -76,6 +77,8 @@ public class Robot extends AMover<Warehouse> {
 
 		if (this.location.equals(this.currentJob.getStorageShelf().getLocation())) {
 			this.currentJob.collected();
+			this.pathFinder = new PerpendicularAStarPathFinder(warehouse.getFloor(), this.location,
+					this.currentJob.getPackingStation().getLocation());
 			this.log("Reached assigned Storage Shelf.");
 		}
 	}
@@ -143,15 +146,17 @@ public class Robot extends AMover<Warehouse> {
 
 		// Pickup Job
 		this.currentJob = jobManager.pickup();
-		this.pathFinder = null;
+		Location targetLocation = this.currentJob.getStorageShelf().getLocation();
+		this.pathFinder = new PerpendicularAStarPathFinder(floor, this.location, targetLocation);
+		;
 
 		this.log("Job to %s then %s picked up.", this.currentJob.getStorageShelf().getLocation(),
 				this.currentJob.getPackingStation().getLocation());
 	}
 
 	/**
-	 * Given a storage shelf and packing station this will calculate the number of power units to make
-	 * the trip back to its charging pod with a leeway of 20%.
+	 * Given a storage shelf and packing station this will calculate the number of
+	 * power units to make the trip back to its charging pod with a leeway of 20%.
 	 * 
 	 * @param storageShelf
 	 * @param packingStation
